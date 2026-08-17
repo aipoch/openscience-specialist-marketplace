@@ -118,6 +118,33 @@ test("GitHub workflows are valid YAML documents", async () => {
     JSON.stringify(workflows["publish.yml"]),
     /AWS_REGION|aws-region/,
   );
+  const publishSteps = workflows["publish.yml"].jobs.publish.steps;
+  const maskAwsIdentity = publishSteps.find(
+    (step) => step.name === "Mask AWS identity metadata",
+  );
+  assert.equal(
+    maskAwsIdentity.env.AWS_ACCESS_KEY_ID,
+    "${{ secrets.AWS_ACCESS_KEY_ID }}",
+  );
+  assert.equal(
+    maskAwsIdentity.env.AWS_SECRET_ACCESS_KEY,
+    "${{ secrets.AWS_SECRET_ACCESS_KEY }}",
+  );
+  assert.match(maskAwsIdentity.run, /sts get-caller-identity/);
+  assert.match(maskAwsIdentity.run, /2>\/dev\/null/);
+  assert.match(maskAwsIdentity.run, /::add-mask::/);
+  assert.equal(
+    publishSteps.indexOf(maskAwsIdentity) <
+      publishSteps.findIndex(
+        (step) => step.name === "Stage and verify exact CDN bytes",
+      ),
+    true,
+  );
+  assert.doesNotMatch(JSON.stringify(workflows["publish.yml"]), /\b\d{12}\b/);
+  assert.doesNotMatch(
+    JSON.stringify(workflows["publish.yml"]),
+    /arn:aws:iam::/,
+  );
   for (const name of [
     "Stage and verify exact CDN bytes",
     "Promote immutable CDN objects and stable root",
