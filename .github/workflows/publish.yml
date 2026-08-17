@@ -90,7 +90,6 @@ jobs:
           MARKETPLACE_EXPECTED_KEY_FINGERPRINT: ${{ vars.MARKETPLACE_EXPECTED_KEY_FINGERPRINT }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          AWS_REGION: ${{ vars.AWS_REGION }}
           MARKETPLACE_BUCKET: ${{ secrets.MARKETPLACE_BUCKET }}
           MARKETPLACE_CDN_DISTRIBUTION_ID: ${{ secrets.MARKETPLACE_CDN_DISTRIBUTION_ID }}
           MARKETPLACE_CDN_BASE_URL: ${{ secrets.MARKETPLACE_CDN_BASE_URL }}
@@ -101,7 +100,6 @@ jobs:
             MARKETPLACE_EXPECTED_KEY_FINGERPRINT
             AWS_ACCESS_KEY_ID
             AWS_SECRET_ACCESS_KEY
-            AWS_REGION
             MARKETPLACE_BUCKET
             MARKETPLACE_CDN_DISTRIBUTION_ID
             MARKETPLACE_CDN_BASE_URL
@@ -259,7 +257,8 @@ jobs:
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ${{ vars.AWS_REGION }}
+          # Bootstrap AWS signing and CloudFront; the AWS CLI resolves S3 bucket regions automatically.
+          aws-region: us-east-1
 
       - name: Stage and verify exact CDN bytes
         shell: bash

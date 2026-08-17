@@ -114,7 +114,19 @@ test("GitHub workflows are valid YAML documents", async () => {
     awsCredentials.with["aws-secret-access-key"],
     "${{ secrets.AWS_SECRET_ACCESS_KEY }}",
   );
+  assert.equal(awsCredentials.with["aws-region"], "us-east-1");
   assert.equal(awsCredentials.with["role-to-assume"], undefined);
+  const protectedConfiguration = workflows[
+    "publish.yml"
+  ].jobs.publish.steps.find(
+    (step) => step.name === "Require protected publication configuration",
+  );
+  assert.equal(protectedConfiguration.env.AWS_REGION, undefined);
+  assert.doesNotMatch(protectedConfiguration.run, /\bAWS_REGION\b/);
+  assert.doesNotMatch(
+    JSON.stringify(workflows["publish.yml"]),
+    /vars\.AWS_REGION/,
+  );
   const publishCommands = workflows["publish.yml"].jobs.publish.steps
     .map((step) => step.run || "")
     .join("\n");
