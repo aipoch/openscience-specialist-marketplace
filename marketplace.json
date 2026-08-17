@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "revision": "1",
+  "marketplace": {
+    "id": "openscience",
+    "name": "OpenScience Specialist Marketplace"
+  },
+  "specialists": [
+    {
+      "id": "auto-research-specialist",
+      "display_name": "Auto Research Specialist",
+      "summary": "Coordinates reproducible biomedical research from evidence discovery through analysis, validation, and writing.",
+      "publisher": {
+        "id": "aipoch",
+        "name": "Aipoch",
+        "url": "https://github.com/aipoch"
+      },
+      "latest": {
+        "version": "1.0.0",
+        "release": {
+          "path": "releases/auto-research-specialist/1.0.0.json",
+          "sha256": "44d0dc613ecaa150ca75d0044b09c919f2d1cb812fafff2f7f1a2597d2e78b51"
+        }
+      }
+    }
+  ]
+}
