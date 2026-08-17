@@ -41,7 +41,7 @@ jobs:
       AWS_REGION: ${{ vars.AWS_REGION }}
       MARKETPLACE_BUCKET: ${{ secrets.MARKETPLACE_BUCKET }}
       MARKETPLACE_CDN_DISTRIBUTION_ID: ${{ secrets.MARKETPLACE_CDN_DISTRIBUTION_ID }}
-      MARKETPLACE_CDN_BASE_URL: ${{ vars.MARKETPLACE_CDN_BASE_URL }}
+      MARKETPLACE_CDN_BASE_URL: ${{ secrets.MARKETPLACE_CDN_BASE_URL }}
       MARKETPLACE_CDN_PREFIX: /open-science/specialist-marketplace/v1/
     steps:
       - name: Check out exact main commit
@@ -281,7 +281,6 @@ jobs:
         run: |
           artifact_sha="$(node -p "JSON.parse(require('fs').readFileSync('dist/releases/${SPECIALIST_ID}/${VERSION}.json')).artifact.sha256")"
           revision="$(node -p "JSON.parse(require('fs').readFileSync('dist/marketplace.json')).revision")"
-          cdn_base="${MARKETPLACE_CDN_BASE_URL%/}${MARKETPLACE_CDN_PREFIX}"
           {
             echo "## Published Specialist"
             echo "- Repository: ${GITHUB_REPOSITORY}"
@@ -290,7 +289,4 @@ jobs:
             echo "- Artifact SHA-256: ${artifact_sha}"
             echo "- Signing key ID: ${MARKETPLACE_SIGNING_KEY_ID}"
             echo "- Public key fingerprint: ${MARKETPLACE_EXPECTED_KEY_FINGERPRINT}"
-            echo "- CDN Marketplace: ${cdn_base}marketplace.json"
-            echo "- CDN release descriptor: ${cdn_base}releases/${SPECIALIST_ID}/${VERSION}.json"
-            echo "- CDN Specialist ZIP: ${cdn_base}specialists/${SPECIALIST_ID}/${VERSION}/${SPECIALIST_ID}-${VERSION}.zip"
           } >> "$GITHUB_STEP_SUMMARY"

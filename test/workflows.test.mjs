@@ -27,7 +27,7 @@ test("GitHub workflows are valid YAML documents", async () => {
   });
   assert.equal(
     workflows["publish.yml"].jobs.publish.env.MARKETPLACE_CDN_BASE_URL,
-    "${{ vars.MARKETPLACE_CDN_BASE_URL }}",
+    "${{ secrets.MARKETPLACE_CDN_BASE_URL }}",
   );
   assert.equal(
     workflows["publish.yml"].jobs.publish.env.MARKETPLACE_CDN_PREFIX,
