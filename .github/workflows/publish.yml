@@ -42,7 +42,7 @@ jobs:
       MARKETPLACE_BUCKET: ${{ secrets.MARKETPLACE_BUCKET }}
       MARKETPLACE_CDN_DISTRIBUTION_ID: ${{ secrets.MARKETPLACE_CDN_DISTRIBUTION_ID }}
       MARKETPLACE_CDN_BASE_URL: ${{ secrets.MARKETPLACE_CDN_BASE_URL }}
-      MARKETPLACE_CDN_PREFIX: ${{ vars.MARKETPLACE_CDN_PREFIX }}
+      MARKETPLACE_CDN_PREFIX: /open-science/specialist-marketplace/v1/
     steps:
       - name: Check out exact main commit
         uses: actions/checkout@v4
@@ -76,7 +76,6 @@ jobs:
             MARKETPLACE_BUCKET
             MARKETPLACE_CDN_DISTRIBUTION_ID
             MARKETPLACE_CDN_BASE_URL
-            MARKETPLACE_CDN_PREFIX
           )
           missing=0
           for name in "${required[@]}"; do
@@ -85,8 +84,8 @@ jobs:
               missing=1
             fi
           done
-          [[ "$MARKETPLACE_CDN_PREFIX" == "/openscience-specialist-marketplace/v1/" ]] || {
-            echo "::error::MARKETPLACE_CDN_PREFIX does not match the protocol v1 prefix"
+          [[ "$MARKETPLACE_CDN_BASE_URL" =~ ^https://[^/]+/?$ ]] || {
+            echo "::error::MARKETPLACE_CDN_BASE_URL must be an HTTPS origin without a path"
             missing=1
           }
           exit "$missing"
