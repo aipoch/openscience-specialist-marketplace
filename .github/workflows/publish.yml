@@ -162,7 +162,8 @@ jobs:
               mkdir -p "dist/$(dirname "$artifact_path")"
               gh release download "$tag" \
                 --pattern "$asset" \
-                --dir "dist/$(dirname "$artifact_path")"
+                --dir "dist/$(dirname "$artifact_path")" \
+                --skip-existing
             done < <(jq -r '.[] | [.tag, .asset_name, .path] | @tsv' dist/base-artifacts.json)
             npm run verify:marketplace -- \
               --marketplace dist/base-marketplace.json \
