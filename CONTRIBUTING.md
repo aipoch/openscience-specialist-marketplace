@@ -26,6 +26,7 @@ or ZIP; changed bytes require a new SemVer version.
 
 - Keep stable Specialist, Skill, Connector, and publisher IDs.
 - Preserve the App-export-compatible package layout in [the authoring guide](specialists/README.md).
+- Use the non-publishable [contribution example](example/README.md) as a copyable starting point.
 - Record the public upstream repository, exact 40-character commit SHA, and license.
 - Do not include secrets, private endpoints, credentials, tokens, local commands, or Connector
   configuration. Connectors remain references for App-side review and reuse.

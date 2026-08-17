@@ -3,6 +3,9 @@
 Production Specialist versions live here; protocol fixtures do not. Add exactly one immutable SemVer
 version per contribution:
 
+For a copyable walkthrough with all required files, see the repository's non-publishable
+[contribution example](../example/README.md).
+
 ```text
 specialists/<specialist-id>/
 ├── README.md
