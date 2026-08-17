@@ -147,6 +147,17 @@ test("GitHub workflows are valid YAML documents", async () => {
   assert.match(publishCommands, /--retry-all-errors/);
   assert.doesNotMatch(publishCommands, /git fetch[^\n]+\|\| true/);
 
+  const promotionCommands = workflows["publish.yml"].jobs.publish.steps.find(
+    (step) => step.name === "Promote immutable CDN objects and stable root",
+  ).run;
+  const s3Copies = promotionCommands
+    .split("\n")
+    .filter((line) => line.trimStart().startsWith('aws s3 cp "s3://'));
+  assert.equal(s3Copies.length, 2);
+  for (const command of s3Copies) {
+    assert.match(command, /--copy-props none/);
+  }
+
   const verificationCommands = workflows[
     "verify-published.yml"
   ].jobs.verify.steps
