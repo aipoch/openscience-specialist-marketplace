@@ -23,7 +23,6 @@ test("GitHub workflows are valid YAML documents", async () => {
   assert.deepEqual(workflows["validate.yml"].permissions, { contents: "read" });
   assert.deepEqual(workflows["publish.yml"].permissions, {
     contents: "write",
-    "id-token": "write",
   });
   assert.equal(
     workflows["publish.yml"].jobs.publish.env.MARKETPLACE_CDN_BASE_URL,
@@ -33,6 +32,18 @@ test("GitHub workflows are valid YAML documents", async () => {
     workflows["publish.yml"].jobs.publish.env.MARKETPLACE_CDN_PREFIX,
     "/open-science/specialist-marketplace/v1/",
   );
+  const awsCredentials = workflows["publish.yml"].jobs.publish.steps.find(
+    (step) => step.uses === "aws-actions/configure-aws-credentials@v4",
+  );
+  assert.equal(
+    awsCredentials.with["aws-access-key-id"],
+    "${{ secrets.AWS_ACCESS_KEY_ID }}",
+  );
+  assert.equal(
+    awsCredentials.with["aws-secret-access-key"],
+    "${{ secrets.AWS_SECRET_ACCESS_KEY }}",
+  );
+  assert.equal(awsCredentials.with["role-to-assume"], undefined);
   const publishCommands = workflows["publish.yml"].jobs.publish.steps
     .map((step) => step.run || "")
     .join("\n");
