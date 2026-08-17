@@ -9,6 +9,20 @@ OpenScience App: remote Skills and Connector references do not enter an Agent co
 reviews and installs that Specialist. Connector entries are references only; credentials and local
 Connector configuration remain under the user's control in the App.
 
+## Project release
+
+**v0.1.0** is the first public release of the Marketplace authority and protocol toolkit. It
+establishes strict Protocol v1 validation, deterministic Specialist packaging, signed discovery,
+immutable publication, and independent verification of the GitHub and CDN copies.
+
+The initial authored catalog entry is Auto Research Specialist 1.0.0, with 27 biomedical research
+Skills and 24 Connector references exported for OpenScience App 0.16.0 compatibility. It must be
+published independently before it becomes installable. Project release tags such as `v0.1.0`
+describe this repository and its tooling; Specialist release tags such as
+`auto-research-specialist-v1.0.0` identify independently published installable packages.
+
+See the [roadmap](ROADMAP.md) for the current delivery status and planned follow-up work.
+
 ## Distribution model
 
 GitHub is the authority. Each immutable Specialist ZIP is a GitHub Release asset, while the
@@ -48,7 +62,8 @@ request with the upstream commit, license, security review notes, and reproducib
 Publication is maintainer-only and runs through the protected `production` GitHub environment.
 
 See the [protocol specification](protocol/README.md), [contribution guide](CONTRIBUTING.md), and
-[security policy](SECURITY.md).
+[security policy](SECURITY.md). Project milestones and planned follow-up work are tracked in the
+[roadmap](ROADMAP.md).
 
 ## Protocol compatibility
 

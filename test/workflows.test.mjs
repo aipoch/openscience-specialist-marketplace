@@ -10,7 +10,12 @@ const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 
 test("GitHub workflows are valid YAML documents", async () => {
   const workflows = {};
-  for (const name of ["validate.yml", "publish.yml", "verify-published.yml"]) {
+  for (const name of [
+    "validate.yml",
+    "publish.yml",
+    "verify-published.yml",
+    "release.yml",
+  ]) {
     const source = await readFile(
       path.join(root, ".github/workflows", name),
       "utf8",
@@ -30,11 +35,22 @@ test("GitHub workflows are valid YAML documents", async () => {
   assert.deepEqual(workflows["verify-published.yml"].permissions, {
     contents: "read",
   });
+  assert.deepEqual(workflows["release.yml"].permissions, {
+    contents: "read",
+  });
+  assert.deepEqual(workflows["release.yml"].jobs.release.permissions, {
+    contents: "write",
+  });
+  assert.equal(
+    workflows["release.yml"].jobs.release.environment,
+    "project-release",
+  );
   assert.equal(workflows["publish.yml"].jobs.publish["timeout-minutes"], 45);
   assert.equal(
     workflows["verify-published.yml"].jobs.verify["timeout-minutes"],
     20,
   );
+  assert.equal(workflows["release.yml"].jobs.release["timeout-minutes"], 10);
   assert.equal(
     workflows["verify-published.yml"].jobs.verify.environment,
     undefined,
@@ -119,4 +135,21 @@ test("GitHub workflows are valid YAML documents", async () => {
     .join("\n");
   assert.match(verificationCommands, /--history true/);
   assert.match(verificationCommands, /verify:history/);
+
+  const releaseCommands = workflows["release.yml"].jobs.release.steps
+    .map((step) => step.run || "")
+    .join("\n");
+  assert.match(releaseCommands, /Tag .* does not match project version/);
+  assert.match(releaseCommands, /SEMVER_PATTERN/);
+  assert.match(releaseCommands, /scripts\/lib\/common\.mjs/);
+  assert.match(releaseCommands, /Project releases require an annotated tag/);
+  assert.match(releaseCommands, /git merge-base --is-ancestor/);
+  assert.match(releaseCommands, /gh release create/);
+  assert.match(releaseCommands, /--verify-tag/);
+  assert.match(releaseCommands, /--generate-notes/);
+  assert.match(releaseCommands, /release_args\+=\(--prerelease\)/);
+  assert.match(
+    releaseCommands,
+    /--title "Open Science Specialist Marketplace \$tag"/,
+  );
 });

@@ -1,0 +1,90 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+
+concurrency:
+  group: project-release-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  release:
+    name: Create project release
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: project-release
+    permissions:
+      contents: write
+    steps:
+      - name: Check out tagged source
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.ref }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
+        with:
+          node-version-file: .nvmrc
+
+      - name: Validate project release tag
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tag="$GITHUB_REF_NAME"
+          if [[ "$tag" != v* ]]; then
+            echo "::error::Project release tag must be valid SemVer prefixed with v"
+            exit 1
+          fi
+
+          version="${tag#v}"
+          if ! RELEASE_VERSION="$version" node --input-type=module -e \
+            'import { SEMVER_PATTERN } from "./scripts/lib/common.mjs"; process.exit(SEMVER_PATTERN.test(process.env.RELEASE_VERSION) ? 0 : 1)'; then
+            echo "::error::Project release tag must be valid SemVer prefixed with v"
+            exit 1
+          fi
+
+          project_version="$(node -p "JSON.parse(require('node:fs').readFileSync('package.json', 'utf8')).version")"
+          if [[ "$version" != "$project_version" ]]; then
+            echo "::error::Tag $tag does not match project version $project_version"
+            exit 1
+          fi
+
+          if [[ "$(git cat-file -t "refs/tags/$tag")" != "tag" ]]; then
+            echo "::error::Project releases require an annotated tag"
+            exit 1
+          fi
+
+          git fetch --no-tags origin \
+            +refs/heads/main:refs/remotes/origin/main
+          if ! git merge-base --is-ancestor "$tag^{commit}" refs/remotes/origin/main; then
+            echo "::error::Project release tag must point to a commit on main"
+            exit 1
+          fi
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        shell: bash
+        run: |
+          set -euo pipefail
+
+          tag="$GITHUB_REF_NAME"
+          version="${tag#v}"
+          release_args=(
+            --verify-tag
+            --title "Open Science Specialist Marketplace $tag"
+            --generate-notes
+          )
+          if [[ "${version%%+*}" == *-* ]]; then
+            release_args+=(--prerelease)
+          fi
+
+          gh release create "$tag" "${release_args[@]}"
