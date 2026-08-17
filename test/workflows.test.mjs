@@ -106,15 +106,34 @@ test("GitHub workflows are valid YAML documents", async () => {
   const awsCredentials = workflows["publish.yml"].jobs.publish.steps.find(
     (step) => step.name === "Configure AWS credentials",
   );
-  assert.equal(
-    awsCredentials.with["aws-access-key-id"],
-    "${{ secrets.AWS_ACCESS_KEY_ID }}",
+  assert.equal(awsCredentials, undefined);
+  const protectedConfiguration = workflows[
+    "publish.yml"
+  ].jobs.publish.steps.find(
+    (step) => step.name === "Require protected publication configuration",
   );
-  assert.equal(
-    awsCredentials.with["aws-secret-access-key"],
-    "${{ secrets.AWS_SECRET_ACCESS_KEY }}",
+  assert.equal(protectedConfiguration.env.AWS_REGION, undefined);
+  assert.doesNotMatch(protectedConfiguration.run, /\bAWS_REGION\b/);
+  assert.doesNotMatch(
+    JSON.stringify(workflows["publish.yml"]),
+    /AWS_REGION|aws-region/,
   );
-  assert.equal(awsCredentials.with["role-to-assume"], undefined);
+  for (const name of [
+    "Stage and verify exact CDN bytes",
+    "Promote immutable CDN objects and stable root",
+  ]) {
+    const awsStep = workflows["publish.yml"].jobs.publish.steps.find(
+      (step) => step.name === name,
+    );
+    assert.equal(
+      awsStep.env.AWS_ACCESS_KEY_ID,
+      "${{ secrets.AWS_ACCESS_KEY_ID }}",
+    );
+    assert.equal(
+      awsStep.env.AWS_SECRET_ACCESS_KEY,
+      "${{ secrets.AWS_SECRET_ACCESS_KEY }}",
+    );
+  }
   const publishCommands = workflows["publish.yml"].jobs.publish.steps
     .map((step) => step.run || "")
     .join("\n");
