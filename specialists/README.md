@@ -42,4 +42,5 @@ Build one version locally with:
 npm run build:release -- --specialist-id <id> --version <semver>
 ```
 
-Generated files go to ignored `dist/`; maintainers publish through the protected workflow.
+Generated files go to ignored `dist/`; maintainers dispatch the protected workflow with the
+Specialist ID, and it resolves the version and source commit from reviewed repository content.
