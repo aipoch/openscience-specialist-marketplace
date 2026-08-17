@@ -45,6 +45,7 @@ const emptyMarketplace = {
 test("SemVer comparison follows numeric and prerelease precedence", () => {
   assert.equal(compareSemver("1.0.0-alpha", "1.0.0"), -1);
   assert.equal(compareSemver("1.0.0-alpha.10", "1.0.0-alpha.2"), 1);
+  assert.equal(compareSemver("1.0.0-alpha-b", "1.0.0-alpha-a"), 1);
   assert.equal(
     compareSemver("999999999999999999999.0.0", "999999999999999999998.0.0"),
     1,

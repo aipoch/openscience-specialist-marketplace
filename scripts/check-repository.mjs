@@ -1,10 +1,14 @@
 #!/usr/bin/env node
+import { createHash, createPrivateKey, createPublicKey } from "node:crypto";
 import { lstat, readdir, readFile } from "node:fs/promises";
 import path from "node:path";
 
 const root = path.resolve(import.meta.dirname, "..");
 const ignored = new Set([".git", "node_modules", "dist"]);
 const forbiddenDirectories = ["plugins", "catalog", "listings"];
+const testKeyPath = "protocol/fixtures/keys/test-only-private-key.pk8.b64";
+const testKeyFingerprint =
+  "662eac5d6d8eb26bb2c8ea13fdaf243ed17b0a3228256e9a2737b64451a8d40f";
 const secretPatterns = [
   [/-----BEGIN (?:RSA |EC )?PRIVATE KEY-----/, "private PEM key"],
   [
@@ -42,8 +46,24 @@ for (const directory of forbiddenDirectories) {
 }
 
 for (const relativePath of await files(root)) {
-  if (relativePath === "protocol/fixtures/keys/test-only-private-key.pk8.b64")
+  if (relativePath === testKeyPath) {
+    const encoded = (
+      await readFile(path.join(root, relativePath), "utf8")
+    ).trim();
+    const privateKey = createPrivateKey({
+      key: Buffer.from(encoded, "base64"),
+      format: "der",
+      type: "pkcs8",
+    });
+    const publicKey = createPublicKey(privateKey).export({
+      format: "der",
+      type: "spki",
+    });
+    const fingerprint = createHash("sha256").update(publicKey).digest("hex");
+    if (fingerprint !== testKeyFingerprint)
+      throw new Error(`${testKeyPath} is not the approved public test fixture`);
     continue;
+  }
   let text;
   try {
     text = await readFile(path.join(root, relativePath), "utf8");

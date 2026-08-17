@@ -11,7 +11,11 @@ export function compareSemver(left, right) {
   }
   const parse = (value) => {
     const [withoutBuild] = value.split("+");
-    const [main, prerelease] = withoutBuild.split("-");
+    const separator = withoutBuild.indexOf("-");
+    const main =
+      separator === -1 ? withoutBuild : withoutBuild.slice(0, separator);
+    const prerelease =
+      separator === -1 ? undefined : withoutBuild.slice(separator + 1);
     return {
       main: main.split("."),
       prerelease: prerelease?.split("."),
