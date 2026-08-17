@@ -361,10 +361,10 @@ jobs:
           descriptor="releases/${SPECIALIST_ID}/${VERSION}.json"
           artifact="specialists/${SPECIALIST_ID}/${VERSION}/${SPECIALIST_ID}-${VERSION}.zip"
           if [[ "$DESCRIPTOR_EXISTS" != true ]]; then
-            aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${descriptor}" "s3://${MARKETPLACE_BUCKET}/${prefix}/${descriptor}" --content-type application/json --cache-control 'public,max-age=31536000,immutable' --only-show-errors
+            aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${descriptor}" "s3://${MARKETPLACE_BUCKET}/${prefix}/${descriptor}" --copy-props none --content-type application/json --cache-control 'public,max-age=31536000,immutable' --only-show-errors
           fi
           if [[ "$ARTIFACT_EXISTS" != true ]]; then
-            aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${artifact}" "s3://${MARKETPLACE_BUCKET}/${prefix}/${artifact}" --content-type application/zip --cache-control 'public,max-age=31536000,immutable' --only-show-errors
+            aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${artifact}" "s3://${MARKETPLACE_BUCKET}/${prefix}/${artifact}" --copy-props none --content-type application/zip --cache-control 'public,max-age=31536000,immutable' --only-show-errors
           fi
           aws s3 cp dist/marketplace.json "s3://${MARKETPLACE_BUCKET}/${prefix}/marketplace.json" --content-type application/json --cache-control no-cache --only-show-errors
           aws s3 cp dist/marketplace.json.sig "s3://${MARKETPLACE_BUCKET}/${prefix}/marketplace.json.sig" --content-type application/json --cache-control no-cache --only-show-errors
