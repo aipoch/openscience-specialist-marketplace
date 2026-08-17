@@ -147,6 +147,14 @@ test("GitHub workflows are valid YAML documents", async () => {
   assert.match(publishCommands, /--retry-all-errors/);
   assert.doesNotMatch(publishCommands, /git fetch[^\n]+\|\| true/);
 
+  const prepareCommands = workflows["publish.yml"].jobs.publish.steps.find(
+    (step) => step.name === "Prepare candidate Marketplace",
+  ).run;
+  assert.match(
+    prepareCommands,
+    /gh release download "\$tag"[\s\S]{0,240}--skip-existing/,
+  );
+
   const promotionCommands = workflows["publish.yml"].jobs.publish.steps.find(
     (step) => step.name === "Promote immutable CDN objects and stable root",
   ).run;
