@@ -46,6 +46,10 @@ test("GitHub workflows are valid YAML documents", async () => {
     "project-release",
   );
   assert.equal(workflows["publish.yml"].jobs.publish["timeout-minutes"], 45);
+  assert.deepEqual(
+    Object.keys(workflows["publish.yml"].on.workflow_dispatch.inputs),
+    ["specialist_id"],
+  );
   assert.equal(
     workflows["verify-published.yml"].jobs.verify["timeout-minutes"],
     20,
@@ -119,6 +123,15 @@ test("GitHub workflows are valid YAML documents", async () => {
     /AWS_REGION|aws-region/,
   );
   const publishSteps = workflows["publish.yml"].jobs.publish.steps;
+  const resolveVersion = publishSteps.find(
+    (step) => step.name === "Resolve Specialist version",
+  );
+  assert.match(resolveVersion.run, /resolve-publication-version\.mjs/);
+  assert.match(resolveVersion.run, /VERSION=\$version/);
+  assert.doesNotMatch(
+    JSON.stringify(workflows["publish.yml"]),
+    /inputs\.version|source_commit_or_tag/,
+  );
   const maskAwsIdentity = publishSteps.find(
     (step) => step.name === "Mask AWS identity metadata",
   );

@@ -4,15 +4,7 @@ on:
   workflow_dispatch:
     inputs:
       specialist_id:
-        description: Stable Specialist ID
-        required: true
-        type: string
-      version:
-        description: Immutable SemVer version
-        required: true
-        type: string
-      source_commit_or_tag:
-        description: Full upstream commit SHA (resolve tags before dispatch)
+        description: Stable Specialist ID (version resolved from repository)
         required: true
         type: string
 
@@ -58,8 +50,6 @@ jobs:
       contents: write
     env:
       SPECIALIST_ID: ${{ inputs.specialist_id }}
-      VERSION: ${{ inputs.version }}
-      SOURCE_COMMIT_OR_TAG: ${{ inputs.source_commit_or_tag }}
       MARKETPLACE_CDN_PREFIX: /open-science/specialist-marketplace/v1/
     steps:
       - name: Check out exact main commit
@@ -142,17 +132,30 @@ jobs:
       - name: Install pinned dependencies
         run: npm ci --ignore-scripts
 
+      - name: Resolve Specialist version
+        shell: bash
+        run: |
+          set -euo pipefail
+          published_args=()
+          if git ls-remote --exit-code origin refs/heads/published >/dev/null; then
+            git fetch origin published:refs/remotes/origin/published
+            published_args=(--published origin/published)
+          elif [[ "$?" -ne 2 ]]; then
+            echo "::error::Unable to determine whether the published branch exists"
+            exit 1
+          fi
+          version="$(node scripts/resolve-publication-version.mjs \
+            --specialist-id "$SPECIALIST_ID" "${published_args[@]}")"
+          echo "VERSION=$version" >> "$GITHUB_ENV"
+          echo "Resolved ${SPECIALIST_ID}@${version} from reviewed repository content" \
+            >> "$GITHUB_STEP_SUMMARY"
+
       - name: Build deterministic release
         run: |
           npm run build:release -- \
             --specialist-id "$SPECIALIST_ID" \
             --version "$VERSION" \
             --output dist
-          configured_commit="$(node -p "JSON.parse(require('fs').readFileSync('specialists/${SPECIALIST_ID}/versions/${VERSION}/release.config.json')).source.commit")"
-          [[ "$SOURCE_COMMIT_OR_TAG" == "$configured_commit" ]] || {
-            echo "::error::source_commit_or_tag must equal the release config's full source commit"
-            exit 1
-          }
 
       - name: Prepare candidate Marketplace
         shell: bash
@@ -161,12 +164,6 @@ jobs:
           MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64: ${{ vars.MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64 }}
         run: |
           set -euo pipefail
-          if git ls-remote --exit-code origin refs/heads/published >/dev/null; then
-            git fetch origin published:refs/remotes/origin/published
-          elif [[ "$?" -ne 2 ]]; then
-            echo "::error::Unable to determine whether the published branch exists"
-            exit 1
-          fi
           if git show-ref --verify --quiet refs/remotes/origin/published; then
             git show origin/published:marketplace.json > dist/base-marketplace.json
             git show origin/published:marketplace.json.sig > dist/base-marketplace.json.sig

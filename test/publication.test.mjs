@@ -8,7 +8,10 @@ import {
   readReleaseHistory,
   validateReleaseHistory,
 } from "../scripts/lib/history.mjs";
-import { findPublishedVersionChanges } from "../scripts/lib/immutability.mjs";
+import {
+  findPublishedVersionChanges,
+  resolvePublicationVersion,
+} from "../scripts/lib/immutability.mjs";
 import { buildRelease } from "../scripts/lib/release.mjs";
 
 const fixtureVersion = path.resolve(
@@ -26,6 +29,38 @@ test("published Specialist versions reject authoring changes", () => {
       publishedReleasePaths: ["releases/example/1.0.0.json"],
     }),
     ["example@1.0.0"],
+  );
+});
+
+test("publication selects one unpublished version and preserves retries", () => {
+  assert.deepEqual(
+    resolvePublicationVersion({
+      specialistId: "example",
+      authoredVersions: ["1.0.0", "1.1.0"],
+      publishedReleasePaths: ["releases/example/1.0.0.json"],
+    }),
+    { version: "1.1.0", alreadyPublished: false },
+  );
+  assert.deepEqual(
+    resolvePublicationVersion({
+      specialistId: "example",
+      authoredVersions: ["1.0.0", "0.9.0"],
+      publishedReleasePaths: [
+        "releases/example/0.9.0.json",
+        "releases/example/1.0.0.json",
+        "releases/other/2.0.0.json",
+      ],
+    }),
+    { version: "1.0.0", alreadyPublished: true },
+  );
+  assert.throws(
+    () =>
+      resolvePublicationVersion({
+        specialistId: "example",
+        authoredVersions: ["1.0.0", "1.1.0", "2.0.0"],
+        publishedReleasePaths: ["releases/example/1.0.0.json"],
+      }),
+    /multiple unpublished versions for example: 1\.1\.0, 2\.0\.0/,
   );
 });
 

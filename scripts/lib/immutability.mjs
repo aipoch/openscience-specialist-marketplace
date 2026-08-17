@@ -1,3 +1,5 @@
+import { compareSemver } from "./common.mjs";
+
 export function findPublishedVersionChanges({
   changedPaths,
   publishedReleasePaths,
@@ -13,4 +15,36 @@ export function findPublishedVersionChanges({
     }
   }
   return [...collisions].sort();
+}
+
+export function resolvePublicationVersion({
+  specialistId,
+  authoredVersions,
+  publishedReleasePaths,
+}) {
+  const publishedVersions = new Set(
+    publishedReleasePaths.flatMap((releasePath) => {
+      const match = releasePath.match(/^releases\/([^/]+)\/([^/]+)\.json$/);
+      return match?.[1] === specialistId ? [match[2]] : [];
+    }),
+  );
+  const unpublished = authoredVersions
+    .filter((version) => !publishedVersions.has(version))
+    .sort(compareSemver);
+  if (unpublished.length > 1) {
+    throw new Error(
+      `multiple unpublished versions for ${specialistId}: ${unpublished.join(", ")}`,
+    );
+  }
+  if (unpublished.length === 1) {
+    return { version: unpublished[0], alreadyPublished: false };
+  }
+
+  const published = authoredVersions
+    .filter((version) => publishedVersions.has(version))
+    .sort(compareSemver);
+  if (!published.length) {
+    throw new Error(`no authored versions found for ${specialistId}`);
+  }
+  return { version: published.at(-1), alreadyPublished: true };
 }
