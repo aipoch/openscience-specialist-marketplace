@@ -8,6 +8,7 @@ import { fileURLToPath } from "node:url";
 
 import { zipSync } from "fflate";
 
+import { compareSemver } from "../scripts/lib/common.mjs";
 import { buildRelease } from "../scripts/lib/release.mjs";
 import { inspectZip } from "../scripts/lib/zip.mjs";
 import { updateMarketplace } from "../scripts/lib/marketplace.mjs";
@@ -41,6 +42,15 @@ const emptyMarketplace = {
   specialists: [],
 };
 
+test("SemVer comparison follows numeric and prerelease precedence", () => {
+  assert.equal(compareSemver("1.0.0-alpha", "1.0.0"), -1);
+  assert.equal(compareSemver("1.0.0-alpha.10", "1.0.0-alpha.2"), 1);
+  assert.equal(
+    compareSemver("999999999999999999999.0.0", "999999999999999999998.0.0"),
+    1,
+  );
+});
+
 test("strict schemas reject unknown fields", async () => {
   const invalid = JSON.parse(
     await readFile(
@@ -54,6 +64,31 @@ test("strict schemas reject unknown fields", async () => {
   assert.throws(
     () => validateDocument("marketplace", invalid),
     /additionalProperties/,
+  );
+
+  const invalidSemver = structuredClone(emptyMarketplace);
+  invalidSemver.specialists = [
+    {
+      id: "example",
+      display_name: "Example",
+      summary: "Example",
+      publisher: {
+        id: "example",
+        name: "Example",
+        url: "https://example.com",
+      },
+      latest: {
+        version: "1.0.0-01",
+        release: {
+          path: "releases/example/1.0.0-01.json",
+          sha256: "0".repeat(64),
+        },
+      },
+    },
+  ];
+  assert.throws(
+    () => validateDocument("marketplace", invalidSemver),
+    /pattern/,
   );
 });
 
@@ -80,6 +115,18 @@ test("release builds are deterministic and App-export compatible", async () => {
     await readFile(b.descriptorPath),
   );
   assert.equal(a.descriptor.artifact.sha256, b.descriptor.artifact.sha256);
+  assert.equal(
+    a.descriptor.artifact.path,
+    "specialists/fixture-specialist/1.0.0/fixture-specialist-1.0.0.zip",
+  );
+  assert.equal(
+    a.descriptor.artifact.github_release.tag,
+    "fixture-specialist-v1.0.0",
+  );
+  assert.equal(
+    a.marketplaceEntry.latest.release.path,
+    "releases/fixture-specialist/1.0.0.json",
+  );
   assert.equal(a.descriptor.defaults.skill_ids[0], "example-skill");
   assert.equal(a.descriptor.defaults.connector_ids[0], "example-connector");
 });
@@ -154,6 +201,10 @@ test("signatures cover the exact marketplace bytes", async () => {
     privateKeyPkcs8Base64,
     keyId: "openscience-test-only",
   });
+  assert.doesNotMatch(
+    JSON.stringify(signature),
+    new RegExp(privateKeyPkcs8Base64),
+  );
 
   assert.equal(
     verifyMarketplaceSignature({ marketplaceBytes: bytes, signature }),
@@ -178,10 +229,32 @@ test("published validation follows root digests through the exact ZIP", async ()
     versionDirectory: fixtureVersion,
     outputDirectory: output,
   });
-  const marketplace = updateMarketplace({
+  let marketplace = updateMarketplace({
     baseMarketplace: emptyMarketplace,
     entry: built.marketplaceEntry,
     releaseDescriptorBytes: await readFile(built.descriptorPath),
+  });
+  const secondFixture = await mkdtemp(
+    path.join(os.tmpdir(), "marketplace-second-specialist-"),
+  );
+  await cp(fixtureVersion, secondFixture, { recursive: true });
+  const secondManifestPath = path.join(secondFixture, "package/manifest.json");
+  const secondManifest = JSON.parse(await readFile(secondManifestPath, "utf8"));
+  secondManifest.id = "second-fixture";
+  await writeFile(
+    secondManifestPath,
+    `${JSON.stringify(secondManifest, null, 2)}\n`,
+  );
+  const second = await buildRelease({
+    specialistId: "second-fixture",
+    version: "1.0.0",
+    versionDirectory: secondFixture,
+    outputDirectory: output,
+  });
+  marketplace = updateMarketplace({
+    baseMarketplace: marketplace,
+    entry: second.marketplaceEntry,
+    releaseDescriptorBytes: await readFile(second.descriptorPath),
   });
   const marketplacePath = path.join(output, "marketplace.json");
   const signaturePath = path.join(output, "marketplace.json.sig");
@@ -202,8 +275,18 @@ test("published validation follows root digests through the exact ZIP", async ()
     signaturePath,
     rootDirectory: output,
   });
-  assert.equal(result.specialistCount, 1);
-  assert.equal(result.releaseCount, 1);
+  assert.equal(result.specialistCount, 2);
+  assert.equal(result.releaseCount, 2);
+
+  assert.throws(
+    () =>
+      updateMarketplace({
+        baseMarketplace: marketplace,
+        entry: built.marketplaceEntry,
+        releaseDescriptorBytes: Buffer.from("different descriptor"),
+      }),
+    /latest version must advance/,
+  );
 });
 
 test("release validation rejects digest, size, duplicate ID, and Connector contract mutations", async () => {
@@ -260,7 +343,7 @@ test("release building rejects App package identity and default-reference drift"
       versionDirectory: identityFixture,
       outputDirectory: path.join(identityFixture, "out"),
     }),
-    /identity\/version/,
+    /compatibility fields/,
   );
 
   const defaultFixture = await mkdtemp(

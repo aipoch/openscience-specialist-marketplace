@@ -7,6 +7,10 @@ const ignored = new Set([".git", "node_modules", "dist"]);
 const forbiddenDirectories = ["plugins", "catalog", "listings"];
 const secretPatterns = [
   [/-----BEGIN (?:RSA |EC )?PRIVATE KEY-----/, "private PEM key"],
+  [
+    /\bMC4CAQAwBQYDK2VwBCIE[A-Za-z0-9+/]{40,}={0,2}\b/,
+    "Ed25519 PKCS#8 private key",
+  ],
   [/\bAKIA[0-9A-Z]{16}\b/, "AWS access key"],
   [/arn:aws:iam::[0-9]{12}:role\//, "AWS role ARN"],
   [/https:\/\/[^\s"']+\.cloudfront\.net\b/, "CloudFront hostname"],

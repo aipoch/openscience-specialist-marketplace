@@ -91,9 +91,16 @@ export async function validateReleaseArtifact({ descriptor, rootDirectory }) {
   if (
     manifest.schema_version !== 1 ||
     manifest.id !== descriptor.specialist_id ||
-    manifest.version !== descriptor.version
+    manifest.version !== descriptor.version ||
+    typeof manifest.exported_with_app_version !== "string" ||
+    !manifest.exported_with_app_version
   ) {
-    throw new Error("manifest.json identity/version mismatch");
+    throw new Error("manifest.json compatibility fields mismatch");
+  }
+  for (const field of ["name", "description", "systemPrompt"]) {
+    if (typeof specialist[field] !== "string" || !specialist[field]) {
+      throw new Error(`specialist.json ${field} must be a non-empty string`);
+    }
   }
   if (
     !Array.isArray(specialist.skillIds) ||
@@ -140,6 +147,33 @@ export async function validateReleaseArtifact({ descriptor, rootDirectory }) {
   return archive;
 }
 
+export async function readIndexedReleases({ marketplace, rootDirectory }) {
+  validateDocument("marketplace", marketplace);
+  const releases = [];
+  for (const specialist of marketplace.specialists) {
+    const expectedReleasePath = `releases/${specialist.id}/${specialist.latest.version}.json`;
+    if (specialist.latest.release.path !== expectedReleasePath)
+      throw new Error("release descriptor path is not canonical");
+    const releasePath = resolveInside(
+      rootDirectory,
+      specialist.latest.release.path,
+    );
+    const releaseBytes = await readFile(releasePath);
+    if (sha256(releaseBytes) !== specialist.latest.release.sha256)
+      throw new Error("release descriptor SHA-256 mismatch");
+    const descriptor = JSON.parse(releaseBytes.toString("utf8"));
+    validateDocument("release", descriptor);
+    if (
+      descriptor.specialist_id !== specialist.id ||
+      descriptor.version !== specialist.latest.version
+    ) {
+      throw new Error("indexed release identity/version mismatch");
+    }
+    releases.push({ specialist, descriptor, releaseBytes });
+  }
+  return releases;
+}
+
 export async function validatePublishedMarketplace({
   marketplacePath,
   signaturePath,
@@ -160,28 +194,12 @@ export async function validatePublishedMarketplace({
   ) {
     throw new Error("marketplace signature verification failed");
   }
-  for (const specialist of marketplace.specialists) {
-    const expectedReleasePath = `releases/${specialist.id}/${specialist.latest.version}.json`;
-    if (specialist.latest.release.path !== expectedReleasePath)
-      throw new Error("release descriptor path is not canonical");
-    const releasePath = resolveInside(
-      rootDirectory,
-      specialist.latest.release.path,
-    );
-    const releaseBytes = await readFile(releasePath);
-    if (sha256(releaseBytes) !== specialist.latest.release.sha256)
-      throw new Error("release descriptor SHA-256 mismatch");
-    const descriptor = JSON.parse(releaseBytes.toString("utf8"));
-    if (
-      descriptor.specialist_id !== specialist.id ||
-      descriptor.version !== specialist.latest.version
-    ) {
-      throw new Error("indexed release identity/version mismatch");
-    }
+  const releases = await readIndexedReleases({ marketplace, rootDirectory });
+  for (const { descriptor } of releases) {
     await validateReleaseArtifact({ descriptor, rootDirectory });
   }
   return {
     specialistCount: marketplace.specialists.length,
-    releaseCount: marketplace.specialists.length,
+    releaseCount: releases.length,
   };
 }

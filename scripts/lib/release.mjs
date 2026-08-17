@@ -123,11 +123,18 @@ export async function buildRelease({
   if (
     manifest.schema_version !== 1 ||
     manifest.id !== specialistId ||
-    manifest.version !== version
+    manifest.version !== version ||
+    typeof manifest.exported_with_app_version !== "string" ||
+    !manifest.exported_with_app_version
   ) {
     throw new Error(
-      "manifest.json identity/version does not match the requested release",
+      "manifest.json compatibility fields do not match the requested release",
     );
+  }
+  for (const field of ["name", "description", "systemPrompt"]) {
+    if (typeof specialist[field] !== "string" || !specialist[field]) {
+      throw new Error(`specialist.json ${field} must be a non-empty string`);
+    }
   }
   if (
     !Array.isArray(specialist.skillIds) ||

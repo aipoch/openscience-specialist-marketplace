@@ -50,6 +50,19 @@ jobs:
           ref: ${{ github.sha }}
           fetch-depth: 0
 
+      - name: Require the current main commit
+        shell: bash
+        run: |
+          [[ "$GITHUB_REF" == "refs/heads/main" ]] || {
+            echo "::error::Publication must be dispatched from main"
+            exit 1
+          }
+          git fetch origin main
+          [[ "$(git rev-parse origin/main)" == "$GITHUB_SHA" ]] || {
+            echo "::error::Publication commit is not the current main commit"
+            exit 1
+          }
+
       - name: Require protected publication configuration
         shell: bash
         run: |
@@ -108,9 +121,25 @@ jobs:
       - name: Prepare signed candidate Marketplace
         shell: bash
         run: |
+          set -euo pipefail
           git fetch origin published:refs/remotes/origin/published || true
           if git show-ref --verify --quiet refs/remotes/origin/published; then
             git show origin/published:marketplace.json > dist/base-marketplace.json
+            git show origin/published:marketplace.json.sig > dist/base-marketplace.json.sig
+            git archive origin/published releases | tar -x -C dist
+            node scripts/list-release-artifacts.mjs \
+              --marketplace dist/base-marketplace.json \
+              --root dist > dist/base-artifacts.json
+            while IFS=$'\t' read -r tag asset artifact_path; do
+              mkdir -p "dist/$(dirname "$artifact_path")"
+              gh release download "$tag" \
+                --pattern "$asset" \
+                --dir "dist/$(dirname "$artifact_path")"
+            done < <(jq -r '.[] | [.tag, .asset_name, .path] | @tsv' dist/base-artifacts.json)
+            npm run verify:marketplace -- \
+              --marketplace dist/base-marketplace.json \
+              --signature dist/base-marketplace.json.sig \
+              --root dist
           else
             cp protocol/fixtures/valid/empty-marketplace.json dist/base-marketplace.json
           fi
@@ -193,19 +222,19 @@ jobs:
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           if git show-ref --verify --quiet refs/remotes/origin/published; then
-            git worktree add dist/published origin/published
+            git worktree add .worktree/published origin/published
           else
-            git worktree add --detach dist/published
-            git -C dist/published switch --orphan published
+            git worktree add --detach .worktree/published
+            git -C .worktree/published switch --orphan published
           fi
-          mkdir -p "dist/published/releases/${SPECIALIST_ID}"
-          cp dist/marketplace.json dist/published/marketplace.json
-          cp dist/marketplace.json.sig dist/published/marketplace.json.sig
+          mkdir -p ".worktree/published/releases/${SPECIALIST_ID}"
+          cp dist/marketplace.json .worktree/published/marketplace.json
+          cp dist/marketplace.json.sig .worktree/published/marketplace.json.sig
           cp "dist/releases/${SPECIALIST_ID}/${VERSION}.json" \
-            "dist/published/releases/${SPECIALIST_ID}/${VERSION}.json"
-          git -C dist/published add marketplace.json marketplace.json.sig releases
-          git -C dist/published commit -m "feat(publishing): publish ${SPECIALIST_ID} ${VERSION}"
-          git -C dist/published push origin HEAD:published
+            ".worktree/published/releases/${SPECIALIST_ID}/${VERSION}.json"
+          git -C .worktree/published add marketplace.json marketplace.json.sig releases
+          git -C .worktree/published commit -m "feat(publishing): publish ${SPECIALIST_ID} ${VERSION}"
+          git -C .worktree/published push origin HEAD:published
 
       - name: Promote immutable CDN objects and stable root
         shell: bash

@@ -1,4 +1,4 @@
-import { assertUniqueIds, sha256 } from "./common.mjs";
+import { assertUniqueIds, compareSemver, sha256 } from "./common.mjs";
 import { validateDocument } from "./schema.mjs";
 
 export function updateMarketplace({
@@ -12,9 +12,12 @@ export function updateMarketplace({
   const existing = baseMarketplace.specialists.find(
     (item) => item.id === nextEntry.id,
   );
-  if (existing && existing.latest.version === nextEntry.latest.version) {
+  if (
+    existing &&
+    compareSemver(nextEntry.latest.version, existing.latest.version) <= 0
+  ) {
     throw new Error(
-      `Specialist version is already indexed: ${nextEntry.id}@${nextEntry.latest.version}`,
+      `Specialist latest version must advance beyond ${existing.latest.version}`,
     );
   }
   const specialists = baseMarketplace.specialists
