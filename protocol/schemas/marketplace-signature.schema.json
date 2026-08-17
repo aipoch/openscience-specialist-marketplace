@@ -1,0 +1,30 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/aipoch/openscience-specialist-marketplace/protocol/schemas/marketplace-signature.schema.json",
+  "title": "OpenScience Specialist Marketplace Protocol v1 signature descriptor",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "algorithm",
+    "key_id",
+    "public_key",
+    "signature"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "algorithm": { "const": "ed25519" },
+    "key_id": {
+      "type": "string",
+      "pattern": "^openscience-[a-z0-9][a-z0-9-]{0,117}$"
+    },
+    "public_key": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]+={0,2}$"
+    },
+    "signature": {
+      "type": "string",
+      "pattern": "^[A-Za-z0-9+/]+={0,2}$"
+    }
+  }
+}

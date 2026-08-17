@@ -1,0 +1,146 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/aipoch/openscience-specialist-marketplace/protocol/schemas/specialist-release.schema.json",
+  "title": "OpenScience Specialist Marketplace Protocol v1 release descriptor",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "schema_version",
+    "specialist_id",
+    "version",
+    "source",
+    "artifact",
+    "defaults",
+    "skills",
+    "connectors"
+  ],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "specialist_id": { "$ref": "#/$defs/id" },
+    "version": { "$ref": "#/$defs/semver" },
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["repository", "commit", "license"],
+      "properties": {
+        "repository": { "$ref": "#/$defs/httpsUrl" },
+        "commit": { "type": "string", "pattern": "^[0-9a-f]{40}$" },
+        "license": { "type": "string", "minLength": 1, "maxLength": 100 }
+      }
+    },
+    "artifact": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": [
+        "path",
+        "github_release",
+        "sha256",
+        "compressed_bytes",
+        "uncompressed_bytes",
+        "file_count"
+      ],
+      "properties": {
+        "path": { "$ref": "#/$defs/relativePath" },
+        "github_release": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["tag", "asset_name"],
+          "properties": {
+            "tag": { "type": "string", "minLength": 1, "maxLength": 260 },
+            "asset_name": {
+              "type": "string",
+              "pattern": "^[a-z0-9][a-z0-9.-]*\\.zip$"
+            }
+          }
+        },
+        "sha256": { "$ref": "#/$defs/sha256" },
+        "compressed_bytes": { "type": "integer", "minimum": 1 },
+        "uncompressed_bytes": { "type": "integer", "minimum": 1 },
+        "file_count": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "defaults": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["skill_ids", "connector_ids"],
+      "properties": {
+        "skill_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        },
+        "connector_ids": {
+          "type": "array",
+          "items": { "$ref": "#/$defs/id" },
+          "uniqueItems": true
+        }
+      }
+    },
+    "skills": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": [
+          "id",
+          "name",
+          "display_name",
+          "description",
+          "path",
+          "content_digest",
+          "file_count",
+          "uncompressed_bytes"
+        ],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "name": { "$ref": "#/$defs/id" },
+          "display_name": {
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 160
+          },
+          "description": { "type": "string", "minLength": 1, "maxLength": 500 },
+          "path": { "$ref": "#/$defs/relativePath" },
+          "content_digest": { "$ref": "#/$defs/sha256" },
+          "file_count": { "type": "integer", "minimum": 1 },
+          "uncompressed_bytes": { "type": "integer", "minimum": 1 }
+        }
+      }
+    },
+    "connectors": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["id", "required", "default_selected"],
+        "properties": {
+          "id": { "$ref": "#/$defs/id" },
+          "required": { "type": "boolean" },
+          "default_selected": { "type": "boolean" }
+        },
+        "allOf": [
+          {
+            "if": {
+              "properties": { "required": { "const": true } },
+              "required": ["required"]
+            },
+            "then": { "properties": { "default_selected": { "const": true } } }
+          }
+        ]
+      }
+    }
+  },
+  "$defs": {
+    "id": { "type": "string", "pattern": "^[a-z0-9][a-z0-9-]{0,127}$" },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "httpsUrl": { "type": "string", "pattern": "^https://[^\\s]+$" },
+    "relativePath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[^/]+(?:/[^/]+)*$"
+    }
+  }
+}

@@ -1,0 +1,84 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/aipoch/openscience-specialist-marketplace/protocol/schemas/marketplace.schema.json",
+  "title": "OpenScience Specialist Marketplace Protocol v1 discovery index",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "revision", "marketplace", "specialists"],
+  "properties": {
+    "schema_version": { "const": 1 },
+    "revision": { "type": "string", "pattern": "^(0|[1-9][0-9]*)$" },
+    "marketplace": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "name"],
+      "properties": {
+        "id": { "const": "openscience" },
+        "name": { "const": "OpenScience Specialist Marketplace" }
+      }
+    },
+    "specialists": {
+      "type": "array",
+      "items": { "$ref": "#/$defs/specialist" }
+    }
+  },
+  "$defs": {
+    "id": {
+      "type": "string",
+      "pattern": "^[a-z0-9][a-z0-9-]{0,127}$"
+    },
+    "semver": {
+      "type": "string",
+      "pattern": "^(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)\\.(0|[1-9][0-9]*)(?:-[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?(?:\\+[0-9A-Za-z-]+(?:\\.[0-9A-Za-z-]+)*)?$"
+    },
+    "sha256": {
+      "type": "string",
+      "pattern": "^[0-9a-f]{64}$"
+    },
+    "httpsUrl": {
+      "type": "string",
+      "pattern": "^https://[^\\s]+$"
+    },
+    "relativePath": {
+      "type": "string",
+      "pattern": "^(?!/)(?!.*\\\\)(?!.*(?:^|/)\\.{1,2}(?:/|$))(?!.*//)[^/]+(?:/[^/]+)*$"
+    },
+    "specialist": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["id", "display_name", "summary", "publisher", "latest"],
+      "properties": {
+        "id": { "$ref": "#/$defs/id" },
+        "display_name": { "type": "string", "minLength": 1, "maxLength": 160 },
+        "summary": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "publisher": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["id", "name", "url"],
+          "properties": {
+            "id": { "$ref": "#/$defs/id" },
+            "name": { "type": "string", "minLength": 1, "maxLength": 160 },
+            "url": { "$ref": "#/$defs/httpsUrl" }
+          }
+        },
+        "latest": {
+          "type": "object",
+          "additionalProperties": false,
+          "required": ["version", "release"],
+          "properties": {
+            "version": { "$ref": "#/$defs/semver" },
+            "release": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["path", "sha256"],
+              "properties": {
+                "path": { "$ref": "#/$defs/relativePath" },
+                "sha256": { "$ref": "#/$defs/sha256" }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

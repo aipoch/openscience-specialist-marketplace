@@ -1,0 +1,25 @@
+{
+  "name": "@aipoch/openscience-specialist-marketplace",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build:release": "node scripts/build-release.mjs",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "test": "node --test",
+    "validate": "node scripts/validate.mjs",
+    "verify:marketplace": "node scripts/verify-marketplace.mjs"
+  },
+  "dependencies": {
+    "ajv": "8.20.0",
+    "fflate": "0.8.2",
+    "yaml": "2.9.0"
+  },
+  "devDependencies": {
+    "prettier": "3.6.2"
+  }
+}

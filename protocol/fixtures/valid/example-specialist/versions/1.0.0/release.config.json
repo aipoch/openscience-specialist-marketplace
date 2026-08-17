@@ -1,0 +1,32 @@
+{
+  "source": {
+    "repository": "https://github.com/example/fixture-specialist",
+    "commit": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+    "license": "Apache-2.0"
+  },
+  "marketplace": {
+    "display_name": "Fixture Specialist",
+    "summary": "A non-publishable Specialist used to verify the protocol toolchain.",
+    "publisher": {
+      "id": "fixture-publisher",
+      "name": "Fixture Publisher",
+      "url": "https://example.com"
+    }
+  },
+  "skills": [
+    {
+      "id": "example-skill",
+      "name": "example-skill",
+      "display_name": "Example Skill",
+      "description": "A deterministic test Skill.",
+      "path": "skills/example-skill"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "example-connector",
+      "required": true,
+      "default_selected": true
+    }
+  ]
+}
