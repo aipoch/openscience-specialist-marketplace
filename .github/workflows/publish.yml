@@ -41,8 +41,8 @@ jobs:
       AWS_REGION: ${{ vars.AWS_REGION }}
       MARKETPLACE_BUCKET: ${{ secrets.MARKETPLACE_BUCKET }}
       MARKETPLACE_CDN_DISTRIBUTION_ID: ${{ secrets.MARKETPLACE_CDN_DISTRIBUTION_ID }}
-      MARKETPLACE_CDN_BASE_URL: ${{ secrets.MARKETPLACE_CDN_BASE_URL }}
-      MARKETPLACE_CDN_PREFIX: ${{ vars.MARKETPLACE_CDN_PREFIX }}
+      MARKETPLACE_CDN_BASE_URL: ${{ vars.MARKETPLACE_CDN_BASE_URL }}
+      MARKETPLACE_CDN_PREFIX: /open-science/specialist-marketplace/v1/
     steps:
       - name: Check out exact main commit
         uses: actions/checkout@v4
@@ -76,7 +76,6 @@ jobs:
             MARKETPLACE_BUCKET
             MARKETPLACE_CDN_DISTRIBUTION_ID
             MARKETPLACE_CDN_BASE_URL
-            MARKETPLACE_CDN_PREFIX
           )
           missing=0
           for name in "${required[@]}"; do
@@ -85,8 +84,8 @@ jobs:
               missing=1
             fi
           done
-          [[ "$MARKETPLACE_CDN_PREFIX" == "/openscience-specialist-marketplace/v1/" ]] || {
-            echo "::error::MARKETPLACE_CDN_PREFIX does not match the protocol v1 prefix"
+          [[ "$MARKETPLACE_CDN_BASE_URL" =~ ^https://[^/]+/?$ ]] || {
+            echo "::error::MARKETPLACE_CDN_BASE_URL must be an HTTPS origin without a path"
             missing=1
           }
           exit "$missing"
@@ -282,6 +281,7 @@ jobs:
         run: |
           artifact_sha="$(node -p "JSON.parse(require('fs').readFileSync('dist/releases/${SPECIALIST_ID}/${VERSION}.json')).artifact.sha256")"
           revision="$(node -p "JSON.parse(require('fs').readFileSync('dist/marketplace.json')).revision")"
+          cdn_base="${MARKETPLACE_CDN_BASE_URL%/}${MARKETPLACE_CDN_PREFIX}"
           {
             echo "## Published Specialist"
             echo "- Repository: ${GITHUB_REPOSITORY}"
@@ -290,4 +290,7 @@ jobs:
             echo "- Artifact SHA-256: ${artifact_sha}"
             echo "- Signing key ID: ${MARKETPLACE_SIGNING_KEY_ID}"
             echo "- Public key fingerprint: ${MARKETPLACE_EXPECTED_KEY_FINGERPRINT}"
+            echo "- CDN Marketplace: ${cdn_base}marketplace.json"
+            echo "- CDN release descriptor: ${cdn_base}releases/${SPECIALIST_ID}/${VERSION}.json"
+            echo "- CDN Specialist ZIP: ${cdn_base}specialists/${SPECIALIST_ID}/${VERSION}/${SPECIALIST_ID}-${VERSION}.zip"
           } >> "$GITHUB_STEP_SUMMARY"

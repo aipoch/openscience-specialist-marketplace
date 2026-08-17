@@ -24,6 +24,42 @@ clients can fall back to GitHub when the CDN is unavailable.
 
 No generated production index or signature is committed to `main`.
 
+## Production publication configuration
+
+Create a protected GitHub environment named `production`, restrict deployments to `main`, and
+require maintainer approval. Configure these environment variables:
+
+| Variable                                      | Value                                                     |
+| --------------------------------------------- | --------------------------------------------------------- |
+| `AWS_REGION`                                  | AWS region containing the Marketplace bucket              |
+| `MARKETPLACE_CDN_BASE_URL`                    | `https://statics.aipoch.com`                              |
+| `MARKETPLACE_EXPECTED_KEY_FINGERPRINT`        | Pinned SHA-256 fingerprint of the signing public key      |
+| `MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64` | Pinned Ed25519 public key in base64-encoded SPKI DER form |
+| `MARKETPLACE_SIGNING_KEY_ID`                  | Stable identifier for the active signing key              |
+
+Configure these environment secrets:
+
+| Secret                                         | Purpose                                               |
+| ---------------------------------------------- | ----------------------------------------------------- |
+| `AWS_ROLE_TO_ASSUME`                           | IAM role assumed through GitHub OIDC                  |
+| `MARKETPLACE_BUCKET`                           | Existing S3 bucket mirrored by the CDN                |
+| `MARKETPLACE_CDN_DISTRIBUTION_ID`              | Existing CloudFront distribution to invalidate        |
+| `MARKETPLACE_SIGNING_PRIVATE_KEY_PKCS8_BASE64` | Ed25519 private key in base64-encoded PKCS#8 DER form |
+
+The IAM role must trust the `production` environment for this repository and allow `s3:GetObject`
+and `s3:PutObject` under `open-science/specialist-marketplace/v1/`, plus
+`cloudfront:CreateInvalidation` for the configured distribution. Publication does not require S3 or
+CloudFront delete permissions.
+
+The CDN routes are fixed by the publication workflow:
+
+```text
+https://statics.aipoch.com/open-science/specialist-marketplace/v1/marketplace.json
+https://statics.aipoch.com/open-science/specialist-marketplace/v1/marketplace.json.sig
+https://statics.aipoch.com/open-science/specialist-marketplace/v1/releases/<specialist-id>/<version>.json
+https://statics.aipoch.com/open-science/specialist-marketplace/v1/specialists/<specialist-id>/<version>/<specialist-id>-<version>.zip
+```
+
 ## Validate locally
 
 Use Node.js 22 and npm:
