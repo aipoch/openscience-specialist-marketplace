@@ -21,34 +21,53 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  publish:
+  validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Check out exact main commit
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install pinned dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Validate authoring input
+        run: |
+          npm run format:check
+          npm test
+          npm run validate
+
+  publish:
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
     environment: production
+    permissions:
+      contents: write
     env:
       SPECIALIST_ID: ${{ inputs.specialist_id }}
       VERSION: ${{ inputs.version }}
       SOURCE_COMMIT_OR_TAG: ${{ inputs.source_commit_or_tag }}
-      GH_TOKEN: ${{ github.token }}
-      MARKETPLACE_SIGNING_PRIVATE_KEY_PKCS8_BASE64: ${{ secrets.MARKETPLACE_SIGNING_PRIVATE_KEY_PKCS8_BASE64 }}
-      MARKETPLACE_SIGNING_KEY_ID: ${{ vars.MARKETPLACE_SIGNING_KEY_ID }}
-      MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64: ${{ vars.MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64 }}
-      MARKETPLACE_EXPECTED_KEY_FINGERPRINT: ${{ vars.MARKETPLACE_EXPECTED_KEY_FINGERPRINT }}
-      AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-      AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-      AWS_REGION: ${{ vars.AWS_REGION }}
-      MARKETPLACE_BUCKET: ${{ secrets.MARKETPLACE_BUCKET }}
-      MARKETPLACE_CDN_DISTRIBUTION_ID: ${{ secrets.MARKETPLACE_CDN_DISTRIBUTION_ID }}
-      MARKETPLACE_CDN_BASE_URL: ${{ secrets.MARKETPLACE_CDN_BASE_URL }}
       MARKETPLACE_CDN_PREFIX: /open-science/specialist-marketplace/v1/
     steps:
       - name: Check out exact main commit
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
         with:
           ref: ${{ github.sha }}
           fetch-depth: 0
+          persist-credentials: false
 
       - name: Require the current main commit
         shell: bash
@@ -65,9 +84,18 @@ jobs:
 
       - name: Require protected publication configuration
         shell: bash
+        env:
+          MARKETPLACE_SIGNING_KEY_ID: ${{ vars.MARKETPLACE_SIGNING_KEY_ID }}
+          MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64: ${{ vars.MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64 }}
+          MARKETPLACE_EXPECTED_KEY_FINGERPRINT: ${{ vars.MARKETPLACE_EXPECTED_KEY_FINGERPRINT }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_REGION: ${{ vars.AWS_REGION }}
+          MARKETPLACE_BUCKET: ${{ secrets.MARKETPLACE_BUCKET }}
+          MARKETPLACE_CDN_DISTRIBUTION_ID: ${{ secrets.MARKETPLACE_CDN_DISTRIBUTION_ID }}
+          MARKETPLACE_CDN_BASE_URL: ${{ secrets.MARKETPLACE_CDN_BASE_URL }}
         run: |
           required=(
-            MARKETPLACE_SIGNING_PRIVATE_KEY_PKCS8_BASE64
             MARKETPLACE_SIGNING_KEY_ID
             MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64
             MARKETPLACE_EXPECTED_KEY_FINGERPRINT
@@ -92,19 +120,13 @@ jobs:
           exit "$missing"
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
 
       - name: Install pinned dependencies
         run: npm ci --ignore-scripts
-
-      - name: Validate authoring input
-        run: |
-          npm run format:check
-          npm test
-          npm run validate
 
       - name: Build deterministic release
         run: |
@@ -118,11 +140,19 @@ jobs:
             exit 1
           }
 
-      - name: Prepare signed candidate Marketplace
+      - name: Prepare candidate Marketplace
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64: ${{ vars.MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64 }}
         run: |
           set -euo pipefail
-          git fetch origin published:refs/remotes/origin/published || true
+          if git ls-remote --exit-code origin refs/heads/published >/dev/null; then
+            git fetch origin published:refs/remotes/origin/published
+          elif [[ "$?" -ne 2 ]]; then
+            echo "::error::Unable to determine whether the published branch exists"
+            exit 1
+          fi
           if git show-ref --verify --quiet refs/remotes/origin/published; then
             git show origin/published:marketplace.json > dist/base-marketplace.json
             git show origin/published:marketplace.json.sig > dist/base-marketplace.json.sig
@@ -149,30 +179,83 @@ jobs:
             --entry dist/marketplace-entry.json \
             --release "$release_path" \
             --output dist/marketplace.json
+
+      - name: Sign candidate Marketplace
+        env:
+          MARKETPLACE_SIGNING_PRIVATE_KEY_PKCS8_BASE64: ${{ secrets.MARKETPLACE_SIGNING_PRIVATE_KEY_PKCS8_BASE64 }}
+          MARKETPLACE_SIGNING_KEY_ID: ${{ vars.MARKETPLACE_SIGNING_KEY_ID }}
+          MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64: ${{ vars.MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64 }}
+          MARKETPLACE_EXPECTED_KEY_FINGERPRINT: ${{ vars.MARKETPLACE_EXPECTED_KEY_FINGERPRINT }}
+        run: |
           node scripts/sign-marketplace.mjs \
             --marketplace dist/marketplace.json \
             --output dist/marketplace.json.sig
+
+      - name: Verify candidate Marketplace
+        env:
+          MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64: ${{ vars.MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64 }}
+        run: |
           npm run verify:marketplace -- \
             --marketplace dist/marketplace.json \
             --signature dist/marketplace.json.sig \
             --root dist
 
-      - name: Refuse immutable GitHub collisions
+      - name: Reconcile immutable GitHub state
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
           tag="${SPECIALIST_ID}-v${VERSION}"
-          if gh release view "$tag" >/dev/null 2>&1; then
-            echo "::error::GitHub Release already exists: ${tag}"
-            exit 1
-          fi
-          if git show-ref --verify --quiet refs/remotes/origin/published && \
-             git cat-file -e "origin/published:releases/${SPECIALIST_ID}/${VERSION}.json" 2>/dev/null; then
-            echo "::error::Published release descriptor already exists"
+          asset="${SPECIALIST_ID}-${VERSION}.zip"
+          expected_asset="dist/specialists/${SPECIALIST_ID}/${VERSION}/${asset}"
+          mkdir -p dist/existing-release
+          if gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${tag}" \
+            > dist/existing-release/release.json \
+            2> dist/existing-release/error.log; then
+            target="$(jq -r '.target_commitish' dist/existing-release/release.json)"
+            draft="$(jq -r '.draft' dist/existing-release/release.json)"
+            prerelease="$(jq -r '.prerelease' dist/existing-release/release.json)"
+            if ! [[ "$target" =~ ^[0-9a-f]{40}$ ]] || \
+               ! git merge-base --is-ancestor "$target" "$GITHUB_SHA"; then
+              echo "::error::Existing GitHub Release target is not an ancestor of the current main commit"
+              exit 1
+            fi
+            git fetch origin "refs/tags/${tag}:refs/tags/${tag}"
+            [[ "$(git rev-list -n 1 "$tag")" == "$target" ]] || {
+              echo "::error::Existing GitHub Release tag does not match its immutable target"
+              exit 1
+            }
+            [[ "$draft" == false && "$prerelease" == false ]] || {
+              echo "::error::Existing GitHub Release must be public and non-prerelease"
+              exit 1
+            }
+            gh release download "$tag" --pattern "$asset" --dir dist/existing-release
+            cmp "$expected_asset" "dist/existing-release/${asset}" || {
+              echo "::error::Existing GitHub Release asset bytes do not match"
+              exit 1
+            }
+            echo "RELEASE_EXISTS=true" >> "$GITHUB_ENV"
+          elif grep -q "HTTP 404" dist/existing-release/error.log; then
+            echo "RELEASE_EXISTS=false" >> "$GITHUB_ENV"
+          else
+            cat dist/existing-release/error.log >&2
             exit 1
           fi
 
+          if git show-ref --verify --quiet refs/remotes/origin/published && \
+             git cat-file -e "origin/published:releases/${SPECIALIST_ID}/${VERSION}.json" 2>/dev/null; then
+            git show "origin/published:releases/${SPECIALIST_ID}/${VERSION}.json" \
+              > dist/existing-release/descriptor.json
+            cmp "dist/releases/${SPECIALIST_ID}/${VERSION}.json" \
+              dist/existing-release/descriptor.json || {
+              echo "::error::Existing published release descriptor bytes do not match"
+              exit 1
+            }
+          fi
+
       - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@v4
+        uses: aws-actions/configure-aws-credentials@7474bc4690e29a8392af63c5b98e7449536d5c3a # v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
@@ -180,6 +263,8 @@ jobs:
 
       - name: Stage and verify exact CDN bytes
         shell: bash
+        env:
+          MARKETPLACE_BUCKET: ${{ secrets.MARKETPLACE_BUCKET }}
         run: |
           set -euo pipefail
           prefix="${MARKETPLACE_CDN_PREFIX#/}"
@@ -187,12 +272,31 @@ jobs:
           stage="${prefix}/staging/${GITHUB_RUN_ID}/${GITHUB_RUN_ATTEMPT}"
           descriptor="releases/${SPECIALIST_ID}/${VERSION}.json"
           artifact="specialists/${SPECIALIST_ID}/${VERSION}/${SPECIALIST_ID}-${VERSION}.zip"
-          for object in "$descriptor" "$artifact"; do
-            if aws s3api head-object --bucket "$MARKETPLACE_BUCKET" --key "${prefix}/${object}" >/dev/null 2>&1; then
-              echo "::error::Immutable CDN object already exists: ${object}"
+
+          reconcile_object() {
+            local object="$1" expected="$2" state_name="$3" existing="$4"
+            if aws s3api head-object --bucket "$MARKETPLACE_BUCKET" \
+              --key "${prefix}/${object}" >/dev/null 2>dist/cdn-head-error.log; then
+              aws s3 cp "s3://${MARKETPLACE_BUCKET}/${prefix}/${object}" "$existing" --only-show-errors
+              cmp "$expected" "$existing" || {
+                echo "::error::Existing CDN object bytes do not match: ${object}"
+                exit 1
+              }
+              echo "${state_name}=true" >> "$GITHUB_ENV"
+            elif grep -Eq "\(404\)|Not Found" dist/cdn-head-error.log; then
+              echo "${state_name}=false" >> "$GITHUB_ENV"
+            else
+              cat dist/cdn-head-error.log >&2
               exit 1
             fi
-          done
+          }
+
+          mkdir -p dist/existing-cdn
+          reconcile_object "$descriptor" "dist/${descriptor}" \
+            DESCRIPTOR_EXISTS dist/existing-cdn/descriptor.json
+          reconcile_object "$artifact" "dist/${artifact}" \
+            ARTIFACT_EXISTS dist/existing-cdn/artifact.zip
+
           aws s3 cp dist/marketplace.json "s3://${MARKETPLACE_BUCKET}/${stage}/marketplace.json" --content-type application/json --cache-control no-cache --only-show-errors
           aws s3 cp dist/marketplace.json.sig "s3://${MARKETPLACE_BUCKET}/${stage}/marketplace.json.sig" --content-type application/json --cache-control no-cache --only-show-errors
           aws s3 cp "dist/${descriptor}" "s3://${MARKETPLACE_BUCKET}/${stage}/${descriptor}" --content-type application/json --cache-control 'public,max-age=31536000,immutable' --only-show-errors
@@ -208,7 +312,10 @@ jobs:
           cmp "dist/${artifact}" dist/staged/artifact/release.zip
 
       - name: Create immutable GitHub Release
+        if: env.RELEASE_EXISTS != 'true'
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           tag="${SPECIALIST_ID}-v${VERSION}"
           asset="dist/specialists/${SPECIALIST_ID}/${VERSION}/${SPECIALIST_ID}-${VERSION}.zip"
@@ -219,7 +326,10 @@ jobs:
 
       - name: Update published branch with verified metadata
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
+          set -euo pipefail
           git config user.name github-actions[bot]
           git config user.email 41898282+github-actions[bot]@users.noreply.github.com
           if git show-ref --verify --quiet refs/remotes/origin/published; then
@@ -234,11 +344,20 @@ jobs:
           cp "dist/releases/${SPECIALIST_ID}/${VERSION}.json" \
             ".worktree/published/releases/${SPECIALIST_ID}/${VERSION}.json"
           git -C .worktree/published add marketplace.json marketplace.json.sig releases
-          git -C .worktree/published commit -m "feat(publishing): publish ${SPECIALIST_ID} ${VERSION}"
-          git -C .worktree/published push origin HEAD:published
+          if git -C .worktree/published diff --cached --quiet; then
+            echo "Published metadata already matches the candidate"
+          else
+            git -C .worktree/published commit -m "feat(publishing): publish ${SPECIALIST_ID} ${VERSION}"
+            git -C .worktree/published push \
+              "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+              HEAD:published
+          fi
 
       - name: Promote immutable CDN objects and stable root
         shell: bash
+        env:
+          MARKETPLACE_BUCKET: ${{ secrets.MARKETPLACE_BUCKET }}
+          MARKETPLACE_CDN_DISTRIBUTION_ID: ${{ secrets.MARKETPLACE_CDN_DISTRIBUTION_ID }}
         run: |
           set -euo pipefail
           prefix="${MARKETPLACE_CDN_PREFIX#/}"
@@ -246,14 +365,29 @@ jobs:
           stage="${prefix}/staging/${GITHUB_RUN_ID}/${GITHUB_RUN_ATTEMPT}"
           descriptor="releases/${SPECIALIST_ID}/${VERSION}.json"
           artifact="specialists/${SPECIALIST_ID}/${VERSION}/${SPECIALIST_ID}-${VERSION}.zip"
-          aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${descriptor}" "s3://${MARKETPLACE_BUCKET}/${prefix}/${descriptor}" --content-type application/json --cache-control 'public,max-age=31536000,immutable' --only-show-errors
-          aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${artifact}" "s3://${MARKETPLACE_BUCKET}/${prefix}/${artifact}" --content-type application/zip --cache-control 'public,max-age=31536000,immutable' --only-show-errors
+          if [[ "$DESCRIPTOR_EXISTS" != true ]]; then
+            aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${descriptor}" "s3://${MARKETPLACE_BUCKET}/${prefix}/${descriptor}" --content-type application/json --cache-control 'public,max-age=31536000,immutable' --only-show-errors
+          fi
+          if [[ "$ARTIFACT_EXISTS" != true ]]; then
+            aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${artifact}" "s3://${MARKETPLACE_BUCKET}/${prefix}/${artifact}" --content-type application/zip --cache-control 'public,max-age=31536000,immutable' --only-show-errors
+          fi
           aws s3 cp dist/marketplace.json "s3://${MARKETPLACE_BUCKET}/${prefix}/marketplace.json" --content-type application/json --cache-control no-cache --only-show-errors
           aws s3 cp dist/marketplace.json.sig "s3://${MARKETPLACE_BUCKET}/${prefix}/marketplace.json.sig" --content-type application/json --cache-control no-cache --only-show-errors
-          aws cloudfront create-invalidation --distribution-id "$MARKETPLACE_CDN_DISTRIBUTION_ID" --paths "${MARKETPLACE_CDN_PREFIX}marketplace.json" "${MARKETPLACE_CDN_PREFIX}marketplace.json.sig" >/dev/null
+          invalidation_id="$(aws cloudfront create-invalidation \
+            --distribution-id "$MARKETPLACE_CDN_DISTRIBUTION_ID" \
+            --paths "${MARKETPLACE_CDN_PREFIX}marketplace.json" \
+              "${MARKETPLACE_CDN_PREFIX}marketplace.json.sig" \
+            --query Invalidation.Id \
+            --output text)"
+          aws cloudfront wait invalidation-completed \
+            --distribution-id "$MARKETPLACE_CDN_DISTRIBUTION_ID" \
+            --id "$invalidation_id"
 
       - name: Prove GitHub and CDN byte equality
         shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MARKETPLACE_CDN_BASE_URL: ${{ secrets.MARKETPLACE_CDN_BASE_URL }}
         run: |
           set -euo pipefail
           base="${MARKETPLACE_CDN_BASE_URL%/}${MARKETPLACE_CDN_PREFIX}"
@@ -261,14 +395,20 @@ jobs:
           descriptor="releases/${SPECIALIST_ID}/${VERSION}.json"
           artifact="specialists/${SPECIALIST_ID}/${VERSION}/${SPECIALIST_ID}-${VERSION}.zip"
           mkdir -p dist/final/github dist/final/cdn
-          curl --fail --silent --show-error "${raw}marketplace.json" -o dist/final/github/marketplace.json
-          curl --fail --silent --show-error "${raw}marketplace.json.sig" -o dist/final/github/marketplace.json.sig
-          curl --fail --silent --show-error "${raw}${descriptor}" -o dist/final/github/release.json
+          download() {
+            curl --fail --silent --show-error \
+              --retry 3 --retry-all-errors \
+              --connect-timeout 10 --max-time 120 \
+              "$1" -o "$2"
+          }
+          download "${raw}marketplace.json" dist/final/github/marketplace.json
+          download "${raw}marketplace.json.sig" dist/final/github/marketplace.json.sig
+          download "${raw}${descriptor}" dist/final/github/release.json
           gh release download "${SPECIALIST_ID}-v${VERSION}" --pattern "${SPECIALIST_ID}-${VERSION}.zip" --dir dist/final/github
-          curl --fail --silent --show-error "${base}marketplace.json" -o dist/final/cdn/marketplace.json
-          curl --fail --silent --show-error "${base}marketplace.json.sig" -o dist/final/cdn/marketplace.json.sig
-          curl --fail --silent --show-error "${base}${descriptor}" -o dist/final/cdn/release.json
-          curl --fail --silent --show-error "${base}${artifact}" -o dist/final/cdn/release.zip
+          download "${base}marketplace.json" dist/final/cdn/marketplace.json
+          download "${base}marketplace.json.sig" dist/final/cdn/marketplace.json.sig
+          download "${base}${descriptor}" dist/final/cdn/release.json
+          download "${base}${artifact}" dist/final/cdn/release.zip
           cmp dist/marketplace.json dist/final/github/marketplace.json
           cmp dist/marketplace.json dist/final/cdn/marketplace.json
           cmp dist/marketplace.json.sig dist/final/github/marketplace.json.sig
@@ -280,6 +420,9 @@ jobs:
 
       - name: Write public publication summary
         shell: bash
+        env:
+          MARKETPLACE_SIGNING_KEY_ID: ${{ vars.MARKETPLACE_SIGNING_KEY_ID }}
+          MARKETPLACE_EXPECTED_KEY_FINGERPRINT: ${{ vars.MARKETPLACE_EXPECTED_KEY_FINGERPRINT }}
         run: |
           artifact_sha="$(node -p "JSON.parse(require('fs').readFileSync('dist/releases/${SPECIALIST_ID}/${VERSION}.json')).artifact.sha256")"
           revision="$(node -p "JSON.parse(require('fs').readFileSync('dist/marketplace.json')).revision")"
