@@ -252,17 +252,11 @@ jobs:
             }
           fi
 
-      - name: Configure AWS credentials
-        uses: aws-actions/configure-aws-credentials@e6de054238d6b7531b4efff3b6587d9aade6a06c # v6.2.3
-        with:
-          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          # Bootstrap AWS signing and CloudFront; the AWS CLI resolves S3 bucket regions automatically.
-          aws-region: us-east-1
-
       - name: Stage and verify exact CDN bytes
         shell: bash
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           MARKETPLACE_BUCKET: ${{ secrets.MARKETPLACE_BUCKET }}
         run: |
           set -euo pipefail
@@ -355,6 +349,8 @@ jobs:
       - name: Promote immutable CDN objects and stable root
         shell: bash
         env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           MARKETPLACE_BUCKET: ${{ secrets.MARKETPLACE_BUCKET }}
           MARKETPLACE_CDN_DISTRIBUTION_ID: ${{ secrets.MARKETPLACE_CDN_DISTRIBUTION_ID }}
         run: |
