@@ -42,9 +42,10 @@ test-only signing key used to prove deterministic builds and byte-exact signatur
 
 Create one immutable version under
 `specialists/<specialist-id>/versions/<semver>/`, using the App-export-compatible layout documented
-in [the Specialist authoring guide](specialists/README.md). Open a pull request with the upstream
-commit, license, security review notes, and reproducibility evidence. Publication is maintainer-only
-and runs through the protected `production` GitHub environment.
+in [the Specialist authoring guide](specialists/README.md). Start with the
+[complete contribution example](example/README.md) if this is your first Specialist. Open a pull
+request with the upstream commit, license, security review notes, and reproducibility evidence.
+Publication is maintainer-only and runs through the protected `production` GitHub environment.
 
 See the [protocol specification](protocol/README.md), [contribution guide](CONTRIBUTING.md), and
 [security policy](SECURITY.md).

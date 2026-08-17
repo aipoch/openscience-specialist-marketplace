@@ -1,0 +1,32 @@
+{
+  "source": {
+    "repository": "https://github.com/example-org/literature-review-specialist",
+    "commit": "0123456789abcdef0123456789abcdef01234567",
+    "license": "Apache-2.0"
+  },
+  "marketplace": {
+    "display_name": "Literature Review Specialist",
+    "summary": "Demonstrates a focused evidence-summary workflow for Marketplace contributors.",
+    "publisher": {
+      "id": "example-org",
+      "name": "Example Organization",
+      "url": "https://github.com/example-org"
+    }
+  },
+  "skills": [
+    {
+      "id": "evidence-summary",
+      "name": "evidence-summary",
+      "display_name": "Evidence Summary",
+      "description": "Summarizes a supplied set of verified literature records without inventing citations.",
+      "path": "skills/evidence-summary"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
