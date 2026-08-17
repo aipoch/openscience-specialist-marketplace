@@ -5,24 +5,56 @@ on:
   push:
     branches: [main]
 
+concurrency:
+  group: validate-${{ github.event.pull_request.number || github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
 permissions:
   contents: read
 
 jobs:
   validate:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     steps:
       - name: Check out repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          persist-credentials: false
 
       - name: Set up Node.js
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
         with:
           node-version: 22
           cache: npm
 
       - name: Install pinned dependencies
         run: npm ci --ignore-scripts
+
+      - name: Lint GitHub Actions workflows
+        uses: raven-actions/actionlint@3d39aea434753780c3b3d4a1a31c854b4dbf49d7 # v2.2.0
+        with:
+          version: 1.7.12
+
+      - name: Protect published Specialist versions
+        if: github.event_name == 'pull_request'
+        shell: bash
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha }}
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code origin refs/heads/published >/dev/null; then
+            git fetch origin published:refs/remotes/origin/published
+            npm run check:immutability -- \
+              --base "$BASE_SHA" \
+              --published origin/published
+          elif [[ "$?" -eq 2 ]]; then
+            echo "No published branch exists yet; no released authoring input to protect"
+          else
+            echo "::error::Unable to determine whether the published branch exists"
+            exit 1
+          fi
 
       - name: Check formatting
         run: npm run format:check

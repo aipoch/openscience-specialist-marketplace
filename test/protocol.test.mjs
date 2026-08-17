@@ -286,7 +286,34 @@ test("published validation follows root digests through the exact ZIP", async ()
         entry: built.marketplaceEntry,
         releaseDescriptorBytes: Buffer.from("different descriptor"),
       }),
-    /latest version must advance/,
+    /published Specialist version collision/,
+  );
+});
+
+test("reapplying an identical published release is idempotent", async () => {
+  const output = await mkdtemp(
+    path.join(os.tmpdir(), "marketplace-idempotent-update-"),
+  );
+  const built = await buildRelease({
+    specialistId: "fixture-specialist",
+    version: "1.0.0",
+    versionDirectory: fixtureVersion,
+    outputDirectory: output,
+  });
+  const descriptorBytes = await readFile(built.descriptorPath);
+  const published = updateMarketplace({
+    baseMarketplace: emptyMarketplace,
+    entry: built.marketplaceEntry,
+    releaseDescriptorBytes: descriptorBytes,
+  });
+
+  assert.deepEqual(
+    updateMarketplace({
+      baseMarketplace: published,
+      entry: built.marketplaceEntry,
+      releaseDescriptorBytes: descriptorBytes,
+    }),
+    published,
   );
 });
 

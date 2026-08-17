@@ -8,10 +8,12 @@
   },
   "scripts": {
     "build:release": "node scripts/build-release.mjs",
+    "check:immutability": "node scripts/check-published-immutability.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "test": "node --test",
     "validate": "node scripts/validate.mjs",
+    "verify:history": "node scripts/verify-release-history.mjs",
     "verify:marketplace": "node scripts/verify-marketplace.mjs"
   },
   "dependencies": {

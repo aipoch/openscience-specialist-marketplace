@@ -1,0 +1,144 @@
+name: Verify Published Marketplace
+
+on:
+  schedule:
+    - cron: "23 3 * * 1"
+  workflow_dispatch:
+
+concurrency:
+  group: openscience-specialist-marketplace-verification
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  detect:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    outputs:
+      exists: ${{ steps.published.outputs.exists }}
+    steps:
+      - name: Detect published branch
+        id: published
+        shell: bash
+        run: |
+          set -euo pipefail
+          status=0
+          git ls-remote --exit-code \
+            "https://github.com/${GITHUB_REPOSITORY}.git" \
+            refs/heads/published >/dev/null || status=$?
+          case "$status" in
+            0)
+              echo "exists=true" >> "$GITHUB_OUTPUT"
+              ;;
+            2)
+              echo "exists=false" >> "$GITHUB_OUTPUT"
+              echo "No published branch exists yet" >> "$GITHUB_STEP_SUMMARY"
+              ;;
+            *)
+              echo "::error::Unable to determine whether the published branch exists"
+              exit "$status"
+              ;;
+          esac
+
+  verify:
+    needs: detect
+    if: needs.detect.outputs.exists == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - name: Check out verification code
+        uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Set up Node.js
+        uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - name: Install pinned dependencies
+        run: npm ci --ignore-scripts
+
+      - name: Download and verify GitHub publication
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+          MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64: ${{ vars.MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64 }}
+        run: |
+          set -euo pipefail
+          [[ -n "$MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64" ]] || {
+            echo "::error::Missing protected publication public key"
+            exit 1
+          }
+          git fetch origin published:refs/remotes/origin/published
+          mkdir -p dist/github
+          git show origin/published:marketplace.json > dist/github/marketplace.json
+          git show origin/published:marketplace.json.sig > dist/github/marketplace.json.sig
+          git archive origin/published releases | tar -x -C dist/github
+          node scripts/list-release-artifacts.mjs \
+            --history true \
+            --root dist/github > dist/github-artifacts.json
+          while IFS=$'\t' read -r tag asset artifact_path; do
+            mkdir -p "dist/github/$(dirname "$artifact_path")"
+            gh release download "$tag" \
+              --pattern "$asset" \
+              --dir "dist/github/$(dirname "$artifact_path")"
+          done < <(jq -r '.[] | [.tag, .asset_name, .path] | @tsv' dist/github-artifacts.json)
+          npm run verify:marketplace -- \
+            --marketplace dist/github/marketplace.json \
+            --signature dist/github/marketplace.json.sig \
+            --root dist/github
+          npm run verify:history -- --root dist/github
+
+      - name: Download and verify exact CDN mirror
+        shell: bash
+        env:
+          MARKETPLACE_CDN_BASE_URL: ${{ secrets.MARKETPLACE_CDN_BASE_URL }}
+          MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64: ${{ vars.MARKETPLACE_EXPECTED_PUBLIC_KEY_SPKI_BASE64 }}
+          MARKETPLACE_CDN_PREFIX: /open-science/specialist-marketplace/v1/
+        run: |
+          set -euo pipefail
+          [[ "$MARKETPLACE_CDN_BASE_URL" =~ ^https://[^/]+/?$ ]] || {
+            echo "::error::MARKETPLACE_CDN_BASE_URL must be an HTTPS origin without a path"
+            exit 1
+          }
+          base="${MARKETPLACE_CDN_BASE_URL%/}${MARKETPLACE_CDN_PREFIX}"
+          download() {
+            mkdir -p "$(dirname "$2")"
+            curl --fail --silent --show-error \
+              --retry 3 --retry-all-errors \
+              --connect-timeout 10 --max-time 120 \
+              "$1" -o "$2"
+          }
+          download "${base}marketplace.json" dist/cdn/marketplace.json
+          download "${base}marketplace.json.sig" dist/cdn/marketplace.json.sig
+          while IFS= read -r descriptor_path; do
+            download "${base}${descriptor_path}" "dist/cdn/${descriptor_path}"
+          done < <(jq -r '.[].descriptor_path' dist/github-artifacts.json)
+          while IFS=$'\t' read -r artifact_path; do
+            download "${base}${artifact_path}" "dist/cdn/${artifact_path}"
+          done < <(jq -r '.[] | [.path] | @tsv' dist/github-artifacts.json)
+          npm run verify:marketplace -- \
+            --marketplace dist/cdn/marketplace.json \
+            --signature dist/cdn/marketplace.json.sig \
+            --root dist/cdn
+          npm run verify:history -- --root dist/cdn
+          diff --recursive --brief dist/github dist/cdn
+
+      - name: Write verification summary
+        run: |
+          revision="$(node -p "JSON.parse(require('fs').readFileSync('dist/github/marketplace.json')).revision")"
+          count="$(node -p "JSON.parse(require('fs').readFileSync('dist/github/marketplace.json')).specialists.length")"
+          release_count="$(node -p "JSON.parse(require('fs').readFileSync('dist/github-artifacts.json')).length")"
+          {
+            echo "## Published Marketplace verified"
+            echo "- Revision: ${revision}"
+            echo "- Specialists: ${count}"
+            echo "- Historical releases: ${release_count}"
+            echo "- GitHub metadata, Release Assets, and CDN mirror are byte-identical"
+          } >> "$GITHUB_STEP_SUMMARY"

@@ -12,10 +12,18 @@ export function updateMarketplace({
   const existing = baseMarketplace.specialists.find(
     (item) => item.id === nextEntry.id,
   );
-  if (
-    existing &&
-    compareSemver(nextEntry.latest.version, existing.latest.version) <= 0
-  ) {
+  const versionOrder = existing
+    ? compareSemver(nextEntry.latest.version, existing.latest.version)
+    : 1;
+  if (existing && versionOrder === 0) {
+    if (JSON.stringify(existing) === JSON.stringify(nextEntry)) {
+      return structuredClone(baseMarketplace);
+    }
+    throw new Error(
+      `published Specialist version collision: ${nextEntry.id}@${nextEntry.latest.version}`,
+    );
+  }
+  if (existing && versionOrder < 0) {
     throw new Error(
       `Specialist latest version must advance beyond ${existing.latest.version}`,
     );
