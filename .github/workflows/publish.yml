@@ -117,6 +117,22 @@ jobs:
           }
           exit "$missing"
 
+      - name: Mask AWS identity metadata
+        shell: bash
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          set -euo pipefail
+          identity="$(aws sts get-caller-identity \
+            --query '[Account,Arn]' --output text 2>/dev/null)" || {
+            echo "::error::Unable to resolve AWS caller identity"
+            exit 1
+          }
+          read -r account_id caller_arn <<< "$identity"
+          printf '::add-mask::%s\n' \
+            "$account_id" "$caller_arn" "${caller_arn##*/}"
+
       - name: Set up Node.js
         uses: actions/setup-node@820762786026740c76f36085b0efc47a31fe5020 # v7.0.0
         with:
