@@ -6,6 +6,7 @@ import { contentDigest } from "./content-digest.mjs";
 import { assertSafeRelativePath } from "./paths.mjs";
 import { validateDocument as validateSchema } from "./schema.mjs";
 import { verifyMarketplaceSignature } from "./signing.mjs";
+import { parseSpecialistJson } from "./specialist.mjs";
 import { inspectZip } from "./zip.mjs";
 
 export function validateDocument(name, value) {
@@ -60,7 +61,11 @@ function resolveInside(rootDirectory, relativePath) {
   return resolved;
 }
 
-export async function validateReleaseArtifact({ descriptor, rootDirectory }) {
+export async function validateReleaseArtifact({
+  descriptor,
+  rootDirectory,
+  publishedHistory = false,
+}) {
   validateDocument("release", descriptor);
   const expectedTag = `${descriptor.specialist_id}-v${descriptor.version}`;
   const expectedAssetName = `${descriptor.specialist_id}-${descriptor.version}.zip`;
@@ -87,7 +92,14 @@ export async function validateReleaseArtifact({ descriptor, rootDirectory }) {
     throw new Error("artifact expanded size mismatch");
 
   const manifest = parseEntryJson(archive.entries, "manifest.json");
-  const specialist = parseEntryJson(archive.entries, "specialist.json");
+  const specialist = parseSpecialistJson(
+    parseEntryJson(archive.entries, "specialist.json"),
+    {
+      specialistId: descriptor.specialist_id,
+      version: descriptor.version,
+      publishedHistory,
+    },
+  );
   if (
     manifest.schema_version !== 1 ||
     manifest.id !== descriptor.specialist_id ||
@@ -96,17 +108,6 @@ export async function validateReleaseArtifact({ descriptor, rootDirectory }) {
     !manifest.exported_with_app_version
   ) {
     throw new Error("manifest.json compatibility fields mismatch");
-  }
-  for (const field of ["name", "description", "systemPrompt"]) {
-    if (typeof specialist[field] !== "string" || !specialist[field]) {
-      throw new Error(`specialist.json ${field} must be a non-empty string`);
-    }
-  }
-  if (
-    !Array.isArray(specialist.skillIds) ||
-    !Array.isArray(specialist.connectorIds)
-  ) {
-    throw new Error("specialist.json references must be arrays");
   }
   const expectedSkills = new Set(descriptor.skills.map((item) => item.id));
   const expectedConnectors = new Set(
@@ -196,7 +197,11 @@ export async function validatePublishedMarketplace({
   }
   const releases = await readIndexedReleases({ marketplace, rootDirectory });
   for (const { descriptor } of releases) {
-    await validateReleaseArtifact({ descriptor, rootDirectory });
+    await validateReleaseArtifact({
+      descriptor,
+      rootDirectory,
+      publishedHistory: true,
+    });
   }
   return {
     specialistCount: marketplace.specialists.length,

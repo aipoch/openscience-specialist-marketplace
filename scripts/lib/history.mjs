@@ -78,7 +78,11 @@ export async function readReleaseHistory({ rootDirectory }) {
 export async function validateReleaseHistory({ rootDirectory }) {
   const records = await readReleaseHistory({ rootDirectory });
   for (const { descriptor } of records) {
-    await validateReleaseArtifact({ descriptor, rootDirectory });
+    await validateReleaseArtifact({
+      descriptor,
+      rootDirectory,
+      publishedHistory: true,
+    });
   }
   return records.length;
 }

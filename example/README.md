@@ -29,7 +29,8 @@ example/literature-review-specialist/
   Skills, and reference-only Connectors.
 - `package/` is the App-export-compatible archive root. Do not add Marketplace metadata inside it.
 - `manifest.json` binds the package to one stable Specialist ID and SemVer version.
-- `specialist.json` contains the Specialist instructions and its default Skill and Connector IDs.
+- `specialist.json` contains only `name`, optional `display_name`, `description`, `system_prompt`,
+  `skill_ids`, and `connector_ids`. CamelCase aliases are not accepted.
 - `skills/<skill-id>/SKILL.md` contains one bundled capability. Its directory, frontmatter `name`,
   release-config ID, and `specialist.json` entry use the same stable ID.
 - `README.txt` is optional package guidance shown here only to demonstrate its location.

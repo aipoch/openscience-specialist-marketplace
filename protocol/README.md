@@ -66,6 +66,13 @@ The manifest identity and version must equal the release descriptor. Every selec
 Connector must exist in the descriptor, every selected Skill must exist in the ZIP, and required
 Connectors must be default-selected.
 
+Protocol v1 `specialist.json` uses snake_case and contains required `name`, `description`,
+`system_prompt`, `skill_ids`, and `connector_ids`, plus optional `display_name`. Unknown fields,
+including the camelCase aliases `displayName`, `systemPrompt`, `skillIds`, and `connectorIds`, are
+rejected for new packages. The published `auto-research-specialist@1.0.0` artifact predates this
+clarification and is accepted only by the repository's historical-publication verifier; this is not
+an App import compatibility path.
+
 ## Trust model
 
 Protocol v1 uses Ed25519 only. The signature is over the exact `marketplace.json` bytes. Official App

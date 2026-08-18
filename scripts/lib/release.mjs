@@ -13,6 +13,7 @@ import {
 import { contentDigest } from "./content-digest.mjs";
 import { assertSafeRelativePath } from "./paths.mjs";
 import { validateDocument } from "./schema.mjs";
+import { parseSpecialistJson } from "./specialist.mjs";
 import { buildDeterministicZip, inspectZip } from "./zip.mjs";
 
 function assertString(value, label) {
@@ -105,6 +106,7 @@ export async function buildRelease({
   version,
   versionDirectory,
   outputDirectory,
+  publishedHistory = false,
 }) {
   if (!ID_PATTERN.test(specialistId))
     throw new Error(`invalid Specialist ID: ${specialistId}`);
@@ -119,7 +121,10 @@ export async function buildRelease({
   const built = await buildDeterministicZip(packageDirectory);
   const archive = inspectZip(built.bytes);
   const manifest = parsePackageJson(archive.entries, "manifest.json");
-  const specialist = parsePackageJson(archive.entries, "specialist.json");
+  const specialist = parseSpecialistJson(
+    parsePackageJson(archive.entries, "specialist.json"),
+    { specialistId, version, publishedHistory },
+  );
   if (
     manifest.schema_version !== 1 ||
     manifest.id !== specialistId ||
@@ -131,24 +136,6 @@ export async function buildRelease({
       "manifest.json compatibility fields do not match the requested release",
     );
   }
-  for (const field of ["name", "description", "systemPrompt"]) {
-    if (typeof specialist[field] !== "string" || !specialist[field]) {
-      throw new Error(`specialist.json ${field} must be a non-empty string`);
-    }
-  }
-  if (
-    !Array.isArray(specialist.skillIds) ||
-    !Array.isArray(specialist.connectorIds)
-  ) {
-    throw new Error(
-      "specialist.json must contain skillIds and connectorIds arrays",
-    );
-  }
-  if (new Set(specialist.skillIds).size !== specialist.skillIds.length)
-    throw new Error("duplicate specialist.json Skill ID");
-  if (new Set(specialist.connectorIds).size !== specialist.connectorIds.length)
-    throw new Error("duplicate specialist.json Connector ID");
-
   const skills = config.skills.map((skill) => {
     const prefix = `${skill.path}/`;
     const files = [...archive.entries]
