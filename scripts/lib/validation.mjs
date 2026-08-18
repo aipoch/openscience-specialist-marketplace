@@ -61,11 +61,7 @@ function resolveInside(rootDirectory, relativePath) {
   return resolved;
 }
 
-export async function validateReleaseArtifact({
-  descriptor,
-  rootDirectory,
-  publishedHistory = false,
-}) {
+export async function validateReleaseArtifact({ descriptor, rootDirectory }) {
   validateDocument("release", descriptor);
   const expectedTag = `${descriptor.specialist_id}-v${descriptor.version}`;
   const expectedAssetName = `${descriptor.specialist_id}-${descriptor.version}.zip`;
@@ -94,11 +90,6 @@ export async function validateReleaseArtifact({
   const manifest = parseEntryJson(archive.entries, "manifest.json");
   const specialist = parseSpecialistJson(
     parseEntryJson(archive.entries, "specialist.json"),
-    {
-      specialistId: descriptor.specialist_id,
-      version: descriptor.version,
-      publishedHistory,
-    },
   );
   if (
     manifest.schema_version !== 1 ||
@@ -200,7 +191,6 @@ export async function validatePublishedMarketplace({
     await validateReleaseArtifact({
       descriptor,
       rootDirectory,
-      publishedHistory: true,
     });
   }
   return {

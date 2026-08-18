@@ -48,7 +48,8 @@ own reviewed local Connector configuration.
    metadata in `release.config.json`.
 4. Replace the sample Specialist instructions and Skills with the unchanged App export you intend to
    publish. Keep every Skill ID and path aligned across all files.
-5. List only reviewed Connector IDs. A required Connector must also be selected by default.
+5. List only reviewed Connector IDs in strict lowercase kebab-case. A required Connector must also
+   be selected by default.
 6. Remove any secrets, private endpoints, local commands, or executable Connector configuration.
 7. Add exactly one new SemVer directory. Never edit an already published version; changed bytes
    require a new version.

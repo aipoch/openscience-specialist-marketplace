@@ -12,7 +12,7 @@ Specialist ecosystem mature.
 - Sign byte-exact discovery metadata with Ed25519 and verify it before publication.
 - Publish immutable Specialist artifacts through protected GitHub and CDN distribution paths.
 - Preserve and periodically verify historical release descriptors and artifacts.
-- Include Auto Research Specialist 1.0.0 as the first authored reference Specialist, ready for
+- Include Auto Research Specialist 1.0.1 as the first authored reference Specialist, ready for
   independent publication through the protected workflow.
 - Document a complete, reviewable contribution flow for additional Specialists.
 

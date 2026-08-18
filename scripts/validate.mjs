@@ -51,7 +51,6 @@ async function validateAuthoring() {
         version,
         versionDirectory: path.join(versionsRoot, version),
         outputDirectory: output,
-        publishedHistory: true,
       });
       versionCount += 1;
     }

@@ -81,7 +81,6 @@ export async function validateReleaseHistory({ rootDirectory }) {
     await validateReleaseArtifact({
       descriptor,
       rootDirectory,
-      publishedHistory: true,
     });
   }
   return records.length;

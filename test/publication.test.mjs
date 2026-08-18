@@ -13,13 +13,9 @@ import {
   resolvePublicationVersion,
 } from "../scripts/lib/immutability.mjs";
 import { buildRelease } from "../scripts/lib/release.mjs";
-import { validateReleaseArtifact } from "../scripts/lib/validation.mjs";
 
 const fixtureVersion = path.resolve(
   "protocol/fixtures/valid/example-specialist/versions/1.0.0",
-);
-const legacyPublishedVersion = path.resolve(
-  "specialists/auto-research-specialist/versions/1.0.0",
 );
 
 test("published Specialist versions reject authoring changes", () => {
@@ -34,38 +30,6 @@ test("published Specialist versions reject authoring changes", () => {
     }),
     ["example@1.0.0"],
   );
-});
-
-test("published 1.0.0 history has an isolated camelCase validation exception", async () => {
-  const strictOutput = await mkdtemp(
-    path.join(os.tmpdir(), "marketplace-strict-history-"),
-  );
-  await assert.rejects(
-    buildRelease({
-      specialistId: "auto-research-specialist",
-      version: "1.0.0",
-      versionDirectory: legacyPublishedVersion,
-      outputDirectory: strictOutput,
-    }),
-    /specialist\.json contains unknown field: displayName/,
-  );
-
-  const historyOutput = await mkdtemp(
-    path.join(os.tmpdir(), "marketplace-legacy-history-"),
-  );
-  const rebuilt = await buildRelease({
-    specialistId: "auto-research-specialist",
-    version: "1.0.0",
-    versionDirectory: legacyPublishedVersion,
-    outputDirectory: historyOutput,
-    publishedHistory: true,
-  });
-  assert.equal(rebuilt.descriptor.version, "1.0.0");
-  await validateReleaseArtifact({
-    descriptor: rebuilt.descriptor,
-    rootDirectory: historyOutput,
-    publishedHistory: true,
-  });
 });
 
 test("publication selects one unpublished version and preserves retries", () => {

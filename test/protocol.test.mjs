@@ -197,10 +197,32 @@ test("release building rejects camelCase Specialist package fields", async () =>
       version: "1.0.0",
       versionDirectory,
       outputDirectory: path.join(versionDirectory, "out"),
-      publishedHistory: true,
     }),
     /specialist\.json contains unknown field: systemPrompt/,
   );
+});
+
+test("release building rejects non-kebab-case Connector identities", async () => {
+  for (const id of ["example--connector", "example-connector-"]) {
+    const versionDirectory = await mkdtemp(
+      path.join(os.tmpdir(), "marketplace-connector-identity-"),
+    );
+    await cp(fixtureVersion, versionDirectory, { recursive: true });
+    const configPath = path.join(versionDirectory, "release.config.json");
+    const config = JSON.parse(await readFile(configPath, "utf8"));
+    config.connectors[0].id = id;
+    await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`);
+
+    await assert.rejects(
+      buildRelease({
+        specialistId: "fixture-specialist",
+        version: "1.0.0",
+        versionDirectory,
+        outputDirectory: path.join(versionDirectory, "out"),
+      }),
+      /invalid Connector ID/,
+    );
+  }
 });
 
 test("release building validates optional Specialist display_name", async () => {
@@ -509,6 +531,14 @@ test("release validation rejects digest, size, duplicate ID, and Connector contr
   assert.throws(
     () => validateDocument("release", configuredConnector),
     /additionalProperties/,
+  );
+
+  const nonKebabConnector = structuredClone(built.descriptor);
+  nonKebabConnector.connectors[0].id = "example--connector";
+  nonKebabConnector.defaults.connector_ids[0] = "example--connector";
+  assert.throws(
+    () => validateDocument("release", nonKebabConnector),
+    /pattern/,
   );
 });
 

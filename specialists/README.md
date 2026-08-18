@@ -33,6 +33,9 @@ compatible with OpenScience App export/import v1. Do not add a plugin manifest o
   `skills/<skill-id>` path;
 - `connectors`: reference-only `id`, `required`, and `default_selected` flags.
 
+All Specialist, Skill, Connector, and publisher IDs use strict lowercase kebab-case: alphanumeric
+segments separated by single hyphens, with no leading or trailing hyphen.
+
 `specialist.json` uses the Protocol v1 package contract: required `name`, `description`,
 `system_prompt`, `skill_ids`, and `connector_ids`, plus optional `display_name`. Unknown fields and
 camelCase aliases are rejected. The default ID arrays must agree with the release config. Never
