@@ -1,0 +1,13 @@
+Package: geneproteinexpressionmatrixnormalization
+Type: Project
+Title: Gene Protein Expression Matrix Normalization Skill
+Version: 0.1.0
+Authors@R: person("OpenCode", "Agent", role = c("aut", "cre"), email = "opencode@example.invalid")
+Description: Command-line normalization workflow for gene or protein expression
+    matrices, supporting log2 transformation, z-score standardization, and
+    min-max scaling for row-wise or column-wise use cases.
+License: MIT
+Encoding: UTF-8
+Depends: R (>= 4.2.0)
+Imports:
+    optparse

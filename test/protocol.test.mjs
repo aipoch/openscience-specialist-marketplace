@@ -31,6 +31,14 @@ const testKeyPath = path.join(
   root,
   "protocol/fixtures/keys/test-only-private-key.pk8.b64",
 );
+const snakeCaseSpecialist = {
+  name: "FIXTURE_SPECIALIST",
+  display_name: "Fixture Specialist",
+  description: "Non-publishable protocol fixture",
+  system_prompt: "Help verify the Marketplace protocol.",
+  skill_ids: ["example-skill"],
+  connector_ids: ["example-connector"],
+};
 
 const emptyMarketplace = {
   schema_version: 1,
@@ -130,6 +138,155 @@ test("release builds are deterministic and App-export compatible", async () => {
   );
   assert.equal(a.descriptor.defaults.skill_ids[0], "example-skill");
   assert.equal(a.descriptor.defaults.connector_ids[0], "example-connector");
+  const archive = inspectZip(await readFile(a.zipPath));
+  assert.deepEqual(
+    Object.keys(
+      JSON.parse(archive.entries.get("specialist.json").toString("utf8")),
+    ),
+    ["name", "description", "system_prompt", "skill_ids", "connector_ids"],
+  );
+});
+
+test("release building accepts the Specialist package v1 snake_case contract", async () => {
+  const versionDirectory = await mkdtemp(
+    path.join(os.tmpdir(), "marketplace-snake-case-specialist-"),
+  );
+  await cp(fixtureVersion, versionDirectory, { recursive: true });
+  const specialistPath = path.join(versionDirectory, "package/specialist.json");
+  await writeFile(
+    specialistPath,
+    `${JSON.stringify(snakeCaseSpecialist, null, 2)}\n`,
+  );
+
+  const built = await buildRelease({
+    specialistId: "fixture-specialist",
+    version: "1.0.0",
+    versionDirectory,
+    outputDirectory: path.join(versionDirectory, "out"),
+  });
+  assert.deepEqual(built.descriptor.defaults, {
+    skill_ids: ["example-skill"],
+    connector_ids: ["example-connector"],
+  });
+});
+
+test("release building rejects camelCase Specialist package fields", async () => {
+  const versionDirectory = await mkdtemp(
+    path.join(os.tmpdir(), "marketplace-camel-case-specialist-"),
+  );
+  await cp(fixtureVersion, versionDirectory, { recursive: true });
+  const specialistPath = path.join(versionDirectory, "package/specialist.json");
+  await writeFile(
+    specialistPath,
+    `${JSON.stringify(
+      {
+        name: "FIXTURE_SPECIALIST",
+        description: "Non-publishable protocol fixture",
+        systemPrompt: "Help verify the Marketplace protocol.",
+        skillIds: ["example-skill"],
+        connectorIds: ["example-connector"],
+      },
+      null,
+      2,
+    )}\n`,
+  );
+
+  await assert.rejects(
+    buildRelease({
+      specialistId: "fixture-specialist",
+      version: "1.0.0",
+      versionDirectory,
+      outputDirectory: path.join(versionDirectory, "out"),
+      publishedHistory: true,
+    }),
+    /specialist\.json contains unknown field: systemPrompt/,
+  );
+});
+
+test("release building validates optional Specialist display_name", async () => {
+  const versionDirectory = await mkdtemp(
+    path.join(os.tmpdir(), "marketplace-specialist-display-name-"),
+  );
+  await cp(fixtureVersion, versionDirectory, { recursive: true });
+  const specialistPath = path.join(versionDirectory, "package/specialist.json");
+  await writeFile(
+    specialistPath,
+    `${JSON.stringify(
+      { ...snakeCaseSpecialist, display_name: 42 },
+      null,
+      2,
+    )}\n`,
+  );
+
+  await assert.rejects(
+    buildRelease({
+      specialistId: "fixture-specialist",
+      version: "1.0.0",
+      versionDirectory,
+      outputDirectory: path.join(versionDirectory, "out"),
+    }),
+    /specialist\.json display_name must be a non-empty string/,
+  );
+});
+
+test("release building requires a non-empty snake_case system_prompt", async () => {
+  const versionDirectory = await mkdtemp(
+    path.join(os.tmpdir(), "marketplace-specialist-system-prompt-"),
+  );
+  await cp(fixtureVersion, versionDirectory, { recursive: true });
+  const specialistPath = path.join(versionDirectory, "package/specialist.json");
+  await writeFile(
+    specialistPath,
+    `${JSON.stringify(
+      { ...snakeCaseSpecialist, system_prompt: " " },
+      null,
+      2,
+    )}\n`,
+  );
+
+  await assert.rejects(
+    buildRelease({
+      specialistId: "fixture-specialist",
+      version: "1.0.0",
+      versionDirectory,
+      outputDirectory: path.join(versionDirectory, "out"),
+    }),
+    /specialist\.json system_prompt must be a non-empty string/,
+  );
+});
+
+test("release building rejects invalid or duplicate snake_case reference arrays", async () => {
+  for (const [specialist, message] of [
+    [
+      { ...snakeCaseSpecialist, skill_ids: "example-skill" },
+      /specialist\.json skill_ids must be an array/,
+    ],
+    [
+      {
+        ...snakeCaseSpecialist,
+        connector_ids: ["example-connector", "example-connector"],
+      },
+      /duplicate specialist\.json connector_ids entry/,
+    ],
+  ]) {
+    const versionDirectory = await mkdtemp(
+      path.join(os.tmpdir(), "marketplace-specialist-references-"),
+    );
+    await cp(fixtureVersion, versionDirectory, { recursive: true });
+    await writeFile(
+      path.join(versionDirectory, "package/specialist.json"),
+      `${JSON.stringify(specialist, null, 2)}\n`,
+    );
+    await assert.rejects(
+      buildRelease({
+        specialistId: "fixture-specialist",
+        version: "1.0.0",
+        versionDirectory,
+        outputDirectory: path.join(versionDirectory, "out"),
+      }),
+      message,
+    );
+  }
 });
 
 test("ZIP inspection rejects traversal before extraction", () => {
@@ -380,7 +537,7 @@ test("release building rejects App package identity and default-reference drift"
   await cp(fixtureVersion, defaultFixture, { recursive: true });
   const specialistPath = path.join(defaultFixture, "package/specialist.json");
   const specialist = JSON.parse(await readFile(specialistPath, "utf8"));
-  specialist.connectorIds = [];
+  specialist.connector_ids = [];
   await writeFile(specialistPath, `${JSON.stringify(specialist, null, 2)}\n`);
   await assert.rejects(
     buildRelease({

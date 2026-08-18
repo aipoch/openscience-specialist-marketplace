@@ -68,8 +68,10 @@ See the [protocol specification](protocol/README.md), [contribution guide](CONTR
 ## Protocol compatibility
 
 Protocol schema v1 becomes immutable when consumed by a production App. Incompatible changes require
-a new protocol version. Published descriptors and ZIP bytes are never replaced; the shallow root may
-advance while historical versions remain available.
+a new protocol version. The snake_case `specialist.json` field contract is a one-time correction to
+v1; only the repository's historical verifier accepts the immutable, already-published
+`auto-research-specialist@1.0.0` camelCase artifact. Published descriptors and ZIP bytes are never
+replaced; the shallow root may advance while historical versions remain available.
 
 ## License
 
