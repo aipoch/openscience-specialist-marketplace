@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": "1",
+  "revision": "2",
   "marketplace": {
     "id": "openscience",
     "name": "OpenScience Specialist Marketplace"
@@ -16,10 +16,10 @@
         "url": "https://github.com/aipoch"
       },
       "latest": {
-        "version": "1.0.0",
+        "version": "1.0.1",
         "release": {
-          "path": "releases/auto-research-specialist/1.0.0.json",
-          "sha256": "44d0dc613ecaa150ca75d0044b09c919f2d1cb812fafff2f7f1a2597d2e78b51"
+          "path": "releases/auto-research-specialist/1.0.1.json",
+          "sha256": "ada8a6c4cab6685a2a400f497c35507bac7508baa79dc36ccaf8e63283d8f54b"
         }
       }
     }

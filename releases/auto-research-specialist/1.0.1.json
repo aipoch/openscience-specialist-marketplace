@@ -1,0 +1,472 @@
+{
+  "schema_version": 1,
+  "specialist_id": "auto-research-specialist",
+  "version": "1.0.1",
+  "source": {
+    "repository": "https://github.com/aipoch/medical-research-skills",
+    "commit": "f5ef65b9bea79b6dd9553f52f95b0d08f7d64d26",
+    "license": "MIT"
+  },
+  "artifact": {
+    "path": "specialists/auto-research-specialist/1.0.1/auto-research-specialist-1.0.1.zip",
+    "github_release": {
+      "tag": "auto-research-specialist-v1.0.1",
+      "asset_name": "auto-research-specialist-1.0.1.zip"
+    },
+    "sha256": "df80f139c7339efdf8f6a73a29181850075a222c25396b99aa5c613814373f04",
+    "compressed_bytes": 8464658,
+    "uncompressed_bytes": 16043315,
+    "file_count": 267
+  },
+  "defaults": {
+    "skill_ids": [
+      "clinical-question-clarifier",
+      "biomedical-search-strategy-builder",
+      "multi-database-literature-collector",
+      "topic-evidence-mapper",
+      "medical-research-gap-finder",
+      "novelty-vs-feasibility-assessor",
+      "primary-plan-recommender",
+      "medical-research-gap-to-study-planner",
+      "endpoint-definition-designer",
+      "medical-research-algorithm-matcher",
+      "validation-strategy-designer",
+      "geo-search-api",
+      "ena-database",
+      "gene-protein-expression-matrix-normalization",
+      "batch-effect-correction",
+      "pca-dimensionality-reduction",
+      "differential-expression-analysis",
+      "gsea",
+      "wgcna-analysis",
+      "lasso-logistics-analysis",
+      "external-model-validation",
+      "result-reliability-checker",
+      "methods-section-writer",
+      "results-section-writer",
+      "discussion-composer",
+      "claim-strength-calibrator",
+      "reference-integrity-checker"
+    ],
+    "connector_ids": [
+      "pubmed",
+      "literature",
+      "clinical-trials",
+      "biorxiv",
+      "genes",
+      "genomes",
+      "expression",
+      "protein-annotation",
+      "structures",
+      "rna",
+      "regulation",
+      "biomart",
+      "clinical-genomics",
+      "human-genetics",
+      "drug-regulatory",
+      "cancer-models",
+      "research-resources",
+      "chembl",
+      "chemistry",
+      "molecule",
+      "zinc",
+      "omics-archives",
+      "variants",
+      "cellguide"
+    ]
+  },
+  "skills": [
+    {
+      "id": "batch-effect-correction",
+      "name": "batch-effect-correction",
+      "display_name": "Batch Effect Correction",
+      "description": "Corrects known batch effects in bulk expression matrices while preserving biological groups.",
+      "path": "skills/batch-effect-correction",
+      "content_digest": "9c2947db05baabdba2f6337dc45d3634effbcb0db8f00ca22e17e28e370fca45",
+      "file_count": 17,
+      "uncompressed_bytes": 168729
+    },
+    {
+      "id": "biomedical-search-strategy-builder",
+      "name": "biomedical-search-strategy-builder",
+      "display_name": "Biomedical Search Strategy Builder",
+      "description": "Builds database-specific biomedical literature search strategies.",
+      "path": "skills/biomedical-search-strategy-builder",
+      "content_digest": "a01bef656ee0f98cec88cf8221dff04cfd4b811206804c0b1da52a349e9ac510",
+      "file_count": 5,
+      "uncompressed_bytes": 44811
+    },
+    {
+      "id": "claim-strength-calibrator",
+      "name": "claim-strength-calibrator",
+      "display_name": "Claim Strength Calibrator",
+      "description": "Aligns manuscript claims with the available evidence and validation level.",
+      "path": "skills/claim-strength-calibrator",
+      "content_digest": "1421449d55578371920aaceb90e97a3e43a1d71a68fe886fb5b5328e05c0334a",
+      "file_count": 8,
+      "uncompressed_bytes": 15845
+    },
+    {
+      "id": "clinical-question-clarifier",
+      "name": "clinical-question-clarifier",
+      "display_name": "Clinical Question Clarifier",
+      "description": "Turns broad clinical ideas into bounded and testable research questions.",
+      "path": "skills/clinical-question-clarifier",
+      "content_digest": "321a356859e4a22d6745846f7a4098b70c09967a77e4a17e549cd44acc409019",
+      "file_count": 11,
+      "uncompressed_bytes": 26468
+    },
+    {
+      "id": "differential-expression-analysis",
+      "name": "differential-expression-analysis",
+      "display_name": "Differential Expression Analysis",
+      "description": "Identifies differentially expressed genes in two-group bulk expression data.",
+      "path": "skills/differential-expression-analysis",
+      "content_digest": "6a1e53b62341ffaaf2b57924f0bba92ab3b769e20ae33eb5f2eae12f23a97e5f",
+      "file_count": 12,
+      "uncompressed_bytes": 6928665
+    },
+    {
+      "id": "discussion-composer",
+      "name": "discussion-composer",
+      "display_name": "Discussion Composer",
+      "description": "Drafts biomedical manuscript discussions from findings, context, and limitations.",
+      "path": "skills/discussion-composer",
+      "content_digest": "9266e6f6080af9a79bac0ce27e5aa9611a33a82f89752db668c46a00e1510de8",
+      "file_count": 3,
+      "uncompressed_bytes": 13880
+    },
+    {
+      "id": "ena-database",
+      "name": "ena-database",
+      "display_name": "ENA Database",
+      "description": "Searches and retrieves sequence records and metadata from the European Nucleotide Archive.",
+      "path": "skills/ena-database",
+      "content_digest": "807c13bfa82ef9e91a8757eb0124f6e123c57cd51383c3582f71e758b7f4b8ae",
+      "file_count": 2,
+      "uncompressed_bytes": 23191
+    },
+    {
+      "id": "endpoint-definition-designer",
+      "name": "endpoint-definition-designer",
+      "display_name": "Endpoint Definition Designer",
+      "description": "Defines operational primary, secondary, and exploratory study endpoints.",
+      "path": "skills/endpoint-definition-designer",
+      "content_digest": "f6ec94c36758d15749d3fc38e91476a7336f23a5f60047eb5cfac6e7315380f4",
+      "file_count": 11,
+      "uncompressed_bytes": 21641
+    },
+    {
+      "id": "external-model-validation",
+      "name": "external-model-validation",
+      "display_name": "External Model Validation",
+      "description": "Validates an existing prognostic signature against an external bulk expression cohort.",
+      "path": "skills/external-model-validation",
+      "content_digest": "a95dfa782a67a99c8ce1697df7b3cc2f6e2865d4bf9508f9b0de718b59791b8a",
+      "file_count": 17,
+      "uncompressed_bytes": 232185
+    },
+    {
+      "id": "gene-protein-expression-matrix-normalization",
+      "name": "gene-protein-expression-matrix-normalization",
+      "display_name": "Gene and Protein Expression Matrix Normalization",
+      "description": "Normalizes bulk gene or protein expression matrices for downstream analysis.",
+      "path": "skills/gene-protein-expression-matrix-normalization",
+      "content_digest": "059eccb371e43bed1b9ddf7e2a0fcabc6dd96151220ce8a86690eaa5de8e5914",
+      "file_count": 14,
+      "uncompressed_bytes": 1080779
+    },
+    {
+      "id": "geo-search-api",
+      "name": "geo-search-api",
+      "display_name": "GEO Search API",
+      "description": "Searches NCBI GEO datasets and profiles by structured metadata.",
+      "path": "skills/geo-search-api",
+      "content_digest": "fc0b2bcef28870879a79d49105faa005c899dab6607d53790204f467433544b5",
+      "file_count": 3,
+      "uncompressed_bytes": 12269
+    },
+    {
+      "id": "gsea",
+      "name": "gsea",
+      "display_name": "GSEA",
+      "description": "Runs gene set enrichment analysis on a ranked gene list.",
+      "path": "skills/gsea",
+      "content_digest": "4714ee6317c82e03dcca64dde59c30684036ff6c6b18a3abc2ea19afe4e5fdee",
+      "file_count": 11,
+      "uncompressed_bytes": 2883893
+    },
+    {
+      "id": "lasso-logistics-analysis",
+      "name": "lasso-logistics-analysis",
+      "display_name": "LASSO Logistic Regression Analysis",
+      "description": "Builds binary classifiers with LASSO logistic regression and cross-validation.",
+      "path": "skills/lasso-logistics-analysis",
+      "content_digest": "22ac45da3abbcac8b2b000aecc9323d8fe12dd8376c712e2b55770667cbed534",
+      "file_count": 20,
+      "uncompressed_bytes": 98599
+    },
+    {
+      "id": "medical-research-algorithm-matcher",
+      "name": "medical-research-algorithm-matcher",
+      "display_name": "Medical Research Algorithm Matcher",
+      "description": "Matches biomedical research objectives and data modalities to verified algorithms.",
+      "path": "skills/medical-research-algorithm-matcher",
+      "content_digest": "439d9c1e8aac593b871565dad3ce33997df48c76861460046c72c09a35384b97",
+      "file_count": 8,
+      "uncompressed_bytes": 22066
+    },
+    {
+      "id": "medical-research-gap-finder",
+      "name": "medical-research-gap-finder",
+      "display_name": "Medical Research Gap Finder",
+      "description": "Finds evidence-audited and study-ready gaps in biomedical research.",
+      "path": "skills/medical-research-gap-finder",
+      "content_digest": "819ebd0ccb1b07441e08b963cb00b6f0ad964970675b1810cd26d891b8c22830",
+      "file_count": 6,
+      "uncompressed_bytes": 23253
+    },
+    {
+      "id": "medical-research-gap-to-study-planner",
+      "name": "medical-research-gap-to-study-planner",
+      "display_name": "Medical Research Gap-to-Study Planner",
+      "description": "Converts an audited research gap into an executable study plan.",
+      "path": "skills/medical-research-gap-to-study-planner",
+      "content_digest": "2a5dc3c6236e31f5e2b7b76ee95fedd48837a811de84c9c1d8c10d38463deb0d",
+      "file_count": 10,
+      "uncompressed_bytes": 33335
+    },
+    {
+      "id": "methods-section-writer",
+      "name": "methods-section-writer",
+      "display_name": "Methods Section Writer",
+      "description": "Turns protocols and analysis workflows into publication-ready Methods text.",
+      "path": "skills/methods-section-writer",
+      "content_digest": "50006812b52a2f8c5aee11f4687d099a04af22d6abafdce57a3ebeb0e73d0f42",
+      "file_count": 4,
+      "uncompressed_bytes": 87372
+    },
+    {
+      "id": "multi-database-literature-collector",
+      "name": "multi-database-literature-collector",
+      "display_name": "Multi-Database Literature Collector",
+      "description": "Collects and normalizes verifiable biomedical literature across databases.",
+      "path": "skills/multi-database-literature-collector",
+      "content_digest": "613625f19c709996bfe7f4525690325154f9a933c1901dcda613756b679087eb",
+      "file_count": 10,
+      "uncompressed_bytes": 19713
+    },
+    {
+      "id": "novelty-vs-feasibility-assessor",
+      "name": "novelty-vs-feasibility-assessor",
+      "display_name": "Novelty vs. Feasibility Assessor",
+      "description": "Balances research novelty against practical feasibility and evidence quality.",
+      "path": "skills/novelty-vs-feasibility-assessor",
+      "content_digest": "d8137f2f4b8e01d35e980641c3bf4671f0dd6320c8a63b06e2816dcc72a17208",
+      "file_count": 15,
+      "uncompressed_bytes": 20057
+    },
+    {
+      "id": "pca-dimensionality-reduction",
+      "name": "pca-dimensionality-reduction",
+      "display_name": "PCA Dimensionality Reduction",
+      "description": "Runs principal component analysis on tabular numeric data.",
+      "path": "skills/pca-dimensionality-reduction",
+      "content_digest": "df0d138dc5ac9c2d32de2366a3a3b3b2f64f7de8fa9f2b52a299891cfaf566bb",
+      "file_count": 11,
+      "uncompressed_bytes": 3387384
+    },
+    {
+      "id": "primary-plan-recommender",
+      "name": "primary-plan-recommender",
+      "display_name": "Primary Plan Recommender",
+      "description": "Compares study routes and recommends a primary biomedical research plan.",
+      "path": "skills/primary-plan-recommender",
+      "content_digest": "1e225ecb71780fae9e7d4841beb188287121d04ef266515d657614c1aa6ef544",
+      "file_count": 10,
+      "uncompressed_bytes": 21908
+    },
+    {
+      "id": "reference-integrity-checker",
+      "name": "reference-integrity-checker",
+      "display_name": "Reference Integrity Checker",
+      "description": "Checks whether manuscript references accurately support their associated claims.",
+      "path": "skills/reference-integrity-checker",
+      "content_digest": "a9a06b5101b97d428328a72be9d0ac02585a8f3bc3f0555138675d23acc9108f",
+      "file_count": 8,
+      "uncompressed_bytes": 15728
+    },
+    {
+      "id": "result-reliability-checker",
+      "name": "result-reliability-checker",
+      "display_name": "Result Reliability Checker",
+      "description": "Audits study design, statistics, bias controls, validation, and claim discipline.",
+      "path": "skills/result-reliability-checker",
+      "content_digest": "505bb5d05faba1f0794e1f5b465014f8c4099bfbd61fddcee93818e25113258d",
+      "file_count": 8,
+      "uncompressed_bytes": 21617
+    },
+    {
+      "id": "results-section-writer",
+      "name": "results-section-writer",
+      "display_name": "Results Section Writer",
+      "description": "Writes a structured biomedical Results section from verified outputs.",
+      "path": "skills/results-section-writer",
+      "content_digest": "8e7e025437c3c48b763c384b7783f223ab3419b04ba7189835df112d382cd322",
+      "file_count": 9,
+      "uncompressed_bytes": 16395
+    },
+    {
+      "id": "topic-evidence-mapper",
+      "name": "topic-evidence-mapper",
+      "display_name": "Topic Evidence Mapper",
+      "description": "Maps research streams, populations, endpoints, methods, and evidence density.",
+      "path": "skills/topic-evidence-mapper",
+      "content_digest": "ad04d4e2c06795c35ee750f8f433157b99605fe34a53569d9e3aa80cc1c2fce0",
+      "file_count": 10,
+      "uncompressed_bytes": 16325
+    },
+    {
+      "id": "validation-strategy-designer",
+      "name": "validation-strategy-designer",
+      "display_name": "Validation Strategy Designer",
+      "description": "Designs internal, external, temporal, and functional validation strategies.",
+      "path": "skills/validation-strategy-designer",
+      "content_digest": "fad52ea8f5f9a3fcd40e2455c78d2c9117b4042f0e75b24f0fa87c5f8d740eba",
+      "file_count": 6,
+      "uncompressed_bytes": 14227
+    },
+    {
+      "id": "wgcna-analysis",
+      "name": "wgcna-analysis",
+      "display_name": "WGCNA Analysis",
+      "description": "Builds weighted gene co-expression networks from bulk expression matrices.",
+      "path": "skills/wgcna-analysis",
+      "content_digest": "058aa66cb5aa71387c6fec284c7011dfc2edbeeed29c0a138186c64520ae2201",
+      "file_count": 16,
+      "uncompressed_bytes": 770139
+    }
+  ],
+  "connectors": [
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "clinical-trials",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "biorxiv",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "genes",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "genomes",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "expression",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "protein-annotation",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "structures",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "rna",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "regulation",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "biomart",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "clinical-genomics",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "human-genetics",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "drug-regulatory",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "cancer-models",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "research-resources",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "chembl",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "chemistry",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "molecule",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "zinc",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "omics-archives",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "variants",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "cellguide",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
