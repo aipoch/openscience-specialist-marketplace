@@ -91,10 +91,7 @@ edit the `published` branch directly.
 ## Protocol changes
 
 Protocol v1 is immutable after production adoption. Discuss incompatible changes before implementation;
-they require a new schema and protocol version rather than edits to v1 contracts. The sole existing
-exception is the documented one-time snake_case correction for `specialist.json`: it preserves the
-immutable `auto-research-specialist@1.0.0` release through a historical-verification-only path and
-does not establish a general v1 compatibility policy.
+they require a new schema and protocol version rather than edits to v1 contracts.
 
 ## License
 

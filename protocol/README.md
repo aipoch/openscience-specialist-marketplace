@@ -30,9 +30,10 @@ a parsed or reserialized equivalent.
 - [`specialist-release.schema.json`](schemas/specialist-release.schema.json) defines an immutable
   version and its ZIP, Skills, and Connector references.
 
-Unknown fields fail validation. IDs match `^[a-z0-9][a-z0-9-]{0,127}$`; versions use SemVer; SHA-256
-digests are 64 lowercase hexadecimal characters. Paths are relative POSIX paths without absolute
-prefixes, backslashes, empty segments, `.` segments, or `..` segments.
+Unknown fields fail validation. IDs use strict lowercase kebab-case and match
+`^(?=.{1,128}$)[a-z0-9]+(?:-[a-z0-9]+)*$`; versions use SemVer; SHA-256 digests are 64 lowercase
+hexadecimal characters. Paths are relative POSIX paths without absolute prefixes, backslashes, empty
+segments, `.` segments, or `..` segments.
 
 Connector objects contain only `id`, `required`, and `default_selected`. They never carry tokens,
 credentials, environment variables, commands, endpoints, or executable server configuration.
@@ -69,9 +70,7 @@ Connectors must be default-selected.
 Protocol v1 `specialist.json` uses snake_case and contains required `name`, `description`,
 `system_prompt`, `skill_ids`, and `connector_ids`, plus optional `display_name`. Unknown fields,
 including the camelCase aliases `displayName`, `systemPrompt`, `skillIds`, and `connectorIds`, are
-rejected for new packages. The published `auto-research-specialist@1.0.0` artifact predates this
-clarification and is accepted only by the repository's historical-publication verifier; this is not
-an App import compatibility path.
+rejected.
 
 ## Trust model
 

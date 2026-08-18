@@ -106,7 +106,6 @@ export async function buildRelease({
   version,
   versionDirectory,
   outputDirectory,
-  publishedHistory = false,
 }) {
   if (!ID_PATTERN.test(specialistId))
     throw new Error(`invalid Specialist ID: ${specialistId}`);
@@ -123,7 +122,6 @@ export async function buildRelease({
   const manifest = parsePackageJson(archive.entries, "manifest.json");
   const specialist = parseSpecialistJson(
     parsePackageJson(archive.entries, "specialist.json"),
-    { specialistId, version, publishedHistory },
   );
   if (
     manifest.schema_version !== 1 ||

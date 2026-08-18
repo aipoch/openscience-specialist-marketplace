@@ -15,11 +15,11 @@ Connector configuration remain under the user's control in the App.
 establishes strict Protocol v1 validation, deterministic Specialist packaging, signed discovery,
 immutable publication, and independent verification of the GitHub and CDN copies.
 
-The initial authored catalog entry is Auto Research Specialist 1.0.0, with 27 biomedical research
+The initial authored catalog entry is Auto Research Specialist 1.0.1, with 27 biomedical research
 Skills and 24 Connector references exported for OpenScience App 0.16.0 compatibility. It must be
 published independently before it becomes installable. Project release tags such as `v0.1.0`
 describe this repository and its tooling; Specialist release tags such as
-`auto-research-specialist-v1.0.0` identify independently published installable packages.
+`auto-research-specialist-v1.0.1` identify independently published installable packages.
 
 See the [roadmap](ROADMAP.md) for the current delivery status and planned follow-up work.
 
@@ -68,10 +68,9 @@ See the [protocol specification](protocol/README.md), [contribution guide](CONTR
 ## Protocol compatibility
 
 Protocol schema v1 becomes immutable when consumed by a production App. Incompatible changes require
-a new protocol version. The snake_case `specialist.json` field contract is a one-time correction to
-v1; only the repository's historical verifier accepts the immutable, already-published
-`auto-research-specialist@1.0.0` camelCase artifact. Published descriptors and ZIP bytes are never
-replaced; the shallow root may advance while historical versions remain available.
+a new protocol version. Protocol v1 `specialist.json` fields use snake_case, and all stable IDs use
+strict lowercase kebab-case. Published descriptors and ZIP bytes are never replaced; the shallow
+root may advance while historical versions remain available.
 
 ## License
 

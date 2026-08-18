@@ -5,8 +5,8 @@ evidence retrieval through study design, analysis, validation, and manuscript dr
 
 ## Versions
 
-- `1.0.0` — initial Marketplace release with 27 bundled Skills and 24 Connector references.
-- `1.0.1` — adopts the Protocol v1 snake_case `specialist.json` package contract.
+- `1.0.1` — initial Marketplace release with 27 bundled Skills, 24 Connector references, and the
+  Protocol v1 snake_case `specialist.json` package contract.
 
 The package is authored in the OpenScience App export/import v1 layout. Connector entries are
 references only; credentials and executable Connector configuration are not included.
