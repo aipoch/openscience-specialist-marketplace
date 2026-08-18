@@ -48,6 +48,16 @@ npm test
 npm run validate
 ```
 
+Repository checks deliberately keep Marketplace tooling separate from versioned Specialist payloads:
+
+- `npm run format:check` skips `specialists/*/versions/*/package/skills/`, while continuing to
+  check Specialist descriptors and release metadata.
+- `npm test` runs only `test/**/*.test.mjs`; it does not discover tests shipped inside Specialist
+  Skill directories. Run tests for a changed Skill separately according to its upstream instructions
+  and include the evidence in the pull request.
+- `npm run validate` remains a full check: it builds every authored Specialist version and scans the
+  repository for safety violations. Do not replace it with a scoped check.
+
 For a single authored release, also run:
 
 ```bash

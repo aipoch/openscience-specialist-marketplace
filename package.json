@@ -11,7 +11,7 @@
     "check:immutability": "node scripts/check-published-immutability.mjs",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
-    "test": "node --test",
+    "test": "node --test \"test/**/*.test.mjs\"",
     "validate": "node scripts/validate.mjs",
     "verify:history": "node scripts/verify-release-history.mjs",
     "verify:marketplace": "node scripts/verify-marketplace.mjs"

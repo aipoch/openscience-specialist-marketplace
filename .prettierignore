@@ -1,0 +1,2 @@
+# Specialist Skill payloads are validated as packages, not formatted as repository tooling.
+specialists/*/versions/*/package/skills/
