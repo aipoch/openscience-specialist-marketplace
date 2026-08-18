@@ -1,0 +1,174 @@
+name: Purge Auto Research Specialist 1.0.0
+
+on:
+  workflow_dispatch:
+
+concurrency:
+  group: openscience-specialist-marketplace-publication
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  purge:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    environment: production
+    permissions:
+      contents: write
+    env:
+      DESCRIPTOR_PATH: releases/auto-research-specialist/1.0.0.json
+      RELEASE_TAG: auto-research-specialist-v1.0.0
+      RELEASE_ASSET: auto-research-specialist-1.0.0.zip
+      DESCRIPTOR_SHA256: 44d0dc613ecaa150ca75d0044b09c919f2d1cb812fafff2f7f1a2597d2e78b51
+      ARTIFACT_SHA256: fbd0c65719898507d98b831a8a2bd06c9121ab843a842bb023c780cc489baaa0
+      ARTIFACT_BYTES: "8464658"
+    steps:
+      - name: Check out exact main commit
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          ref: ${{ github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Require current main and inspect exact targets
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          [[ "$GITHUB_REF" == refs/heads/main ]] || {
+            echo "::error::Purge must be dispatched from main"
+            exit 1
+          }
+          git fetch origin main
+          git fetch origin published:refs/remotes/origin/published
+          [[ "$(git rev-parse origin/main)" == "$GITHUB_SHA" ]] || {
+            echo "::error::Purge commit is not the current main commit"
+            exit 1
+          }
+
+          mkdir -p dist/purge
+          git show origin/published:marketplace.json > dist/purge/marketplace.json
+          jq -e '
+            .specialists
+            | any(
+                .[];
+                .id == "auto-research-specialist"
+                and .latest.version == "1.0.1"
+                and .latest.release.path == "releases/auto-research-specialist/1.0.1.json"
+              )
+          ' dist/purge/marketplace.json >/dev/null || {
+            echo "::error::Marketplace root does not point to auto-research-specialist@1.0.1"
+            exit 1
+          }
+
+          if git cat-file -e "origin/published:${DESCRIPTOR_PATH}" 2>/dev/null; then
+            git show "origin/published:${DESCRIPTOR_PATH}" > dist/purge/descriptor.json
+            [[ "$(sha256sum dist/purge/descriptor.json | cut -d ' ' -f 1)" == "$DESCRIPTOR_SHA256" ]] || {
+              echo "::error::Published descriptor bytes do not match the approved purge target"
+              exit 1
+            }
+            jq -e \
+              --arg artifact_sha "$ARTIFACT_SHA256" \
+              --argjson artifact_bytes "$ARTIFACT_BYTES" \
+              '
+                .specialist_id == "auto-research-specialist"
+                and .version == "1.0.0"
+                and .artifact.github_release.tag == "auto-research-specialist-v1.0.0"
+                and .artifact.github_release.asset_name == "auto-research-specialist-1.0.0.zip"
+                and .artifact.sha256 == $artifact_sha
+                and .artifact.compressed_bytes == $artifact_bytes
+              ' dist/purge/descriptor.json >/dev/null
+            echo "DESCRIPTOR_EXISTS=true" >> "$GITHUB_ENV"
+          else
+            echo "DESCRIPTOR_EXISTS=false" >> "$GITHUB_ENV"
+          fi
+
+          if gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${RELEASE_TAG}" \
+            > dist/purge/release.json 2> dist/purge/release-error.log; then
+            jq -e \
+              --arg tag "$RELEASE_TAG" \
+              --arg asset "$RELEASE_ASSET" \
+              --arg digest "sha256:${ARTIFACT_SHA256}" \
+              --argjson size "$ARTIFACT_BYTES" \
+              '
+                .tag_name == $tag
+                and .draft == false
+                and .prerelease == false
+                and (.assets | length == 1)
+                and .assets[0].name == $asset
+                and .assets[0].digest == $digest
+                and .assets[0].size == $size
+              ' dist/purge/release.json >/dev/null || {
+                echo "::error::GitHub Release does not match the approved purge target"
+                exit 1
+              }
+            echo "RELEASE_EXISTS=true" >> "$GITHUB_ENV"
+          elif grep -q "HTTP 404" dist/purge/release-error.log; then
+            echo "RELEASE_EXISTS=false" >> "$GITHUB_ENV"
+          else
+            cat dist/purge/release-error.log >&2
+            exit 1
+          fi
+
+      - name: Remove published descriptor
+        if: env.DESCRIPTOR_EXISTS == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git config user.name github-actions[bot]
+          git config user.email 41898282+github-actions[bot]@users.noreply.github.com
+          git worktree add .worktree/published origin/published
+          git -C .worktree/published rm "$DESCRIPTOR_PATH"
+          git -C .worktree/published commit \
+            -m "chore(publishing): purge auto-research-specialist 1.0.0"
+          git -C .worktree/published push \
+            "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
+            HEAD:published
+
+      - name: Delete GitHub Release and tag
+        if: env.RELEASE_EXISTS == 'true'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: gh release delete "$RELEASE_TAG" --cleanup-tag --yes
+
+      - name: Verify GitHub purge
+        shell: bash
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          git fetch origin +refs/heads/published:refs/remotes/origin/published
+          if git cat-file -e "origin/published:${DESCRIPTOR_PATH}" 2>/dev/null; then
+            echo "::error::Published descriptor still exists"
+            exit 1
+          fi
+
+          if gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${RELEASE_TAG}" \
+            > /dev/null 2> dist/purge/final-release-error.log; then
+            echo "::error::GitHub Release still exists"
+            exit 1
+          elif ! grep -q "HTTP 404" dist/purge/final-release-error.log; then
+            cat dist/purge/final-release-error.log >&2
+            exit 1
+          fi
+
+          status=0
+          git ls-remote --exit-code origin "refs/tags/${RELEASE_TAG}" \
+            >/dev/null || status=$?
+          [[ "$status" -eq 2 ]] || {
+            echo "::error::Git tag still exists or could not be checked"
+            exit 1
+          }
+
+          {
+            echo "## GitHub release purged"
+            echo "- Removed published descriptor: ${DESCRIPTOR_PATH}"
+            echo "- Removed GitHub Release and tag: ${RELEASE_TAG}"
+            echo "- CDN cleanup remains a separate maintainer operation"
+          } >> "$GITHUB_STEP_SUMMARY"
