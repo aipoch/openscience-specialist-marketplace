@@ -1,0 +1,61 @@
+{
+  "source": {
+    "repository": "https://github.com/K-Dense-AI/scientific-agent-skills",
+    "commit": "36d8f13a1e754618794bf42f417884940077b4ae",
+    "license": "MIT AND CC-BY-4.0"
+  },
+  "marketplace": {
+    "display_name": "Multimodal Neuroimaging Connectomics Architect",
+    "summary": "Designs reproducible structural MRI, resting-state fMRI, diffusion MRI, and multimodal connectomics workflows with distortion, motion, exchangeability, and network-inference controls and no clinical diagnosis.",
+    "publisher": {
+      "id": "aipoch",
+      "name": "Aipoch",
+      "url": "https://github.com/aipoch"
+    }
+  },
+  "skills": [
+    {
+      "id": "bids",
+      "name": "bids",
+      "display_name": "BIDS",
+      "description": "Organizes, validates, converts, and queries Brain Imaging Data Structure datasets and derivatives.",
+      "path": "skills/bids"
+    },
+    {
+      "id": "scientific-visualization",
+      "name": "scientific-visualization",
+      "display_name": "Scientific Visualization",
+      "description": "Creates and audits truthful, accessible, publication-ready scientific figures and export settings.",
+      "path": "skills/scientific-visualization"
+    },
+    {
+      "id": "statistical-analysis",
+      "name": "statistical-analysis",
+      "display_name": "Statistical Analysis",
+      "description": "Guides test selection, assumptions, effect sizes, power, Bayesian alternatives, and transparent statistical reporting.",
+      "path": "skills/statistical-analysis"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "human-genetics",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "research-resources",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}

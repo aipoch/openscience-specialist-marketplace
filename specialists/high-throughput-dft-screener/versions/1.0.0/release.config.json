@@ -1,0 +1,56 @@
+{
+  "source": {
+    "repository": "https://github.com/K-Dense-AI/scientific-agent-skills",
+    "commit": "36d8f13a1e754618794bf42f417884940077b4ae",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "High-throughput DFT Screening Specialist",
+    "summary": "Designs convergence-tested, magnetism-aware, thermodynamically consistent high-throughput DFT screening workflows with uncertainty and stability gates instead of fabricated energies or universal settings.",
+    "publisher": {
+      "id": "aipoch",
+      "name": "Aipoch",
+      "url": "https://github.com/aipoch"
+    }
+  },
+  "skills": [
+    {
+      "id": "experimental-design",
+      "name": "experimental-design",
+      "display_name": "Experimental Design",
+      "description": "Designs randomized, blocked, factorial, response-surface, and sequential experiments while preventing confounding and pseudoreplication.",
+      "path": "skills/experimental-design"
+    },
+    {
+      "id": "pymatgen",
+      "name": "pymatgen",
+      "display_name": "pymatgen",
+      "description": "Validates, converts, and analyzes materials structures, symmetry, phase diagrams, and bounded Materials Project queries.",
+      "path": "skills/pymatgen"
+    },
+    {
+      "id": "uncertainty-and-units",
+      "name": "uncertainty-and-units",
+      "display_name": "Uncertainty and Units",
+      "description": "Audits units, dimensional consistency, plausibility, and measurement-uncertainty propagation in scientific calculations.",
+      "path": "skills/uncertainty-and-units"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "structures",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "research-resources",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}

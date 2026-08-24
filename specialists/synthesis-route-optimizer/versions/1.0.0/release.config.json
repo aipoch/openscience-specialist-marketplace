@@ -1,0 +1,61 @@
+{
+  "source": {
+    "repository": "https://github.com/K-Dense-AI/scientific-agent-skills",
+    "commit": "36d8f13a1e754618794bf42f417884940077b4ae",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Synthetic Route and Reaction Optimization Specialist",
+    "summary": "Designs evidence-grounded retrosynthesis, reaction-risk, staged optimization, scale-up, and green-chemistry plans for lawful targets without fabricating yields, costs, impurity levels, or process-safety results.",
+    "publisher": {
+      "id": "aipoch",
+      "name": "Aipoch",
+      "url": "https://github.com/aipoch"
+    }
+  },
+  "skills": [
+    {
+      "id": "experimental-design",
+      "name": "experimental-design",
+      "display_name": "Experimental Design",
+      "description": "Designs randomized, blocked, factorial, response-surface, and sequential experiments while preventing confounding and pseudoreplication.",
+      "path": "skills/experimental-design"
+    },
+    {
+      "id": "medchem",
+      "name": "medchem",
+      "display_name": "Medicinal Chemistry",
+      "description": "Audits medicinal-chemistry structures and property filters while preserving evidence and applicability boundaries.",
+      "path": "skills/medchem"
+    },
+    {
+      "id": "rdkit",
+      "name": "rdkit",
+      "display_name": "RDKit",
+      "description": "Validates molecular structures and supports reproducible descriptor, similarity, and substructure workflows with RDKit.",
+      "path": "skills/rdkit"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "chembl",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "zinc",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
