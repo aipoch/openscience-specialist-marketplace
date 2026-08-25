@@ -18,6 +18,7 @@ const marketplace = updateMarketplace({
   baseMarketplace,
   entry,
   releaseDescriptorBytes,
+  authorPolicy: args["author-policy"] || "include",
 });
 await writeFile(args.output, jsonBytes(marketplace));
 console.log(`Prepared Marketplace revision ${marketplace.revision}`);

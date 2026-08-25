@@ -7,9 +7,10 @@
   "marketplace": {
     "display_name": "Synthetic Route and Reaction Optimization Specialist",
     "summary": "Designs evidence-grounded retrosynthesis, reaction-risk, staged optimization, scale-up, and green-chemistry plans for lawful targets without fabricating yields, costs, impurity levels, or process-safety results.",
+    "author": "K-Dense Inc.",
     "publisher": {
       "id": "aipoch",
-      "name": "Aipoch",
+      "name": "AIPOCH",
       "url": "https://github.com/aipoch"
     }
   },

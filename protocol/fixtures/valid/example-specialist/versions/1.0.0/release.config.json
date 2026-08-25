@@ -7,6 +7,7 @@
   "marketplace": {
     "display_name": "Fixture Specialist",
     "summary": "A non-publishable Specialist used to verify the protocol toolchain.",
+    "author": "Fixture Author",
     "publisher": {
       "id": "fixture-publisher",
       "name": "Fixture Publisher",

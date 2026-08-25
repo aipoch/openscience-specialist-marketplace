@@ -56,6 +56,8 @@ jobs:
       SPECIALIST_ID: ${{ inputs.specialist_id }}
       SPECIALIST_IDS: ${{ inputs.specialist_ids }}
       MARKETPLACE_CDN_PREFIX: /open-science/specialist-marketplace/v1/
+      MARKETPLACE_AUTHOR_POLICY: ${{ vars.MARKETPLACE_AUTHOR_POLICY || 'omit' }}
+      MARKETPLACE_MIN_OPEN_SCIENCE_VERSION: ${{ vars.MARKETPLACE_MIN_OPEN_SCIENCE_VERSION }}
     steps:
       - name: Check out exact main commit
         uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
@@ -110,6 +112,22 @@ jobs:
             echo "::error::MARKETPLACE_CDN_BASE_URL must be an HTTPS origin without a path"
             missing=1
           }
+          case "$MARKETPLACE_AUTHOR_POLICY" in
+            omit) ;;
+            include)
+              if [[ -z "$MARKETPLACE_MIN_OPEN_SCIENCE_VERSION" ]] || \
+                 ! OPEN_SCIENCE_VERSION="$MARKETPLACE_MIN_OPEN_SCIENCE_VERSION" \
+                   node --input-type=module -e \
+                   'import { SEMVER_PATTERN } from "./scripts/lib/common.mjs"; process.exit(SEMVER_PATTERN.test(process.env.OPEN_SCIENCE_VERSION) ? 0 : 1)'; then
+                echo "::error::Author publication requires a valid minimum Open Science SemVer"
+                missing=1
+              fi
+              ;;
+            *)
+              echo "::error::MARKETPLACE_AUTHOR_POLICY must be omit or include"
+              missing=1
+              ;;
+          esac
           exit "$missing"
 
       - name: Mask AWS identity metadata
@@ -230,6 +248,7 @@ jobs:
               --base dist/marketplace.json \
               --entry "${candidate}/marketplace-entry.json" \
               --release "dist/releases/${specialist_id}/${version}.json" \
+              --author-policy "$MARKETPLACE_AUTHOR_POLICY" \
               --output dist/next-marketplace.json
             mv dist/next-marketplace.json dist/marketplace.json
           done < <(jq -r '.[] | [.specialist_id, .version] | @tsv' dist/publication-plan.json)
@@ -504,6 +523,10 @@ jobs:
             echo "## Published Specialists"
             echo "- Repository: ${GITHUB_REPOSITORY}"
             echo "- Marketplace revision: ${revision}"
+            echo "- Author policy: ${MARKETPLACE_AUTHOR_POLICY}"
+            if [[ "$MARKETPLACE_AUTHOR_POLICY" == include ]]; then
+              echo "- Minimum Open Science version: ${MARKETPLACE_MIN_OPEN_SCIENCE_VERSION}"
+            fi
             echo "- Signing key ID: ${MARKETPLACE_SIGNING_KEY_ID}"
             echo "- Public key fingerprint: ${MARKETPLACE_EXPECTED_KEY_FINGERPRINT}"
           } >> "$GITHUB_STEP_SUMMARY"

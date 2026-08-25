@@ -7,9 +7,10 @@
   "marketplace": {
     "display_name": "High-throughput DFT Screening Specialist",
     "summary": "Designs convergence-tested, magnetism-aware, thermodynamically consistent high-throughput DFT screening workflows with uncertainty and stability gates instead of fabricated energies or universal settings.",
+    "author": "K-Dense Inc.",
     "publisher": {
       "id": "aipoch",
-      "name": "Aipoch",
+      "name": "AIPOCH",
       "url": "https://github.com/aipoch"
     }
   },

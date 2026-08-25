@@ -7,9 +7,10 @@
   "marketplace": {
     "display_name": "Atmospheric Chemistry Transport Modeling Specialist",
     "summary": "Designs reproducible meteorology-chemistry transport, emissions, source-attribution, and nonlinear control-sensitivity studies for air pollution episodes without inventing model performance or policy effects.",
+    "author": "K-Dense Inc.",
     "publisher": {
       "id": "aipoch",
-      "name": "Aipoch",
+      "name": "AIPOCH",
       "url": "https://github.com/aipoch"
     }
   },

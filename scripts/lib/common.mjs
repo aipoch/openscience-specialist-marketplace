@@ -68,11 +68,11 @@ export function jsonBytes(value) {
   return Buffer.from(`${JSON.stringify(value, null, 2)}\n`);
 }
 
-export function assertExactKeys(value, keys, label) {
+export function assertExactKeys(value, keys, label, optionalKeys = []) {
   if (!value || typeof value !== "object" || Array.isArray(value)) {
     throw new Error(`${label} must be an object`);
   }
-  const expected = new Set(keys);
+  const expected = new Set([...keys, ...optionalKeys]);
   for (const key of Object.keys(value)) {
     if (!expected.has(key))
       throw new Error(`${label} contains unknown field: ${key}`);

@@ -7,9 +7,10 @@
   "marketplace": {
     "display_name": "Aerodynamics CFD Verification and Validation Specialist",
     "summary": "Designs evidence-bound aerodynamic CFD verification and validation workflows, including mesh convergence, numerical uncertainty, turbulence-model sensitivity, and comparison with experiments without inventing aerodynamic results.",
+    "author": "K-Dense Inc.",
     "publisher": {
       "id": "aipoch",
-      "name": "Aipoch",
+      "name": "AIPOCH",
       "url": "https://github.com/aipoch"
     }
   },

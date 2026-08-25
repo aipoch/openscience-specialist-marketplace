@@ -7,6 +7,7 @@
   "marketplace": {
     "display_name": "Literature Review Specialist",
     "summary": "Demonstrates a focused evidence-summary workflow for Marketplace contributors.",
+    "author": "AIPOCH",
     "publisher": {
       "id": "example-org",
       "name": "Example Organization",

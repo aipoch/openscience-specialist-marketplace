@@ -1,3 +1,5 @@
+import { isDeepStrictEqual } from "node:util";
+
 import { compareSemver, ID_PATTERN } from "./common.mjs";
 
 export function parsePublicationSpecialistIds({ specialistId, specialistIds }) {
@@ -26,10 +28,13 @@ export function parsePublicationSpecialistIds({ specialistId, specialistIds }) {
 export function findPublishedVersionChanges({
   changedPaths,
   publishedReleasePaths,
+  marketplaceOnlyReleaseConfigs = [],
 }) {
   const published = new Set(publishedReleasePaths);
+  const metadataOnly = new Set(marketplaceOnlyReleaseConfigs);
   const collisions = new Set();
   for (const changedPath of changedPaths) {
+    if (metadataOnly.has(changedPath)) continue;
     const match = changedPath.match(
       /^specialists\/([a-z0-9][a-z0-9-]{0,127})\/versions\/([^/]+)\//,
     );
@@ -38,6 +43,26 @@ export function findPublishedVersionChanges({
     }
   }
   return [...collisions].sort();
+}
+
+export function isMarketplaceOnlyReleaseConfigChange(before, after) {
+  if (
+    !before ||
+    typeof before !== "object" ||
+    Array.isArray(before) ||
+    !after ||
+    typeof after !== "object" ||
+    Array.isArray(after) ||
+    !("marketplace" in before) ||
+    !("marketplace" in after)
+  ) {
+    return false;
+  }
+  const beforeImmutable = structuredClone(before);
+  const afterImmutable = structuredClone(after);
+  delete beforeImmutable.marketplace;
+  delete afterImmutable.marketplace;
+  return isDeepStrictEqual(beforeImmutable, afterImmutable);
 }
 
 export function resolvePublicationVersion({

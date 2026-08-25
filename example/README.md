@@ -19,6 +19,7 @@ example/literature-review-specialist/
             ├── manifest.json
             ├── specialist.json
             ├── README.txt
+            ├── PACKAGE_NOTES.md
             └── skills/
                 └── evidence-summary/
                     └── SKILL.md
@@ -34,6 +35,12 @@ example/literature-review-specialist/
 - `skills/<skill-id>/SKILL.md` contains one bundled capability. Its directory, frontmatter `name`,
   release-config ID, and `specialist.json` entry use the same stable ID.
 - `README.txt` is optional package guidance shown here only to demonstrate its location.
+- `PACKAGE_NOTES.md` is an ordinary attachment. Attachments are safety-scanned with the complete ZIP
+  but are not installed or executed; only `skills/<skill-id>/...` enters the Specialist install.
+
+Marketplace `publisher` identifies the required publication and source subject with a stable ID,
+display name, and URL. Optional `author` is separate displayed authorship credit; missing, blank, or
+null values are omitted from generated listing data.
 
 Connector entries are references, not executable configuration. Never include endpoints, commands,
 environment variables, credentials, or tokens. The OpenScience App resolves a reference against its
@@ -44,8 +51,8 @@ own reviewed local Connector configuration.
 1. Copy `example/literature-review-specialist/` to `specialists/<your-specialist-id>/`.
 2. Choose a lowercase, hyphenated Specialist ID and keep it stable. Use it for the directory and
    `manifest.json` `id`.
-3. Replace the fictional source repository, 40-character commit SHA, license, publisher, and display
-   metadata in `release.config.json`.
+3. Replace the fictional source repository, 40-character commit SHA, license, publisher, author, and
+   display metadata in `release.config.json`.
 4. Replace the sample Specialist instructions and Skills with the unchanged App export you intend to
    publish. Keep every Skill ID and path aligned across all files.
 5. List only reviewed Connector IDs in strict lowercase kebab-case. A required Connector must also

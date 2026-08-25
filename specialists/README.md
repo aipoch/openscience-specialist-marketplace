@@ -19,22 +19,32 @@ specialists/<specialist-id>/
             │   └── <skill-id>/
             │       ├── SKILL.md
             │       └── ...
-            └── README.txt
+            ├── README.txt
+            └── ... optional ordinary attachments
 ```
 
-`README.txt` is optional. The contents of `package/` are zipped at the archive root and must remain
-compatible with OpenScience App export/import v1. Do not add a plugin manifest or `.claude-plugin`.
+`README.txt` and ordinary regular-file attachments such as licenses and supporting documents are
+optional. The ZIP root is not limited to a content whitelist. The complete contents of `package/`
+are zipped and safety-scanned, but only `skills/<skill-id>/...` enters the installed Specialist;
+other attachments are not installed or executed. Packages must remain compatible with OpenScience
+App export/import v1. Do not add a plugin manifest or `.claude-plugin`.
 
 `release.config.json` has four strict fields:
 
 - `source`: HTTPS `repository`, full 40-character lowercase `commit`, and `license`;
-- `marketplace`: `display_name`, `summary`, and publisher `id`, `name`, and HTTPS `url`;
+- `marketplace`: `display_name`, `summary`, optional `author`, and publisher `id`, `name`, and HTTPS
+  `url`;
 - `skills`: each Skill's stable `id`/`name`, display text, description, and canonical
   `skills/<skill-id>` path;
 - `connectors`: reference-only `id`, `required`, and `default_selected` flags.
 
 All Specialist, Skill, Connector, and publisher IDs use strict lowercase kebab-case: alphanumeric
 segments separated by single hyphens, with no leading or trailing hyphen.
+
+`publisher` is the required publication and source subject. Keep its stable ID, display name, and URL
+separate from `author`, which is optional displayed authorship credit. Author values are trimmed,
+limited to 160 characters, and omitted from generated listing data when missing, blank, or null.
+Official Publisher metadata uses ID `aipoch` and display name `AIPOCH`.
 
 `specialist.json` uses the Protocol v1 package contract: required `name`, `description`,
 `system_prompt`, `skill_ids`, and `connector_ids`, plus optional `display_name`. Unknown fields and

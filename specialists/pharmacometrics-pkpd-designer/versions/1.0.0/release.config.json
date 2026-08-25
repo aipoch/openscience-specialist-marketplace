@@ -7,9 +7,10 @@
   "marketplace": {
     "display_name": "Pharmacometrics PK/PD Design Specialist",
     "summary": "Designs unit-safe, uncertainty-aware NCA, population PK/PD, translational scaling, and dose-exploration workflows for research and regulatory planning without issuing patient-specific prescriptions.",
+    "author": "K-Dense Inc.",
     "publisher": {
       "id": "aipoch",
-      "name": "Aipoch",
+      "name": "AIPOCH",
       "url": "https://github.com/aipoch"
     }
   },

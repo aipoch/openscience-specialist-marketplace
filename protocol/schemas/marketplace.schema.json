@@ -51,6 +51,12 @@
         "id": { "$ref": "#/$defs/id" },
         "display_name": { "type": "string", "minLength": 1, "maxLength": 160 },
         "summary": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "author": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 160,
+          "pattern": "\\S"
+        },
         "publisher": {
           "type": "object",
           "additionalProperties": false,
