@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": "6",
+  "revision": "7",
   "marketplace": {
     "id": "openscience",
     "name": "OpenScience Specialist Marketplace"
@@ -88,6 +88,23 @@
         "release": {
           "path": "releases/cryoem-structure-validator/1.0.0.json",
           "sha256": "ddfdec089a7290e02639d8ef27728801bf46d04e6e41b3cdc31c18e0085fdaa9"
+        }
+      }
+    },
+    {
+      "id": "high-throughput-dft-screener",
+      "display_name": "High-throughput DFT Screening Specialist",
+      "summary": "Designs convergence-tested, magnetism-aware, thermodynamically consistent high-throughput DFT screening workflows with uncertainty and stability gates instead of fabricated energies or universal settings.",
+      "publisher": {
+        "id": "aipoch",
+        "name": "Aipoch",
+        "url": "https://github.com/aipoch"
+      },
+      "latest": {
+        "version": "1.0.0",
+        "release": {
+          "path": "releases/high-throughput-dft-screener/1.0.0.json",
+          "sha256": "fc8fd37ee74050d672fc882e4ab033d55fb9dbf4b0ab3d976d6fb5409ccbf193"
         }
       }
     }
