@@ -48,8 +48,22 @@ test("GitHub workflows are valid YAML documents", async () => {
   assert.equal(workflows["publish.yml"].jobs.publish["timeout-minutes"], 45);
   assert.deepEqual(
     Object.keys(workflows["publish.yml"].on.workflow_dispatch.inputs),
-    ["specialist_id"],
+    ["specialist_id", "specialist_ids"],
   );
+  assert.equal(
+    workflows["publish.yml"].on.workflow_dispatch.inputs.specialist_id.required,
+    false,
+  );
+  assert.equal(
+    workflows["publish.yml"].on.workflow_dispatch.inputs.specialist_ids
+      .required,
+    false,
+  );
+  assert.equal(workflows["publish.yml"].jobs.publish.environment, "production");
+  assert.deepEqual(workflows["publish.yml"].concurrency, {
+    group: "openscience-specialist-marketplace-publication",
+    "cancel-in-progress": false,
+  });
   assert.equal(
     workflows["verify-published.yml"].jobs.verify["timeout-minutes"],
     20,
@@ -123,11 +137,16 @@ test("GitHub workflows are valid YAML documents", async () => {
     /AWS_REGION|aws-region/,
   );
   const publishSteps = workflows["publish.yml"].jobs.publish.steps;
-  const resolveVersion = publishSteps.find(
-    (step) => step.name === "Resolve Specialist version",
+  const resolvePlan = publishSteps.find(
+    (step) => step.name === "Resolve Specialist publication plan",
   );
-  assert.match(resolveVersion.run, /resolve-publication-version\.mjs/);
-  assert.match(resolveVersion.run, /VERSION=\$version/);
+  assert.match(resolvePlan.run, /resolve-publication-plan\.mjs/);
+  assert.match(resolvePlan.run, /--specialist-ids/);
+  const parallelBuild = publishSteps.find(
+    (step) => step.name === "Build deterministic releases in parallel",
+  );
+  assert.match(parallelBuild.run, /--output "\$output" &/);
+  assert.match(parallelBuild.run, /wait "\$\{pids\[\$index\]\}"/);
   assert.doesNotMatch(
     JSON.stringify(workflows["publish.yml"]),
     /inputs\.version|source_commit_or_tag/,
@@ -180,11 +199,16 @@ test("GitHub workflows are valid YAML documents", async () => {
   assert.match(publishCommands, /Publication must be dispatched from main/);
   assert.match(publishCommands, /list-release-artifacts\.mjs/);
   assert.match(publishCommands, /--marketplace dist\/base-marketplace\.json/);
-  assert.match(publishCommands, /RELEASE_EXISTS=true/);
+  assert.match(publishCommands, /release-exists/);
   assert.match(publishCommands, /Existing GitHub Release must be public/);
   assert.match(publishCommands, /Existing CDN object bytes do not match/);
   assert.match(publishCommands, /cloudfront wait invalidation-completed/);
   assert.match(publishCommands, /--retry-all-errors/);
+  assert.match(publishCommands, /PUBLISHED_COMMIT=/);
+  assert.match(
+    publishCommands,
+    /raw="https:\/\/raw\.githubusercontent\.com\/\$\{GITHUB_REPOSITORY\}\/\$\{PUBLISHED_COMMIT\}\/"/,
+  );
   assert.doesNotMatch(publishCommands, /git fetch[^\n]+\|\| true/);
 
   const prepareCommands = workflows["publish.yml"].jobs.publish.steps.find(

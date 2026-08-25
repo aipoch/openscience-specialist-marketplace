@@ -5,7 +5,11 @@ on:
     inputs:
       specialist_id:
         description: Stable Specialist ID (version resolved from repository)
-        required: true
+        required: false
+        type: string
+      specialist_ids:
+        description: Comma- or whitespace-separated Specialist IDs for one batch
+        required: false
         type: string
 
 concurrency:
@@ -50,6 +54,7 @@ jobs:
       contents: write
     env:
       SPECIALIST_ID: ${{ inputs.specialist_id }}
+      SPECIALIST_IDS: ${{ inputs.specialist_ids }}
       MARKETPLACE_CDN_PREFIX: /open-science/specialist-marketplace/v1/
     steps:
       - name: Check out exact main commit
@@ -132,7 +137,7 @@ jobs:
       - name: Install pinned dependencies
         run: npm ci --ignore-scripts
 
-      - name: Resolve Specialist version
+      - name: Resolve Specialist publication plan
         shell: bash
         run: |
           set -euo pipefail
@@ -144,18 +149,45 @@ jobs:
             echo "::error::Unable to determine whether the published branch exists"
             exit 1
           fi
-          version="$(node scripts/resolve-publication-version.mjs \
-            --specialist-id "$SPECIALIST_ID" "${published_args[@]}")"
-          echo "VERSION=$version" >> "$GITHUB_ENV"
-          echo "Resolved ${SPECIALIST_ID}@${version} from reviewed repository content" \
-            >> "$GITHUB_STEP_SUMMARY"
+          input_args=()
+          if [[ -n "$SPECIALIST_ID" ]]; then
+            input_args+=(--specialist-id "$SPECIALIST_ID")
+          fi
+          if [[ -n "$SPECIALIST_IDS" ]]; then
+            input_args+=(--specialist-ids "$SPECIALIST_IDS")
+          fi
+          mkdir -p dist
+          node scripts/resolve-publication-plan.mjs \
+            "${input_args[@]}" "${published_args[@]}" \
+            > dist/publication-plan.json
+          while IFS=$'\t' read -r specialist_id version; do
+            echo "Resolved ${specialist_id}@${version} from reviewed repository content" \
+              >> "$GITHUB_STEP_SUMMARY"
+          done < <(jq -r '.[] | [.specialist_id, .version] | @tsv' dist/publication-plan.json)
 
-      - name: Build deterministic release
+      - name: Build deterministic releases in parallel
+        shell: bash
         run: |
-          npm run build:release -- \
-            --specialist-id "$SPECIALIST_ID" \
-            --version "$VERSION" \
-            --output dist
+          set -euo pipefail
+          pids=()
+          labels=()
+          while IFS=$'\t' read -r specialist_id version; do
+            output="dist/candidates/${specialist_id}"
+            npm run build:release -- \
+              --specialist-id "$specialist_id" \
+              --version "$version" \
+              --output "$output" &
+            pids+=("$!")
+            labels+=("${specialist_id}@${version}")
+          done < <(jq -r '.[] | [.specialist_id, .version] | @tsv' dist/publication-plan.json)
+          failed=0
+          for index in "${!pids[@]}"; do
+            if ! wait "${pids[$index]}"; then
+              echo "::error::Build failed for ${labels[$index]}"
+              failed=1
+            fi
+          done
+          exit "$failed"
 
       - name: Prepare candidate Marketplace
         shell: bash
@@ -185,12 +217,22 @@ jobs:
           else
             cp protocol/fixtures/valid/empty-marketplace.json dist/base-marketplace.json
           fi
-          release_path="dist/releases/${SPECIALIST_ID}/${VERSION}.json"
-          node scripts/update-marketplace.mjs \
-            --base dist/base-marketplace.json \
-            --entry dist/marketplace-entry.json \
-            --release "$release_path" \
-            --output dist/marketplace.json
+          cp dist/base-marketplace.json dist/marketplace.json
+          while IFS=$'\t' read -r specialist_id version; do
+            candidate="dist/candidates/${specialist_id}"
+            mkdir -p "dist/releases/${specialist_id}" \
+              "dist/specialists/${specialist_id}/${version}"
+            cp "${candidate}/releases/${specialist_id}/${version}.json" \
+              "dist/releases/${specialist_id}/${version}.json"
+            cp "${candidate}/specialists/${specialist_id}/${version}/${specialist_id}-${version}.zip" \
+              "dist/specialists/${specialist_id}/${version}/${specialist_id}-${version}.zip"
+            node scripts/update-marketplace.mjs \
+              --base dist/marketplace.json \
+              --entry "${candidate}/marketplace-entry.json" \
+              --release "dist/releases/${specialist_id}/${version}.json" \
+              --output dist/next-marketplace.json
+            mv dist/next-marketplace.json dist/marketplace.json
+          done < <(jq -r '.[] | [.specialist_id, .version] | @tsv' dist/publication-plan.json)
 
       - name: Sign candidate Marketplace
         env:
@@ -218,53 +260,56 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
-          tag="${SPECIALIST_ID}-v${VERSION}"
-          asset="${SPECIALIST_ID}-${VERSION}.zip"
-          expected_asset="dist/specialists/${SPECIALIST_ID}/${VERSION}/${asset}"
-          mkdir -p dist/existing-release
-          if gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${tag}" \
-            > dist/existing-release/release.json \
-            2> dist/existing-release/error.log; then
-            target="$(jq -r '.target_commitish' dist/existing-release/release.json)"
-            draft="$(jq -r '.draft' dist/existing-release/release.json)"
-            prerelease="$(jq -r '.prerelease' dist/existing-release/release.json)"
-            if ! [[ "$target" =~ ^[0-9a-f]{40}$ ]] || \
-               ! git merge-base --is-ancestor "$target" "$GITHUB_SHA"; then
-              echo "::error::Existing GitHub Release target is not an ancestor of the current main commit"
+          while IFS=$'\t' read -r specialist_id version; do
+            tag="${specialist_id}-v${version}"
+            asset="${specialist_id}-${version}.zip"
+            expected_asset="dist/specialists/${specialist_id}/${version}/${asset}"
+            state="dist/publication-state/${specialist_id}"
+            existing="${state}/existing-release"
+            mkdir -p "$existing"
+            echo false > "${state}/release-exists"
+            if gh api "repos/${GITHUB_REPOSITORY}/releases/tags/${tag}" \
+              > "${existing}/release.json" \
+              2> "${existing}/error.log"; then
+              target="$(jq -r '.target_commitish' "${existing}/release.json")"
+              draft="$(jq -r '.draft' "${existing}/release.json")"
+              prerelease="$(jq -r '.prerelease' "${existing}/release.json")"
+              if ! [[ "$target" =~ ^[0-9a-f]{40}$ ]] || \
+                 ! git merge-base --is-ancestor "$target" "$GITHUB_SHA"; then
+                echo "::error::Existing GitHub Release target is not an ancestor of the current main commit"
+                exit 1
+              fi
+              git fetch origin "refs/tags/${tag}:refs/tags/${tag}"
+              [[ "$(git rev-list -n 1 "$tag")" == "$target" ]] || {
+                echo "::error::Existing GitHub Release tag does not match its immutable target"
+                exit 1
+              }
+              [[ "$draft" == false && "$prerelease" == false ]] || {
+                echo "::error::Existing GitHub Release must be public and non-prerelease"
+                exit 1
+              }
+              gh release download "$tag" --pattern "$asset" --dir "$existing"
+              cmp "$expected_asset" "${existing}/${asset}" || {
+                echo "::error::Existing GitHub Release asset bytes do not match"
+                exit 1
+              }
+              echo true > "${state}/release-exists"
+            elif ! grep -q "HTTP 404" "${existing}/error.log"; then
+              cat "${existing}/error.log" >&2
               exit 1
             fi
-            git fetch origin "refs/tags/${tag}:refs/tags/${tag}"
-            [[ "$(git rev-list -n 1 "$tag")" == "$target" ]] || {
-              echo "::error::Existing GitHub Release tag does not match its immutable target"
-              exit 1
-            }
-            [[ "$draft" == false && "$prerelease" == false ]] || {
-              echo "::error::Existing GitHub Release must be public and non-prerelease"
-              exit 1
-            }
-            gh release download "$tag" --pattern "$asset" --dir dist/existing-release
-            cmp "$expected_asset" "dist/existing-release/${asset}" || {
-              echo "::error::Existing GitHub Release asset bytes do not match"
-              exit 1
-            }
-            echo "RELEASE_EXISTS=true" >> "$GITHUB_ENV"
-          elif grep -q "HTTP 404" dist/existing-release/error.log; then
-            echo "RELEASE_EXISTS=false" >> "$GITHUB_ENV"
-          else
-            cat dist/existing-release/error.log >&2
-            exit 1
-          fi
 
-          if git show-ref --verify --quiet refs/remotes/origin/published && \
-             git cat-file -e "origin/published:releases/${SPECIALIST_ID}/${VERSION}.json" 2>/dev/null; then
-            git show "origin/published:releases/${SPECIALIST_ID}/${VERSION}.json" \
-              > dist/existing-release/descriptor.json
-            cmp "dist/releases/${SPECIALIST_ID}/${VERSION}.json" \
-              dist/existing-release/descriptor.json || {
-              echo "::error::Existing published release descriptor bytes do not match"
-              exit 1
-            }
-          fi
+            if git show-ref --verify --quiet refs/remotes/origin/published && \
+               git cat-file -e "origin/published:releases/${specialist_id}/${version}.json" 2>/dev/null; then
+              git show "origin/published:releases/${specialist_id}/${version}.json" \
+                > "${existing}/descriptor.json"
+              cmp "dist/releases/${specialist_id}/${version}.json" \
+                "${existing}/descriptor.json" || {
+                echo "::error::Existing published release descriptor bytes do not match"
+                exit 1
+              }
+            fi
+          done < <(jq -r '.[] | [.specialist_id, .version] | @tsv' dist/publication-plan.json)
 
       - name: Stage and verify exact CDN bytes
         shell: bash
@@ -277,11 +322,9 @@ jobs:
           prefix="${MARKETPLACE_CDN_PREFIX#/}"
           prefix="${prefix%/}"
           stage="${prefix}/staging/${GITHUB_RUN_ID}/${GITHUB_RUN_ATTEMPT}"
-          descriptor="releases/${SPECIALIST_ID}/${VERSION}.json"
-          artifact="specialists/${SPECIALIST_ID}/${VERSION}/${SPECIALIST_ID}-${VERSION}.zip"
 
           reconcile_object() {
-            local object="$1" expected="$2" state_name="$3" existing="$4"
+            local object="$1" expected="$2" state_file="$3" existing="$4"
             if aws s3api head-object --bucket "$MARKETPLACE_BUCKET" \
               --key "${prefix}/${object}" >/dev/null 2>dist/cdn-head-error.log; then
               aws s3 cp "s3://${MARKETPLACE_BUCKET}/${prefix}/${object}" "$existing" --only-show-errors
@@ -289,47 +332,58 @@ jobs:
                 echo "::error::Existing CDN object bytes do not match: ${object}"
                 exit 1
               }
-              echo "${state_name}=true" >> "$GITHUB_ENV"
+              echo true > "$state_file"
             elif grep -Eq "\(404\)|Not Found" dist/cdn-head-error.log; then
-              echo "${state_name}=false" >> "$GITHUB_ENV"
+              echo false > "$state_file"
             else
               cat dist/cdn-head-error.log >&2
               exit 1
             fi
           }
 
-          mkdir -p dist/existing-cdn
-          reconcile_object "$descriptor" "dist/${descriptor}" \
-            DESCRIPTOR_EXISTS dist/existing-cdn/descriptor.json
-          reconcile_object "$artifact" "dist/${artifact}" \
-            ARTIFACT_EXISTS dist/existing-cdn/artifact.zip
-
           aws s3 cp dist/marketplace.json "s3://${MARKETPLACE_BUCKET}/${stage}/marketplace.json" --content-type application/json --cache-control no-cache --only-show-errors
           aws s3 cp dist/marketplace.json.sig "s3://${MARKETPLACE_BUCKET}/${stage}/marketplace.json.sig" --content-type application/json --cache-control no-cache --only-show-errors
-          aws s3 cp "dist/${descriptor}" "s3://${MARKETPLACE_BUCKET}/${stage}/${descriptor}" --content-type application/json --cache-control 'public,max-age=31536000,immutable' --only-show-errors
-          aws s3 cp "dist/${artifact}" "s3://${MARKETPLACE_BUCKET}/${stage}/${artifact}" --content-type application/zip --cache-control 'public,max-age=31536000,immutable' --only-show-errors
-          mkdir -p dist/staged/releases dist/staged/artifact
+          mkdir -p dist/staged
           aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/marketplace.json" dist/staged/marketplace.json --only-show-errors
           aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/marketplace.json.sig" dist/staged/marketplace.json.sig --only-show-errors
-          aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${descriptor}" dist/staged/releases/release.json --only-show-errors
-          aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${artifact}" dist/staged/artifact/release.zip --only-show-errors
           cmp dist/marketplace.json dist/staged/marketplace.json
           cmp dist/marketplace.json.sig dist/staged/marketplace.json.sig
-          cmp "dist/${descriptor}" dist/staged/releases/release.json
-          cmp "dist/${artifact}" dist/staged/artifact/release.zip
+          while IFS=$'\t' read -r specialist_id version; do
+            descriptor="releases/${specialist_id}/${version}.json"
+            artifact="specialists/${specialist_id}/${version}/${specialist_id}-${version}.zip"
+            state="dist/publication-state/${specialist_id}"
+            existing="${state}/existing-cdn"
+            mkdir -p "$existing" "dist/staged/$(dirname "$descriptor")" \
+              "dist/staged/$(dirname "$artifact")"
+            reconcile_object "$descriptor" "dist/${descriptor}" \
+              "${state}/descriptor-exists" "${existing}/descriptor.json"
+            reconcile_object "$artifact" "dist/${artifact}" \
+              "${state}/artifact-exists" "${existing}/artifact.zip"
+            aws s3 cp "dist/${descriptor}" "s3://${MARKETPLACE_BUCKET}/${stage}/${descriptor}" --content-type application/json --cache-control 'public,max-age=31536000,immutable' --only-show-errors
+            aws s3 cp "dist/${artifact}" "s3://${MARKETPLACE_BUCKET}/${stage}/${artifact}" --content-type application/zip --cache-control 'public,max-age=31536000,immutable' --only-show-errors
+            aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${descriptor}" "dist/staged/${descriptor}" --only-show-errors
+            aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${artifact}" "dist/staged/${artifact}" --only-show-errors
+            cmp "dist/${descriptor}" "dist/staged/${descriptor}"
+            cmp "dist/${artifact}" "dist/staged/${artifact}"
+          done < <(jq -r '.[] | [.specialist_id, .version] | @tsv' dist/publication-plan.json)
 
-      - name: Create immutable GitHub Release
-        if: env.RELEASE_EXISTS != 'true'
+      - name: Create immutable GitHub Releases
         shell: bash
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          tag="${SPECIALIST_ID}-v${VERSION}"
-          asset="dist/specialists/${SPECIALIST_ID}/${VERSION}/${SPECIALIST_ID}-${VERSION}.zip"
-          gh release create "$tag" "$asset" \
-            --target "$GITHUB_SHA" \
-            --title "${SPECIALIST_ID} ${VERSION}" \
-            --notes "Immutable OpenScience Specialist release ${SPECIALIST_ID}@${VERSION}."
+          set -euo pipefail
+          while IFS=$'\t' read -r specialist_id version; do
+            if [[ "$(<"dist/publication-state/${specialist_id}/release-exists")" == true ]]; then
+              continue
+            fi
+            tag="${specialist_id}-v${version}"
+            asset="dist/specialists/${specialist_id}/${version}/${specialist_id}-${version}.zip"
+            gh release create "$tag" "$asset" \
+              --target "$GITHUB_SHA" \
+              --title "${specialist_id} ${version}" \
+              --notes "Immutable OpenScience Specialist release ${specialist_id}@${version}."
+          done < <(jq -r '.[] | [.specialist_id, .version] | @tsv' dist/publication-plan.json)
 
       - name: Update published branch with verified metadata
         shell: bash
@@ -345,20 +399,23 @@ jobs:
             git worktree add --detach .worktree/published
             git -C .worktree/published switch --orphan published
           fi
-          mkdir -p ".worktree/published/releases/${SPECIALIST_ID}"
           cp dist/marketplace.json .worktree/published/marketplace.json
           cp dist/marketplace.json.sig .worktree/published/marketplace.json.sig
-          cp "dist/releases/${SPECIALIST_ID}/${VERSION}.json" \
-            ".worktree/published/releases/${SPECIALIST_ID}/${VERSION}.json"
+          while IFS=$'\t' read -r specialist_id version; do
+            mkdir -p ".worktree/published/releases/${specialist_id}"
+            cp "dist/releases/${specialist_id}/${version}.json" \
+              ".worktree/published/releases/${specialist_id}/${version}.json"
+          done < <(jq -r '.[] | [.specialist_id, .version] | @tsv' dist/publication-plan.json)
           git -C .worktree/published add marketplace.json marketplace.json.sig releases
           if git -C .worktree/published diff --cached --quiet; then
             echo "Published metadata already matches the candidate"
           else
-            git -C .worktree/published commit -m "feat(publishing): publish ${SPECIALIST_ID} ${VERSION}"
+            git -C .worktree/published commit -m "feat(publishing): publish Specialist batch"
             git -C .worktree/published push \
               "https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" \
               HEAD:published
           fi
+          echo "PUBLISHED_COMMIT=$(git -C .worktree/published rev-parse HEAD)" >> "$GITHUB_ENV"
 
       - name: Promote immutable CDN objects and stable root
         shell: bash
@@ -372,14 +429,17 @@ jobs:
           prefix="${MARKETPLACE_CDN_PREFIX#/}"
           prefix="${prefix%/}"
           stage="${prefix}/staging/${GITHUB_RUN_ID}/${GITHUB_RUN_ATTEMPT}"
-          descriptor="releases/${SPECIALIST_ID}/${VERSION}.json"
-          artifact="specialists/${SPECIALIST_ID}/${VERSION}/${SPECIALIST_ID}-${VERSION}.zip"
-          if [[ "$DESCRIPTOR_EXISTS" != true ]]; then
-            aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${descriptor}" "s3://${MARKETPLACE_BUCKET}/${prefix}/${descriptor}" --copy-props none --content-type application/json --cache-control 'public,max-age=31536000,immutable' --only-show-errors
-          fi
-          if [[ "$ARTIFACT_EXISTS" != true ]]; then
-            aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${artifact}" "s3://${MARKETPLACE_BUCKET}/${prefix}/${artifact}" --copy-props none --content-type application/zip --cache-control 'public,max-age=31536000,immutable' --only-show-errors
-          fi
+          while IFS=$'\t' read -r specialist_id version; do
+            descriptor="releases/${specialist_id}/${version}.json"
+            artifact="specialists/${specialist_id}/${version}/${specialist_id}-${version}.zip"
+            state="dist/publication-state/${specialist_id}"
+            if [[ "$(<"${state}/descriptor-exists")" != true ]]; then
+              aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${descriptor}" "s3://${MARKETPLACE_BUCKET}/${prefix}/${descriptor}" --copy-props none --content-type application/json --cache-control 'public,max-age=31536000,immutable' --only-show-errors
+            fi
+            if [[ "$(<"${state}/artifact-exists")" != true ]]; then
+              aws s3 cp "s3://${MARKETPLACE_BUCKET}/${stage}/${artifact}" "s3://${MARKETPLACE_BUCKET}/${prefix}/${artifact}" --copy-props none --content-type application/zip --cache-control 'public,max-age=31536000,immutable' --only-show-errors
+            fi
+          done < <(jq -r '.[] | [.specialist_id, .version] | @tsv' dist/publication-plan.json)
           aws s3 cp dist/marketplace.json "s3://${MARKETPLACE_BUCKET}/${prefix}/marketplace.json" --content-type application/json --cache-control no-cache --only-show-errors
           aws s3 cp dist/marketplace.json.sig "s3://${MARKETPLACE_BUCKET}/${prefix}/marketplace.json.sig" --content-type application/json --cache-control no-cache --only-show-errors
           invalidation_id="$(aws cloudfront create-invalidation \
@@ -400,9 +460,7 @@ jobs:
         run: |
           set -euo pipefail
           base="${MARKETPLACE_CDN_BASE_URL%/}${MARKETPLACE_CDN_PREFIX}"
-          raw="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/published/"
-          descriptor="releases/${SPECIALIST_ID}/${VERSION}.json"
-          artifact="specialists/${SPECIALIST_ID}/${VERSION}/${SPECIALIST_ID}-${VERSION}.zip"
+          raw="https://raw.githubusercontent.com/${GITHUB_REPOSITORY}/${PUBLISHED_COMMIT}/"
           mkdir -p dist/final/github dist/final/cdn
           download() {
             curl --fail --silent --show-error \
@@ -412,20 +470,28 @@ jobs:
           }
           download "${raw}marketplace.json" dist/final/github/marketplace.json
           download "${raw}marketplace.json.sig" dist/final/github/marketplace.json.sig
-          download "${raw}${descriptor}" dist/final/github/release.json
-          gh release download "${SPECIALIST_ID}-v${VERSION}" --pattern "${SPECIALIST_ID}-${VERSION}.zip" --dir dist/final/github
           download "${base}marketplace.json" dist/final/cdn/marketplace.json
           download "${base}marketplace.json.sig" dist/final/cdn/marketplace.json.sig
-          download "${base}${descriptor}" dist/final/cdn/release.json
-          download "${base}${artifact}" dist/final/cdn/release.zip
           cmp dist/marketplace.json dist/final/github/marketplace.json
           cmp dist/marketplace.json dist/final/cdn/marketplace.json
           cmp dist/marketplace.json.sig dist/final/github/marketplace.json.sig
           cmp dist/marketplace.json.sig dist/final/cdn/marketplace.json.sig
-          cmp "dist/${descriptor}" dist/final/github/release.json
-          cmp "dist/${descriptor}" dist/final/cdn/release.json
-          cmp "dist/${artifact}" "dist/final/github/${SPECIALIST_ID}-${VERSION}.zip"
-          cmp "dist/${artifact}" dist/final/cdn/release.zip
+          while IFS=$'\t' read -r specialist_id version; do
+            descriptor="releases/${specialist_id}/${version}.json"
+            artifact="specialists/${specialist_id}/${version}/${specialist_id}-${version}.zip"
+            github_dir="dist/final/github/${specialist_id}"
+            cdn_dir="dist/final/cdn/${specialist_id}"
+            mkdir -p "$github_dir" "$cdn_dir"
+            download "${raw}${descriptor}" "${github_dir}/release.json"
+            gh release download "${specialist_id}-v${version}" \
+              --pattern "${specialist_id}-${version}.zip" --dir "$github_dir"
+            download "${base}${descriptor}" "${cdn_dir}/release.json"
+            download "${base}${artifact}" "${cdn_dir}/release.zip"
+            cmp "dist/${descriptor}" "${github_dir}/release.json"
+            cmp "dist/${descriptor}" "${cdn_dir}/release.json"
+            cmp "dist/${artifact}" "${github_dir}/${specialist_id}-${version}.zip"
+            cmp "dist/${artifact}" "${cdn_dir}/release.zip"
+          done < <(jq -r '.[] | [.specialist_id, .version] | @tsv' dist/publication-plan.json)
 
       - name: Write public publication summary
         shell: bash
@@ -433,14 +499,19 @@ jobs:
           MARKETPLACE_SIGNING_KEY_ID: ${{ vars.MARKETPLACE_SIGNING_KEY_ID }}
           MARKETPLACE_EXPECTED_KEY_FINGERPRINT: ${{ vars.MARKETPLACE_EXPECTED_KEY_FINGERPRINT }}
         run: |
-          artifact_sha="$(node -p "JSON.parse(require('fs').readFileSync('dist/releases/${SPECIALIST_ID}/${VERSION}.json')).artifact.sha256")"
           revision="$(node -p "JSON.parse(require('fs').readFileSync('dist/marketplace.json')).revision")"
           {
-            echo "## Published Specialist"
+            echo "## Published Specialists"
             echo "- Repository: ${GITHUB_REPOSITORY}"
-            echo "- Tag: ${SPECIALIST_ID}-v${VERSION}"
             echo "- Marketplace revision: ${revision}"
-            echo "- Artifact SHA-256: ${artifact_sha}"
             echo "- Signing key ID: ${MARKETPLACE_SIGNING_KEY_ID}"
             echo "- Public key fingerprint: ${MARKETPLACE_EXPECTED_KEY_FINGERPRINT}"
           } >> "$GITHUB_STEP_SUMMARY"
+          while IFS=$'\t' read -r specialist_id version; do
+            artifact_sha="$(node -p "JSON.parse(require('fs').readFileSync('dist/releases/${specialist_id}/${version}.json')).artifact.sha256")"
+            {
+              echo "- ${specialist_id}@${version}"
+              echo "  - Tag: ${specialist_id}-v${version}"
+              echo "  - Artifact SHA-256: ${artifact_sha}"
+            } >> "$GITHUB_STEP_SUMMARY"
+          done < <(jq -r '.[] | [.specialist_id, .version] | @tsv' dist/publication-plan.json)
