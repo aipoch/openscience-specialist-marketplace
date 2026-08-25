@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "specialist_id": "synthesis-route-optimizer",
+  "version": "1.0.0",
+  "source": {
+    "repository": "https://github.com/K-Dense-AI/scientific-agent-skills",
+    "commit": "36d8f13a1e754618794bf42f417884940077b4ae",
+    "license": "MIT"
+  },
+  "artifact": {
+    "path": "specialists/synthesis-route-optimizer/1.0.0/synthesis-route-optimizer-1.0.0.zip",
+    "github_release": {
+      "tag": "synthesis-route-optimizer-v1.0.0",
+      "asset_name": "synthesis-route-optimizer-1.0.0.zip"
+    },
+    "sha256": "d8b99f176278dab1cd54081bd760916a4dba01e5b0e436055c6253497ff12da2",
+    "compressed_bytes": 80908,
+    "uncompressed_bytes": 210073,
+    "file_count": 23
+  },
+  "defaults": {
+    "skill_ids": [
+      "experimental-design",
+      "medchem",
+      "rdkit"
+    ],
+    "connector_ids": [
+      "chembl",
+      "literature",
+      "zinc",
+      "pubmed"
+    ]
+  },
+  "skills": [
+    {
+      "id": "experimental-design",
+      "name": "experimental-design",
+      "display_name": "Experimental Design",
+      "description": "Designs randomized, blocked, factorial, response-surface, and sequential experiments while preventing confounding and pseudoreplication.",
+      "path": "skills/experimental-design",
+      "content_digest": "0b0c009f12b72f8d3b5712c08ad21bfafded2310963a4c85aaa4add83d241933",
+      "file_count": 7,
+      "uncompressed_bytes": 53960
+    },
+    {
+      "id": "medchem",
+      "name": "medchem",
+      "display_name": "Medicinal Chemistry",
+      "description": "Audits medicinal-chemistry structures and property filters while preserving evidence and applicability boundaries.",
+      "path": "skills/medchem",
+      "content_digest": "502c6e347b55186254cb36f85f5e497941b7c2fc5e011465984c7efd3d6d77ba",
+      "file_count": 4,
+      "uncompressed_bytes": 40686
+    },
+    {
+      "id": "rdkit",
+      "name": "rdkit",
+      "display_name": "RDKit",
+      "description": "Validates molecular structures and supports reproducible descriptor, similarity, and substructure workflows with RDKit.",
+      "path": "skills/rdkit",
+      "content_digest": "6f81878517f57da39b1aeae1904723d27d2b62ad14a0271e4e24d3542708a9df",
+      "file_count": 9,
+      "uncompressed_bytes": 93103
+    }
+  ],
+  "connectors": [
+    {
+      "id": "chembl",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "zinc",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}

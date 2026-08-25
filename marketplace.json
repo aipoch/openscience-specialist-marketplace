@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": "10",
+  "revision": "11",
   "marketplace": {
     "id": "openscience",
     "name": "OpenScience Specialist Marketplace"
@@ -156,6 +156,23 @@
         "release": {
           "path": "releases/precision-ag-phenotyping-designer/1.0.0.json",
           "sha256": "3b969b8d1e12a2bb709411f26b179efd9608b7819a4ffcdb576e379b3703ccb3"
+        }
+      }
+    },
+    {
+      "id": "synthesis-route-optimizer",
+      "display_name": "Synthetic Route and Reaction Optimization Specialist",
+      "summary": "Designs evidence-grounded retrosynthesis, reaction-risk, staged optimization, scale-up, and green-chemistry plans for lawful targets without fabricating yields, costs, impurity levels, or process-safety results.",
+      "publisher": {
+        "id": "aipoch",
+        "name": "Aipoch",
+        "url": "https://github.com/aipoch"
+      },
+      "latest": {
+        "version": "1.0.0",
+        "release": {
+          "path": "releases/synthesis-route-optimizer/1.0.0.json",
+          "sha256": "784b24a70b93ac03403815cc72f8e0611044d1ad49ee63b0f3408f5f4fd3d719"
         }
       }
     }
