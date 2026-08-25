@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": "5",
+  "revision": "6",
   "marketplace": {
     "id": "openscience",
     "name": "OpenScience Specialist Marketplace"
@@ -71,6 +71,23 @@
         "release": {
           "path": "releases/auto-research-specialist/1.0.1.json",
           "sha256": "ada8a6c4cab6685a2a400f497c35507bac7508baa79dc36ccaf8e63283d8f54b"
+        }
+      }
+    },
+    {
+      "id": "cryoem-structure-validator",
+      "display_name": "Cryo-EM Structure Validation Specialist",
+      "summary": "Designs independent-half-map, map-quality, map-model, geometry, and deposition-readiness validation workflows for single-particle cryo-EM without inventing coordinates, local resolution, or validation scores.",
+      "publisher": {
+        "id": "aipoch",
+        "name": "Aipoch",
+        "url": "https://github.com/aipoch"
+      },
+      "latest": {
+        "version": "1.0.0",
+        "release": {
+          "path": "releases/cryoem-structure-validator/1.0.0.json",
+          "sha256": "ddfdec089a7290e02639d8ef27728801bf46d04e6e41b3cdc31c18e0085fdaa9"
         }
       }
     }
