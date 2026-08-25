@@ -1,4 +1,27 @@
-import { compareSemver } from "./common.mjs";
+import { compareSemver, ID_PATTERN } from "./common.mjs";
+
+export function parsePublicationSpecialistIds({ specialistId, specialistIds }) {
+  const single = specialistId?.trim();
+  const batch = specialistIds?.trim();
+  if (Boolean(single) === Boolean(batch)) {
+    throw new Error(
+      "provide exactly one of --specialist-id or --specialist-ids",
+    );
+  }
+
+  const ids = single ? [single] : batch.split(/[\s,]+/).filter(Boolean);
+  const seen = new Set();
+  for (const id of ids) {
+    if (!ID_PATTERN.test(id)) {
+      throw new Error(`invalid Specialist ID: ${id}`);
+    }
+    if (seen.has(id)) {
+      throw new Error(`duplicate Specialist ID: ${id}`);
+    }
+    seen.add(id);
+  }
+  return ids.sort();
+}
 
 export function findPublishedVersionChanges({
   changedPaths,

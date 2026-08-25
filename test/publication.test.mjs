@@ -10,6 +10,7 @@ import {
 } from "../scripts/lib/history.mjs";
 import {
   findPublishedVersionChanges,
+  parsePublicationSpecialistIds,
   resolvePublicationVersion,
 } from "../scripts/lib/immutability.mjs";
 import { buildRelease } from "../scripts/lib/release.mjs";
@@ -61,6 +62,37 @@ test("publication selects one unpublished version and preserves retries", () => 
         publishedReleasePaths: ["releases/example/1.0.0.json"],
       }),
     /multiple unpublished versions for example: 1\.1\.0, 2\.0\.0/,
+  );
+});
+
+test("publication accepts one single or batch Specialist input", () => {
+  assert.deepEqual(
+    parsePublicationSpecialistIds({ specialistId: "single-specialist" }),
+    ["single-specialist"],
+  );
+  assert.deepEqual(
+    parsePublicationSpecialistIds({
+      specialistIds: "second-specialist, first-specialist\nthird-specialist",
+    }),
+    ["first-specialist", "second-specialist", "third-specialist"],
+  );
+  assert.throws(() => parsePublicationSpecialistIds({}), /provide exactly one/);
+  assert.throws(
+    () =>
+      parsePublicationSpecialistIds({
+        specialistId: "one",
+        specialistIds: "two",
+      }),
+    /provide exactly one/,
+  );
+  assert.throws(
+    () => parsePublicationSpecialistIds({ specialistIds: "valid,invalid_" }),
+    /invalid Specialist ID: invalid_/,
+  );
+  assert.throws(
+    () =>
+      parsePublicationSpecialistIds({ specialistIds: "duplicate duplicate" }),
+    /duplicate Specialist ID: duplicate/,
   );
 });
 
