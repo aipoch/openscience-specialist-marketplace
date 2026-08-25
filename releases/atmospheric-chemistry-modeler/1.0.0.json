@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "specialist_id": "atmospheric-chemistry-modeler",
+  "version": "1.0.0",
+  "source": {
+    "repository": "https://github.com/K-Dense-AI/scientific-agent-skills",
+    "commit": "36d8f13a1e754618794bf42f417884940077b4ae",
+    "license": "MIT"
+  },
+  "artifact": {
+    "path": "specialists/atmospheric-chemistry-modeler/1.0.0/atmospheric-chemistry-modeler-1.0.0.zip",
+    "github_release": {
+      "tag": "atmospheric-chemistry-modeler-v1.0.0",
+      "asset_name": "atmospheric-chemistry-modeler-1.0.0.zip"
+    },
+    "sha256": "476bc9a9d675a0d13f56948a6b54879fbcda04b6db9233ec98b288d8ed9338e2",
+    "compressed_bytes": 162274,
+    "uncompressed_bytes": 424528,
+    "file_count": 38
+  },
+  "defaults": {
+    "skill_ids": [
+      "experimental-design",
+      "geopandas",
+      "uncertainty-and-units"
+    ],
+    "connector_ids": [
+      "research-resources",
+      "literature"
+    ]
+  },
+  "skills": [
+    {
+      "id": "experimental-design",
+      "name": "experimental-design",
+      "display_name": "Experimental Design",
+      "description": "Designs randomized, blocked, factorial, response-surface, and sequential experiments while preventing confounding and pseudoreplication.",
+      "path": "skills/experimental-design",
+      "content_digest": "0b0c009f12b72f8d3b5712c08ad21bfafded2310963a4c85aaa4add83d241933",
+      "file_count": 7,
+      "uncompressed_bytes": 53960
+    },
+    {
+      "id": "geopandas",
+      "name": "geopandas",
+      "display_name": "GeoPandas",
+      "description": "Audits GeoPandas vector-data workflows, coordinate systems, geometry validity, spatial joins, and geospatial exports.",
+      "path": "skills/geopandas",
+      "content_digest": "58b6331e0173ce6f18fdba1584f02d9274a6d2cf9747829529c86d4d9d41cc8c",
+      "file_count": 14,
+      "uncompressed_bytes": 142556
+    },
+    {
+      "id": "uncertainty-and-units",
+      "name": "uncertainty-and-units",
+      "display_name": "Uncertainty and Units",
+      "description": "Audits units, dimensional consistency, plausibility, and measurement-uncertainty propagation in scientific calculations.",
+      "path": "skills/uncertainty-and-units",
+      "content_digest": "155fa7899bb8eb064a5195fdb799f57542cdcd0e6cc04e3ecbe4e695cfd146da",
+      "file_count": 14,
+      "uncompressed_bytes": 207652
+    }
+  ],
+  "connectors": [
+    {
+      "id": "research-resources",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}

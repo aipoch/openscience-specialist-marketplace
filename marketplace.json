@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": "4",
+  "revision": "5",
   "marketplace": {
     "id": "openscience",
     "name": "OpenScience Specialist Marketplace"
@@ -37,6 +37,23 @@
         "release": {
           "path": "releases/astronomical-photometry-analyzer/1.0.0.json",
           "sha256": "5415b7ab15262fa296678a0300612747f7d779a023556410275b31dc15968dbf"
+        }
+      }
+    },
+    {
+      "id": "atmospheric-chemistry-modeler",
+      "display_name": "Atmospheric Chemistry Transport Modeling Specialist",
+      "summary": "Designs reproducible meteorology-chemistry transport, emissions, source-attribution, and nonlinear control-sensitivity studies for air pollution episodes without inventing model performance or policy effects.",
+      "publisher": {
+        "id": "aipoch",
+        "name": "Aipoch",
+        "url": "https://github.com/aipoch"
+      },
+      "latest": {
+        "version": "1.0.0",
+        "release": {
+          "path": "releases/atmospheric-chemistry-modeler/1.0.0.json",
+          "sha256": "9c13a4b68ed38439b3e6cc499502222a1575e2e55374272a0a01498a8ef3b11b"
         }
       }
     },
