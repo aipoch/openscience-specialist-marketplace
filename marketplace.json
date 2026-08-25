@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": "11",
+  "revision": "21",
   "marketplace": {
     "id": "openscience",
     "name": "OpenScience Specialist Marketplace"
@@ -12,7 +12,7 @@
       "summary": "Designs evidence-bound aerodynamic CFD verification and validation workflows, including mesh convergence, numerical uncertainty, turbulence-model sensitivity, and comparison with experiments without inventing aerodynamic results.",
       "publisher": {
         "id": "aipoch",
-        "name": "Aipoch",
+        "name": "AIPOCH",
         "url": "https://github.com/aipoch"
       },
       "latest": {
@@ -29,7 +29,7 @@
       "summary": "Designs calibrated astronomical image, photometry, transient, and variability analysis workflows with explicit detector characterization, false-alarm control, uncertainty propagation, and no fabricated magnitudes or classifications.",
       "publisher": {
         "id": "aipoch",
-        "name": "Aipoch",
+        "name": "AIPOCH",
         "url": "https://github.com/aipoch"
       },
       "latest": {
@@ -46,7 +46,7 @@
       "summary": "Designs reproducible meteorology-chemistry transport, emissions, source-attribution, and nonlinear control-sensitivity studies for air pollution episodes without inventing model performance or policy effects.",
       "publisher": {
         "id": "aipoch",
-        "name": "Aipoch",
+        "name": "AIPOCH",
         "url": "https://github.com/aipoch"
       },
       "latest": {
@@ -63,7 +63,7 @@
       "summary": "Coordinates reproducible biomedical research from evidence discovery through analysis, validation, and writing.",
       "publisher": {
         "id": "aipoch",
-        "name": "Aipoch",
+        "name": "AIPOCH",
         "url": "https://github.com/aipoch"
       },
       "latest": {
@@ -80,7 +80,7 @@
       "summary": "Designs independent-half-map, map-quality, map-model, geometry, and deposition-readiness validation workflows for single-particle cryo-EM without inventing coordinates, local resolution, or validation scores.",
       "publisher": {
         "id": "aipoch",
-        "name": "Aipoch",
+        "name": "AIPOCH",
         "url": "https://github.com/aipoch"
       },
       "latest": {
@@ -97,7 +97,7 @@
       "summary": "Designs convergence-tested, magnetism-aware, thermodynamically consistent high-throughput DFT screening workflows with uncertainty and stability gates instead of fabricated energies or universal settings.",
       "publisher": {
         "id": "aipoch",
-        "name": "Aipoch",
+        "name": "AIPOCH",
         "url": "https://github.com/aipoch"
       },
       "latest": {
@@ -114,7 +114,7 @@
       "summary": "Designs reproducible structural MRI, resting-state fMRI, diffusion MRI, and multimodal connectomics workflows with distortion, motion, exchangeability, and network-inference controls and no clinical diagnosis.",
       "publisher": {
         "id": "aipoch",
-        "name": "Aipoch",
+        "name": "AIPOCH",
         "url": "https://github.com/aipoch"
       },
       "latest": {
@@ -131,7 +131,7 @@
       "summary": "Designs unit-safe, uncertainty-aware NCA, population PK/PD, translational scaling, and dose-exploration workflows for research and regulatory planning without issuing patient-specific prescriptions.",
       "publisher": {
         "id": "aipoch",
-        "name": "Aipoch",
+        "name": "AIPOCH",
         "url": "https://github.com/aipoch"
       },
       "latest": {
@@ -148,7 +148,7 @@
       "summary": "Designs radiometrically defensible UAV phenotyping, spatial validation, crop-stress inference, and machinery-ready variable-rate prescription workflows without inventing yield, nitrogen, or irrigation rates.",
       "publisher": {
         "id": "aipoch",
-        "name": "Aipoch",
+        "name": "AIPOCH",
         "url": "https://github.com/aipoch"
       },
       "latest": {
@@ -165,7 +165,7 @@
       "summary": "Designs evidence-grounded retrosynthesis, reaction-risk, staged optimization, scale-up, and green-chemistry plans for lawful targets without fabricating yields, costs, impurity levels, or process-safety results.",
       "publisher": {
         "id": "aipoch",
-        "name": "Aipoch",
+        "name": "AIPOCH",
         "url": "https://github.com/aipoch"
       },
       "latest": {
