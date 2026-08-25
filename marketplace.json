@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": "7",
+  "revision": "8",
   "marketplace": {
     "id": "openscience",
     "name": "OpenScience Specialist Marketplace"
@@ -105,6 +105,23 @@
         "release": {
           "path": "releases/high-throughput-dft-screener/1.0.0.json",
           "sha256": "fc8fd37ee74050d672fc882e4ab033d55fb9dbf4b0ab3d976d6fb5409ccbf193"
+        }
+      }
+    },
+    {
+      "id": "neuroimaging-connectomics-architect",
+      "display_name": "Multimodal Neuroimaging Connectomics Architect",
+      "summary": "Designs reproducible structural MRI, resting-state fMRI, diffusion MRI, and multimodal connectomics workflows with distortion, motion, exchangeability, and network-inference controls and no clinical diagnosis.",
+      "publisher": {
+        "id": "aipoch",
+        "name": "Aipoch",
+        "url": "https://github.com/aipoch"
+      },
+      "latest": {
+        "version": "1.0.0",
+        "release": {
+          "path": "releases/neuroimaging-connectomics-architect/1.0.0.json",
+          "sha256": "70a932da120ee1500f53a581423ed4e2467e64a96ae7c45168be247e1213d63e"
         }
       }
     }

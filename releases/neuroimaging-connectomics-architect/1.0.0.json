@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "specialist_id": "neuroimaging-connectomics-architect",
+  "version": "1.0.0",
+  "source": {
+    "repository": "https://github.com/K-Dense-AI/scientific-agent-skills",
+    "commit": "36d8f13a1e754618794bf42f417884940077b4ae",
+    "license": "MIT AND CC-BY-4.0"
+  },
+  "artifact": {
+    "path": "specialists/neuroimaging-connectomics-architect/1.0.0/neuroimaging-connectomics-architect-1.0.0.zip",
+    "github_release": {
+      "tag": "neuroimaging-connectomics-architect-v1.0.0",
+      "asset_name": "neuroimaging-connectomics-architect-1.0.0.zip"
+    },
+    "sha256": "c3ced622bc6f7c319180f100312c58cc249bd91b67f891d697917987ceb4af59",
+    "compressed_bytes": 287902,
+    "uncompressed_bytes": 1245062,
+    "file_count": 36
+  },
+  "defaults": {
+    "skill_ids": [
+      "bids",
+      "scientific-visualization",
+      "statistical-analysis"
+    ],
+    "connector_ids": [
+      "human-genetics",
+      "research-resources",
+      "literature",
+      "pubmed"
+    ]
+  },
+  "skills": [
+    {
+      "id": "bids",
+      "name": "bids",
+      "display_name": "BIDS",
+      "description": "Organizes, validates, converts, and queries Brain Imaging Data Structure datasets and derivatives.",
+      "path": "skills/bids",
+      "content_digest": "49a396763ccad15d0546b2e999ed40c6fdc0cb45b6820b221855b5b555bd5251",
+      "file_count": 8,
+      "uncompressed_bytes": 915613
+    },
+    {
+      "id": "scientific-visualization",
+      "name": "scientific-visualization",
+      "display_name": "Scientific Visualization",
+      "description": "Creates and audits truthful, accessible, publication-ready scientific figures and export settings.",
+      "path": "skills/scientific-visualization",
+      "content_digest": "86e85df3386b4d814983d893183ad7749f1c4f5a2d9a230e648cf65e138e44ea",
+      "file_count": 18,
+      "uncompressed_bytes": 189804
+    },
+    {
+      "id": "statistical-analysis",
+      "name": "statistical-analysis",
+      "display_name": "Statistical Analysis",
+      "description": "Guides test selection, assumptions, effect sizes, power, Bayesian alternatives, and transparent statistical reporting.",
+      "path": "skills/statistical-analysis",
+      "content_digest": "e500941b3db38fc61cba704dc58e435ac1669ccb500e1a596e44c91861e39038",
+      "file_count": 7,
+      "uncompressed_bytes": 116948
+    }
+  ],
+  "connectors": [
+    {
+      "id": "human-genetics",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "research-resources",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
