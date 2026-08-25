@@ -1,11 +1,28 @@
 {
   "schema_version": 1,
-  "revision": "2",
+  "revision": "3",
   "marketplace": {
     "id": "openscience",
     "name": "OpenScience Specialist Marketplace"
   },
   "specialists": [
+    {
+      "id": "aerodynamics-cfd-validator",
+      "display_name": "Aerodynamics CFD Verification and Validation Specialist",
+      "summary": "Designs evidence-bound aerodynamic CFD verification and validation workflows, including mesh convergence, numerical uncertainty, turbulence-model sensitivity, and comparison with experiments without inventing aerodynamic results.",
+      "publisher": {
+        "id": "aipoch",
+        "name": "Aipoch",
+        "url": "https://github.com/aipoch"
+      },
+      "latest": {
+        "version": "1.0.0",
+        "release": {
+          "path": "releases/aerodynamics-cfd-validator/1.0.0.json",
+          "sha256": "b350ce105bfb581e6432af7c9bb5c0c832270cb24b7192077125d46f38eef0d1"
+        }
+      }
+    },
     {
       "id": "auto-research-specialist",
       "display_name": "Auto Research Specialist",
