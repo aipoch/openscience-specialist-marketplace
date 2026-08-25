@@ -1,0 +1,88 @@
+{
+  "schema_version": 1,
+  "specialist_id": "pharmacometrics-pkpd-designer",
+  "version": "1.0.0",
+  "source": {
+    "repository": "https://github.com/K-Dense-AI/scientific-agent-skills",
+    "commit": "36d8f13a1e754618794bf42f417884940077b4ae",
+    "license": "MIT"
+  },
+  "artifact": {
+    "path": "specialists/pharmacometrics-pkpd-designer/1.0.0/pharmacometrics-pkpd-designer-1.0.0.zip",
+    "github_release": {
+      "tag": "pharmacometrics-pkpd-designer-v1.0.0",
+      "asset_name": "pharmacometrics-pkpd-designer-1.0.0.zip"
+    },
+    "sha256": "bb89f1066ced038e15cb2de0997131ed1db54bc20b859cc11ecc7f5fc48ab8a0",
+    "compressed_bytes": 255608,
+    "uncompressed_bytes": 664827,
+    "file_count": 52
+  },
+  "defaults": {
+    "skill_ids": [
+      "pkpd-modeling",
+      "statistical-analysis",
+      "uncertainty-and-units"
+    ],
+    "connector_ids": [
+      "chembl",
+      "pubmed",
+      "drug-regulatory",
+      "literature"
+    ]
+  },
+  "skills": [
+    {
+      "id": "pkpd-modeling",
+      "name": "pkpd-modeling",
+      "display_name": "PK/PD Modeling",
+      "description": "Supports NCA, compartmental and population PK, PK/PD, exposure-response, translational scaling, and model validation.",
+      "path": "skills/pkpd-modeling",
+      "content_digest": "effa0c0a40f90a9b41497b157b79894e52ea98edeea79a1b083e833c1a025e53",
+      "file_count": 28,
+      "uncompressed_bytes": 317050
+    },
+    {
+      "id": "statistical-analysis",
+      "name": "statistical-analysis",
+      "display_name": "Statistical Analysis",
+      "description": "Guides test selection, assumptions, effect sizes, power, Bayesian alternatives, and transparent statistical reporting.",
+      "path": "skills/statistical-analysis",
+      "content_digest": "e500941b3db38fc61cba704dc58e435ac1669ccb500e1a596e44c91861e39038",
+      "file_count": 7,
+      "uncompressed_bytes": 116948
+    },
+    {
+      "id": "uncertainty-and-units",
+      "name": "uncertainty-and-units",
+      "display_name": "Uncertainty and Units",
+      "description": "Audits units, dimensional consistency, plausibility, and measurement-uncertainty propagation in scientific calculations.",
+      "path": "skills/uncertainty-and-units",
+      "content_digest": "155fa7899bb8eb064a5195fdb799f57542cdcd0e6cc04e3ecbe4e695cfd146da",
+      "file_count": 14,
+      "uncompressed_bytes": 207652
+    }
+  ],
+  "connectors": [
+    {
+      "id": "chembl",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "drug-regulatory",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": "8",
+  "revision": "9",
   "marketplace": {
     "id": "openscience",
     "name": "OpenScience Specialist Marketplace"
@@ -122,6 +122,23 @@
         "release": {
           "path": "releases/neuroimaging-connectomics-architect/1.0.0.json",
           "sha256": "70a932da120ee1500f53a581423ed4e2467e64a96ae7c45168be247e1213d63e"
+        }
+      }
+    },
+    {
+      "id": "pharmacometrics-pkpd-designer",
+      "display_name": "Pharmacometrics PK/PD Design Specialist",
+      "summary": "Designs unit-safe, uncertainty-aware NCA, population PK/PD, translational scaling, and dose-exploration workflows for research and regulatory planning without issuing patient-specific prescriptions.",
+      "publisher": {
+        "id": "aipoch",
+        "name": "Aipoch",
+        "url": "https://github.com/aipoch"
+      },
+      "latest": {
+        "version": "1.0.0",
+        "release": {
+          "path": "releases/pharmacometrics-pkpd-designer/1.0.0.json",
+          "sha256": "597f1d4064e2b5652bcf84a93a39deb55aa8c8f62ecfaeacd80a2fc1cdf7507a"
         }
       }
     }
