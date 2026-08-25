@@ -1,0 +1,51 @@
+{
+  "source": {
+    "repository": "https://github.com/K-Dense-AI/scientific-agent-skills",
+    "commit": "36d8f13a1e754618794bf42f417884940077b4ae",
+    "license": "MIT AND BSD-3-Clause"
+  },
+  "marketplace": {
+    "display_name": "Astronomical Photometry and Time-domain Analysis Specialist",
+    "summary": "Designs calibrated astronomical image, photometry, transient, and variability analysis workflows with explicit detector characterization, false-alarm control, uncertainty propagation, and no fabricated magnitudes or classifications.",
+    "publisher": {
+      "id": "aipoch",
+      "name": "Aipoch",
+      "url": "https://github.com/aipoch"
+    }
+  },
+  "skills": [
+    {
+      "id": "astropy",
+      "name": "astropy",
+      "display_name": "Astropy",
+      "description": "Supports astronomy workflows using Astropy units, coordinates, FITS, tables, time systems, WCS, and cosmology APIs.",
+      "path": "skills/astropy"
+    },
+    {
+      "id": "statistical-analysis",
+      "name": "statistical-analysis",
+      "display_name": "Statistical Analysis",
+      "description": "Guides test selection, assumptions, effect sizes, power, Bayesian alternatives, and transparent statistical reporting.",
+      "path": "skills/statistical-analysis"
+    },
+    {
+      "id": "uncertainty-and-units",
+      "name": "uncertainty-and-units",
+      "display_name": "Uncertainty and Units",
+      "description": "Audits units, dimensional consistency, plausibility, and measurement-uncertainty propagation in scientific calculations.",
+      "path": "skills/uncertainty-and-units"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "research-resources",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}

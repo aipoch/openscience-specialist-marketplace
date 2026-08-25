@@ -1,0 +1,51 @@
+{
+  "source": {
+    "repository": "https://github.com/K-Dense-AI/scientific-agent-skills",
+    "commit": "36d8f13a1e754618794bf42f417884940077b4ae",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Atmospheric Chemistry Transport Modeling Specialist",
+    "summary": "Designs reproducible meteorology-chemistry transport, emissions, source-attribution, and nonlinear control-sensitivity studies for air pollution episodes without inventing model performance or policy effects.",
+    "publisher": {
+      "id": "aipoch",
+      "name": "Aipoch",
+      "url": "https://github.com/aipoch"
+    }
+  },
+  "skills": [
+    {
+      "id": "experimental-design",
+      "name": "experimental-design",
+      "display_name": "Experimental Design",
+      "description": "Designs randomized, blocked, factorial, response-surface, and sequential experiments while preventing confounding and pseudoreplication.",
+      "path": "skills/experimental-design"
+    },
+    {
+      "id": "geopandas",
+      "name": "geopandas",
+      "display_name": "GeoPandas",
+      "description": "Audits GeoPandas vector-data workflows, coordinate systems, geometry validity, spatial joins, and geospatial exports.",
+      "path": "skills/geopandas"
+    },
+    {
+      "id": "uncertainty-and-units",
+      "name": "uncertainty-and-units",
+      "display_name": "Uncertainty and Units",
+      "description": "Audits units, dimensional consistency, plausibility, and measurement-uncertainty propagation in scientific calculations.",
+      "path": "skills/uncertainty-and-units"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "research-resources",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}

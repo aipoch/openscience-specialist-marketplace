@@ -1,0 +1,51 @@
+{
+  "source": {
+    "repository": "https://github.com/K-Dense-AI/scientific-agent-skills",
+    "commit": "36d8f13a1e754618794bf42f417884940077b4ae",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Aerodynamics CFD Verification and Validation Specialist",
+    "summary": "Designs evidence-bound aerodynamic CFD verification and validation workflows, including mesh convergence, numerical uncertainty, turbulence-model sensitivity, and comparison with experiments without inventing aerodynamic results.",
+    "publisher": {
+      "id": "aipoch",
+      "name": "Aipoch",
+      "url": "https://github.com/aipoch"
+    }
+  },
+  "skills": [
+    {
+      "id": "experimental-design",
+      "name": "experimental-design",
+      "display_name": "Experimental Design",
+      "description": "Designs randomized, blocked, factorial, response-surface, and sequential experiments while preventing confounding and pseudoreplication.",
+      "path": "skills/experimental-design"
+    },
+    {
+      "id": "fluidsim",
+      "name": "fluidsim",
+      "display_name": "FluidSim",
+      "description": "Plans and audits bounded FluidSim simulations, solver configuration, outputs, restarts, and computational-resource requirements.",
+      "path": "skills/fluidsim"
+    },
+    {
+      "id": "uncertainty-and-units",
+      "name": "uncertainty-and-units",
+      "display_name": "Uncertainty and Units",
+      "description": "Audits units, dimensional consistency, plausibility, and measurement-uncertainty propagation in scientific calculations.",
+      "path": "skills/uncertainty-and-units"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "research-resources",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
