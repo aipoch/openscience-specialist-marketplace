@@ -7,9 +7,10 @@
   "marketplace": {
     "display_name": "Astronomical Photometry and Time-domain Analysis Specialist",
     "summary": "Designs calibrated astronomical image, photometry, transient, and variability analysis workflows with explicit detector characterization, false-alarm control, uncertainty propagation, and no fabricated magnitudes or classifications.",
+    "author": "K-Dense Inc.",
     "publisher": {
       "id": "aipoch",
-      "name": "Aipoch",
+      "name": "AIPOCH",
       "url": "https://github.com/aipoch"
     }
   },

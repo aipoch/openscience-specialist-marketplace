@@ -1,5 +1,5 @@
 import assert from "node:assert/strict";
-import { mkdtemp } from "node:fs/promises";
+import { mkdtemp, readFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -10,6 +10,7 @@ import {
 } from "../scripts/lib/history.mjs";
 import {
   findPublishedVersionChanges,
+  isMarketplaceOnlyReleaseConfigChange,
   parsePublicationSpecialistIds,
   resolvePublicationVersion,
 } from "../scripts/lib/immutability.mjs";
@@ -19,6 +20,38 @@ const fixtureVersion = path.resolve(
   "protocol/fixtures/valid/example-specialist/versions/1.0.0",
 );
 
+test("official discovery metadata uses the canonical publisher and source authors", async () => {
+  const authors = {
+    "aerodynamics-cfd-validator": "K-Dense Inc.",
+    "astronomical-photometry-analyzer": "K-Dense Inc.",
+    "atmospheric-chemistry-modeler": "K-Dense Inc.",
+    "auto-research-specialist": "AIPOCH",
+    "cryoem-structure-validator": "K-Dense Inc.",
+    "high-throughput-dft-screener": "K-Dense Inc.",
+    "neuroimaging-connectomics-architect": "K-Dense Inc.",
+    "pharmacometrics-pkpd-designer": "K-Dense Inc.",
+    "precision-ag-phenotyping-designer": "K-Dense Inc.",
+    "synthesis-route-optimizer": "K-Dense Inc.",
+  };
+  for (const [specialistId, author] of Object.entries(authors)) {
+    const versionsRoot = path.resolve("specialists", specialistId, "versions");
+    const version =
+      specialistId === "auto-research-specialist" ? "1.0.1" : "1.0.0";
+    const config = JSON.parse(
+      await readFile(
+        path.join(versionsRoot, version, "release.config.json"),
+        "utf8",
+      ),
+    );
+    assert.deepEqual(config.marketplace.publisher, {
+      id: "aipoch",
+      name: "AIPOCH",
+      url: "https://github.com/aipoch",
+    });
+    assert.equal(config.marketplace.author, author);
+  }
+});
+
 test("published Specialist versions reject authoring changes", () => {
   assert.deepEqual(
     findPublishedVersionChanges({
@@ -27,6 +60,46 @@ test("published Specialist versions reject authoring changes", () => {
         "specialists/example/versions/2.0.0/package/manifest.json",
         "README.md",
       ],
+      publishedReleasePaths: ["releases/example/1.0.0.json"],
+    }),
+    ["example@1.0.0"],
+  );
+});
+
+test("published release configs allow only discovery metadata changes", () => {
+  const before = {
+    source: { repository: "https://example.com", commit: "a".repeat(40) },
+    marketplace: {
+      display_name: "Example",
+      publisher: { id: "example", name: "Example" },
+    },
+    skills: [],
+    connectors: [],
+  };
+  const after = structuredClone(before);
+  after.marketplace.author = "Example Author";
+  after.marketplace.publisher.name = "EXAMPLE";
+  assert.equal(isMarketplaceOnlyReleaseConfigChange(before, after), true);
+
+  const changedSource = structuredClone(after);
+  changedSource.source.commit = "b".repeat(40);
+  assert.equal(
+    isMarketplaceOnlyReleaseConfigChange(before, changedSource),
+    false,
+  );
+
+  const configPath = "specialists/example/versions/1.0.0/release.config.json";
+  assert.deepEqual(
+    findPublishedVersionChanges({
+      changedPaths: [configPath],
+      publishedReleasePaths: ["releases/example/1.0.0.json"],
+      marketplaceOnlyReleaseConfigs: [configPath],
+    }),
+    [],
+  );
+  assert.deepEqual(
+    findPublishedVersionChanges({
+      changedPaths: [configPath],
       publishedReleasePaths: ["releases/example/1.0.0.json"],
     }),
     ["example@1.0.0"],

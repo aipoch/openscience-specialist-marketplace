@@ -2,7 +2,10 @@
 import { execFileSync } from "node:child_process";
 
 import { parseArgs } from "./lib/common.mjs";
-import { findPublishedVersionChanges } from "./lib/immutability.mjs";
+import {
+  findPublishedVersionChanges,
+  isMarketplaceOnlyReleaseConfigChange,
+} from "./lib/immutability.mjs";
 
 const args = parseArgs(process.argv.slice(2));
 if (!args.base || !args.published)
@@ -15,20 +18,50 @@ function gitLines(commandArgs) {
     .filter(Boolean);
 }
 
+function gitJson(revision, filePath) {
+  return JSON.parse(
+    execFileSync("git", ["show", `${revision}:${filePath}`], {
+      encoding: "utf8",
+    }),
+  );
+}
+
+const head = args.head || "HEAD";
+const changedPaths = gitLines([
+  "diff",
+  "--name-only",
+  `${args.base}...${head}`,
+]);
+const publishedReleasePaths = gitLines([
+  "ls-tree",
+  "-r",
+  "--name-only",
+  args.published,
+  "--",
+  "releases",
+]);
+const published = new Set(publishedReleasePaths);
+const marketplaceOnlyReleaseConfigs = changedPaths.filter((filePath) => {
+  const match = filePath.match(
+    /^specialists\/([a-z0-9][a-z0-9-]{0,127})\/versions\/([^/]+)\/release\.config\.json$/,
+  );
+  if (!match || !published.has(`releases/${match[1]}/${match[2]}.json`)) {
+    return false;
+  }
+  try {
+    return isMarketplaceOnlyReleaseConfigChange(
+      gitJson(args.base, filePath),
+      gitJson(head, filePath),
+    );
+  } catch {
+    return false;
+  }
+});
+
 const collisions = findPublishedVersionChanges({
-  changedPaths: gitLines([
-    "diff",
-    "--name-only",
-    `${args.base}...${args.head || "HEAD"}`,
-  ]),
-  publishedReleasePaths: gitLines([
-    "ls-tree",
-    "-r",
-    "--name-only",
-    args.published,
-    "--",
-    "releases",
-  ]),
+  changedPaths,
+  publishedReleasePaths,
+  marketplaceOnlyReleaseConfigs,
 });
 
 if (collisions.length) {

@@ -1,6 +1,6 @@
 import assert from "node:assert/strict";
 import { spawnSync } from "node:child_process";
-import { cp, mkdtemp, readFile, writeFile } from "node:fs/promises";
+import { cp, link, mkdtemp, readFile, writeFile } from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import test from "node:test";
@@ -61,6 +61,20 @@ test("SemVer comparison follows numeric and prerelease precedence", () => {
 });
 
 test("strict schemas reject unknown fields", async () => {
+  const withAuthor = JSON.parse(
+    await readFile(
+      path.join(root, "protocol/fixtures/valid/marketplace-with-author.json"),
+      "utf8",
+    ),
+  );
+  assert.equal(
+    validateDocument("marketplace", withAuthor).specialists[0].author,
+    "Fixture Author",
+  );
+  const blankAuthor = structuredClone(withAuthor);
+  blankAuthor.specialists[0].author = "   ";
+  assert.throws(() => validateDocument("marketplace", blankAuthor), /pattern/);
+
   const invalid = JSON.parse(
     await readFile(
       path.join(
@@ -136,9 +150,23 @@ test("release builds are deterministic and App-export compatible", async () => {
     a.marketplaceEntry.latest.release.path,
     "releases/fixture-specialist/1.0.0.json",
   );
+  assert.equal(a.marketplaceEntry.author, "Fixture Author");
   assert.equal(a.descriptor.defaults.skill_ids[0], "example-skill");
   assert.equal(a.descriptor.defaults.connector_ids[0], "example-connector");
   const archive = inspectZip(await readFile(a.zipPath));
+  assert.equal(
+    archive.entries
+      .get("PACKAGE_NOTES.md")
+      .toString("utf8")
+      .includes("ordinary attachment"),
+    true,
+  );
+  assert.equal(
+    a.descriptor.skills[0].file_count,
+    [...archive.entries].filter(([name]) =>
+      name.startsWith("skills/example-skill/"),
+    ).length,
+  );
   assert.deepEqual(
     Object.keys(
       JSON.parse(archive.entries.get("specialist.json").toString("utf8")),
@@ -251,6 +279,56 @@ test("release building validates optional Specialist display_name", async () => 
   );
 });
 
+test("release building trims valid authors and omits blank or null authors", async () => {
+  for (const [author, expected] of [
+    ["  AIPOCH  ", "AIPOCH"],
+    ["   ", undefined],
+    [null, undefined],
+  ]) {
+    const versionDirectory = await mkdtemp(
+      path.join(os.tmpdir(), "marketplace-author-"),
+    );
+    await cp(fixtureVersion, versionDirectory, { recursive: true });
+    const configPath = path.join(versionDirectory, "release.config.json");
+    const config = JSON.parse(await readFile(configPath, "utf8"));
+    config.marketplace.author = author;
+    await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`);
+    const built = await buildRelease({
+      specialistId: "fixture-specialist",
+      version: "1.0.0",
+      versionDirectory,
+      outputDirectory: path.join(versionDirectory, "out"),
+    });
+    assert.equal(built.marketplaceEntry.author, expected);
+    assert.equal("author" in built.descriptor, false);
+  }
+});
+
+test("release building rejects invalid author values", async () => {
+  for (const [author, message] of [
+    [42, /marketplace\.author must be a string/],
+    ["a".repeat(161), /marketplace\.author must be at most 160 characters/],
+  ]) {
+    const versionDirectory = await mkdtemp(
+      path.join(os.tmpdir(), "marketplace-invalid-author-"),
+    );
+    await cp(fixtureVersion, versionDirectory, { recursive: true });
+    const configPath = path.join(versionDirectory, "release.config.json");
+    const config = JSON.parse(await readFile(configPath, "utf8"));
+    config.marketplace.author = author;
+    await writeFile(configPath, `${JSON.stringify(config, null, 2)}\n`);
+    await assert.rejects(
+      buildRelease({
+        specialistId: "fixture-specialist",
+        version: "1.0.0",
+        versionDirectory,
+        outputDirectory: path.join(versionDirectory, "out"),
+      }),
+      message,
+    );
+  }
+});
+
 test("release building requires a non-empty snake_case system_prompt", async () => {
   const versionDirectory = await mkdtemp(
     path.join(os.tmpdir(), "marketplace-specialist-system-prompt-"),
@@ -334,6 +412,23 @@ test("ZIP inspection rejects unsafe names, types, encryption, methods, and resou
       ),
     /duplicate normalized ZIP path/,
   );
+  assert.throws(
+    () =>
+      inspectZip(
+        zipSync({
+          "NOTICE.txt": text,
+          "notice.txt": text,
+        }),
+      ),
+    /duplicate normalized ZIP path/,
+  );
+  assert.throws(
+    () =>
+      inspectZip(
+        zipSync({ [`${Array(33).fill("deep").join("/")}.txt`]: text }),
+      ),
+    /nested too deeply/,
+  );
 
   const encrypted = Buffer.from(zipSync({ "file.txt": text }));
   const central = encrypted.indexOf(Buffer.from([0x50, 0x4b, 0x01, 0x02]));
@@ -354,6 +449,10 @@ test("ZIP inspection rejects unsafe names, types, encryption, methods, and resou
   assert.throws(() => inspectZip(symlink), /symlinks and special ZIP entries/);
 
   const compact = zipSync({ "large.txt": new Uint8Array(1_024) });
+  assert.throws(
+    () => inspectZip(compact, { maxCompressedBytes: compact.length - 1 }),
+    /compressed size limit/,
+  );
   assert.throws(() => inspectZip(compact, { maxFiles: 0 }), /too many files/);
   assert.throws(
     () => inspectZip(compact, { maxFileBytes: 100 }),
@@ -370,6 +469,26 @@ test("ZIP inspection rejects unsafe names, types, encryption, methods, and resou
   assert.throws(
     () => inspectZip(compact, { maxCompressionRatio: 2 }),
     /unsafe ZIP compression ratio/,
+  );
+});
+
+test("release building rejects hard-linked package files", async () => {
+  const versionDirectory = await mkdtemp(
+    path.join(os.tmpdir(), "marketplace-hard-link-"),
+  );
+  await cp(fixtureVersion, versionDirectory, { recursive: true });
+  await link(
+    path.join(versionDirectory, "package/PACKAGE_NOTES.md"),
+    path.join(versionDirectory, "package/HARD_LINK.md"),
+  );
+  await assert.rejects(
+    buildRelease({
+      specialistId: "fixture-specialist",
+      version: "1.0.0",
+      versionDirectory,
+      outputDirectory: path.join(versionDirectory, "out"),
+    }),
+    /hard links are not allowed/,
   );
 });
 
@@ -493,6 +612,61 @@ test("reapplying an identical published release is idempotent", async () => {
       releaseDescriptorBytes: descriptorBytes,
     }),
     published,
+  );
+});
+
+test("same-version discovery metadata can change only with an identical release reference", async () => {
+  const output = await mkdtemp(
+    path.join(os.tmpdir(), "marketplace-metadata-only-update-"),
+  );
+  const built = await buildRelease({
+    specialistId: "fixture-specialist",
+    version: "1.0.0",
+    versionDirectory: fixtureVersion,
+    outputDirectory: output,
+  });
+  const descriptorBytes = await readFile(built.descriptorPath);
+  const published = updateMarketplace({
+    baseMarketplace: emptyMarketplace,
+    entry: built.marketplaceEntry,
+    releaseDescriptorBytes: descriptorBytes,
+    authorPolicy: "omit",
+  });
+  assert.equal("author" in published.specialists[0], false);
+
+  const metadataUpdate = structuredClone(built.marketplaceEntry);
+  metadataUpdate.publisher.name = "Updated Publisher";
+  const updated = updateMarketplace({
+    baseMarketplace: published,
+    entry: metadataUpdate,
+    releaseDescriptorBytes: descriptorBytes,
+  });
+  assert.equal(updated.revision, "2");
+  assert.equal(updated.specialists[0].publisher.name, "Updated Publisher");
+  assert.equal(updated.specialists[0].author, "Fixture Author");
+  assert.deepEqual(
+    updated.specialists[0].latest.release,
+    published.specialists[0].latest.release,
+  );
+
+  assert.throws(
+    () =>
+      updateMarketplace({
+        baseMarketplace: updated,
+        entry: metadataUpdate,
+        releaseDescriptorBytes: Buffer.from("changed descriptor"),
+      }),
+    /published Specialist version collision/,
+  );
+  assert.throws(
+    () =>
+      updateMarketplace({
+        baseMarketplace: updated,
+        entry: metadataUpdate,
+        releaseDescriptorBytes: descriptorBytes,
+        authorPolicy: "unexpected",
+      }),
+    /invalid Marketplace author policy/,
   );
 });
 

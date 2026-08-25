@@ -14,9 +14,9 @@ releases/<specialist-id>/<version>.json
 specialists/<specialist-id>/<version>/<specialist-id>-<version>.zip
 ```
 
-The root index is intentionally shallow: it contains identity, publisher, summary, latest version,
-and the exact SHA-256 of that version's release descriptor. It never embeds Skill contents,
-Connector configuration, or complete release history.
+The root index is intentionally shallow: it contains identity, required publisher, optional author,
+summary, latest version, and the exact SHA-256 of that version's release descriptor. It never embeds
+Skill contents, Connector configuration, or complete release history.
 
 Protocol JSON documents are UTF-8 JSON. Publishers in this repository serialize them with two-space
 indentation and a trailing LF, but hashes and signatures always cover the exact published bytes—not
@@ -40,6 +40,11 @@ credentials, environment variables, commands, endpoints, or executable server co
 Required Connectors must be selected by default. The App resolves each reference against its own
 reviewed local Connector configuration.
 
+Every listing has a required `publisher`: the stable publication and source subject with an ID,
+display name, and HTTPS URL. Optional `author` is separate displayed authorship credit, limited to
+160 characters. Missing, blank, and null author configuration is omitted from generated listing
+data, and clients do not display an absent author.
+
 ## Skill content digest
 
 For every regular file below a Skill directory:
@@ -58,10 +63,15 @@ and ZIP metadata are not part of this digest.
 ## ZIP safety and compatibility
 
 The ZIP root is the App-exported `package/` directory: `manifest.json`, `specialist.json`, and
-`skills/` appear at the archive root. Protocol v1 accepts only stored or DEFLATE-compressed regular
-files. Validation rejects traversal and absolute paths, backslashes, duplicate Unicode-normalized
-paths, symlinks, special files, encryption, unsupported compression, excessive counts or sizes, and
-unsafe compression ratios before extraction.
+`skills/` appear at the archive root, alongside any ordinary regular-file attachments. There is no
+top-level content whitelist. Protocol v1 accepts only stored or DEFLATE-compressed regular files.
+Validation scans every ZIP entry and rejects traversal and absolute paths, backslashes, duplicate or
+Unicode-normalization-conflicting paths, excessive path depth, symbolic links, hard links and special
+files, encryption, unsupported compression, excessive compressed or expanded sizes and file counts,
+and unsafe compression ratios before use.
+
+Only files under a declared `skills/<skill-id>/` path contribute installed Skill content. Other
+attachments remain in the verified release artifact but are not installed or executed by the client.
 
 The manifest identity and version must equal the release descriptor. Every selected Skill and
 Connector must exist in the descriptor, every selected Skill must exist in the ZIP, and required
@@ -94,3 +104,13 @@ all checks. Clients may fall back from the CDN mirror to GitHub without changing
 
 Schema v1 is immutable after production adoption. Incompatible contracts require a new versioned
 prefix and schemas; additive Marketplace releases do not rewrite historical App-exported ZIPs.
+
+Repository schemas, fixtures, and tools accept optional `author`, matching
+[Open Science #1696](https://github.com/aipoch/open-science/pull/1696). Older clients use a strict
+Marketplace v1 schema and reject the entire index when they see this field. The official publication
+workflow therefore defaults to omitting author and permits it only when a protected feature gate also
+records a valid minimum supported Open Science version containing that client change.
+
+Discovery metadata may be corrected for an already published Specialist version only when its
+release descriptor path and SHA-256 remain identical. Such a change creates and signs a newer root
+revision; it never rewrites the immutable release descriptor or ZIP.

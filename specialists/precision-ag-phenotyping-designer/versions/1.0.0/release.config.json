@@ -7,9 +7,10 @@
   "marketplace": {
     "display_name": "Precision Agriculture Phenotyping and Prescription Design Specialist",
     "summary": "Designs radiometrically defensible UAV phenotyping, spatial validation, crop-stress inference, and machinery-ready variable-rate prescription workflows without inventing yield, nitrogen, or irrigation rates.",
+    "author": "K-Dense Inc.",
     "publisher": {
       "id": "aipoch",
-      "name": "Aipoch",
+      "name": "AIPOCH",
       "url": "https://github.com/aipoch"
     }
   },

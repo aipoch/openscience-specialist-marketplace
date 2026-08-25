@@ -5,9 +5,14 @@ export function updateMarketplace({
   baseMarketplace,
   entry,
   releaseDescriptorBytes,
+  authorPolicy = "include",
 }) {
   validateDocument("marketplace", baseMarketplace);
   const nextEntry = structuredClone(entry);
+  if (authorPolicy === "omit") delete nextEntry.author;
+  else if (authorPolicy !== "include") {
+    throw new Error(`invalid Marketplace author policy: ${authorPolicy}`);
+  }
   nextEntry.latest.release.sha256 = sha256(releaseDescriptorBytes);
   const existing = baseMarketplace.specialists.find(
     (item) => item.id === nextEntry.id,
@@ -19,9 +24,14 @@ export function updateMarketplace({
     if (JSON.stringify(existing) === JSON.stringify(nextEntry)) {
       return structuredClone(baseMarketplace);
     }
-    throw new Error(
-      `published Specialist version collision: ${nextEntry.id}@${nextEntry.latest.version}`,
-    );
+    if (
+      existing.latest.release.path !== nextEntry.latest.release.path ||
+      existing.latest.release.sha256 !== nextEntry.latest.release.sha256
+    ) {
+      throw new Error(
+        `published Specialist version collision: ${nextEntry.id}@${nextEntry.latest.version}`,
+      );
+    }
   }
   if (existing && versionOrder < 0) {
     throw new Error(

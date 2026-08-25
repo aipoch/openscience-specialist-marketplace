@@ -26,12 +26,26 @@ or ZIP; changed bytes require a new SemVer version.
 
 - Keep stable Specialist, Skill, Connector, and publisher IDs.
 - Preserve the App-export-compatible package layout in [the authoring guide](specialists/README.md).
+- Ordinary regular-file attachments are allowed and are safety-scanned with the complete ZIP. Only
+  `skills/<skill-id>/...` is installed; other attachments are not installed or executed.
 - Use the non-publishable [contribution example](example/README.md) as a copyable starting point.
 - Record the public upstream repository, exact 40-character commit SHA, and license.
 - Do not include secrets, private endpoints, credentials, tokens, local commands, or Connector
   configuration. Connectors remain references for App-side review and reuse.
 - Do not add a fake production Specialist, `plugins/`, `catalog/`, or `listings/` abstraction.
 - Do not add generated production output to `main`.
+
+Marketplace discovery metadata keeps two roles distinct:
+
+- `publisher` is required and identifies the stable publication/source subject with an ID, display
+  name, and HTTPS URL;
+- `author` is optional displayed authorship credit, limited to 160 characters and omitted when
+  missing, blank, or null.
+
+Do not infer a Specialist author from its publisher. Use a verifiable authorship credit from the
+reviewed source. Older clients strictly reject the optional field, so production continues to omit
+author until the protected publication configuration records a minimum supported Open Science
+version containing [client support](https://github.com/aipoch/open-science/pull/1696).
 
 Skill instructions can influence Agent behavior and therefore require maintainer review. Clearly call
 out new network access, command execution, data handling, destructive actions, or trust changes in the
@@ -87,6 +101,11 @@ Open a focused pull request containing the Specialist ID/version, upstream commi
 changes, Connector references, security impact, and reproducibility evidence. Maintainers publish
 accepted versions through the protected `production` environment; contributors do not publish or
 edit the `published` branch directly.
+
+Metadata-only corrections to an already published listing are allowed only when CI proves the
+versioned ZIP and release descriptor are unchanged. The publication workflow requires the existing
+descriptor path and SHA-256 to match, increments and re-signs the root index, and never replaces a
+release tag or asset. Do not create a fake Specialist SemVer for a listing-only correction.
 
 ## Protocol changes
 

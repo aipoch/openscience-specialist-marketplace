@@ -7,9 +7,10 @@
   "marketplace": {
     "display_name": "Cryo-EM Structure Validation Specialist",
     "summary": "Designs independent-half-map, map-quality, map-model, geometry, and deposition-readiness validation workflows for single-particle cryo-EM without inventing coordinates, local resolution, or validation scores.",
+    "author": "K-Dense Inc.",
     "publisher": {
       "id": "aipoch",
-      "name": "Aipoch",
+      "name": "AIPOCH",
       "url": "https://github.com/aipoch"
     }
   },

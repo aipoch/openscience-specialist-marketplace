@@ -24,7 +24,11 @@ contain:
 
 - Specialist identity, instructions, and default selections;
 - reusable **Skills** for domain knowledge and research methods; and
-- reference-only **Connectors** for scientific databases and tools configured in the App.
+- reference-only **Connectors** for scientific databases and tools configured in the App; and
+- ordinary attachments such as licenses and supporting documentation.
+
+The complete ZIP is safety-scanned, but only files under `skills/<skill-id>/` enter the installed
+Specialist. Other attachments are neither installed nor executed.
 
 Marketplace resources are not built into the OpenScience App. Remote Skills and Connector references
 do not enter an Agent context until the user reviews and installs the Specialist. Connector entries
@@ -121,6 +125,13 @@ Protocol schema v1 becomes immutable when consumed by a production App. Incompat
 a new protocol version. Protocol v1 `specialist.json` fields use snake_case, and all stable IDs use
 strict lowercase kebab-case. The shallow Marketplace root may advance to a newer version while
 historical release descriptors and ZIPs remain available.
+
+Discovery listings always identify a required `publisher`, the stable publication and source
+subject with an ID, display name, and URL. They may also carry an optional `author`, the Specialist's
+displayed authorship credit. Blank authors are omitted and not shown. Because older Open Science
+clients strictly reject unknown Marketplace v1 fields, the official publication workflow keeps
+`author` disabled until the minimum supported Open Science version includes
+[client support](https://github.com/aipoch/open-science/pull/1696).
 
 ## License
 

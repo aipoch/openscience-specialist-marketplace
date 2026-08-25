@@ -1,0 +1,28 @@
+{
+  "schema_version": 1,
+  "revision": "1",
+  "marketplace": {
+    "id": "openscience",
+    "name": "OpenScience Specialist Marketplace"
+  },
+  "specialists": [
+    {
+      "id": "fixture-specialist",
+      "display_name": "Fixture Specialist",
+      "summary": "A non-publishable Specialist used to verify optional author metadata.",
+      "author": "Fixture Author",
+      "publisher": {
+        "id": "fixture-publisher",
+        "name": "Fixture Publisher",
+        "url": "https://example.com"
+      },
+      "latest": {
+        "version": "1.0.0",
+        "release": {
+          "path": "releases/fixture-specialist/1.0.0.json",
+          "sha256": "0000000000000000000000000000000000000000000000000000000000000000"
+        }
+      }
+    }
+  ]
+}

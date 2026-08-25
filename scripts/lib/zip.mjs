@@ -9,10 +9,12 @@ const CENTRAL_DIRECTORY_SIGNATURE = 0x02014b50;
 const END_SIGNATURE = 0x06054b50;
 const FIXED_MTIME = new Date(1980, 0, 1, 0, 0, 0);
 const DEFAULT_LIMITS = {
+  maxCompressedBytes: 50 * 1024 * 1024,
   maxFiles: 1_000,
   maxFileBytes: 10 * 1024 * 1024,
   maxExpandedBytes: 100 * 1024 * 1024,
   maxCompressionRatio: 100,
+  maxPathDepth: 32,
 };
 
 async function collectFiles(root, current = "") {
@@ -28,6 +30,8 @@ async function collectFiles(root, current = "") {
       throw new Error(`symlinks are not allowed: ${relativePath}`);
     if (stat.isDirectory())
       files.push(...(await collectFiles(root, relativePath)));
+    else if (stat.isFile() && stat.nlink > 1)
+      throw new Error(`hard links are not allowed: ${relativePath}`);
     else if (stat.isFile())
       files.push({ path: relativePath, bytes: await readFile(filePath) });
     else throw new Error(`special files are not allowed: ${relativePath}`);
@@ -60,6 +64,8 @@ function findEnd(bytes) {
 export function inspectZip(input, limits = {}) {
   const bytes = Buffer.from(input);
   const effective = { ...DEFAULT_LIMITS, ...limits };
+  if (bytes.length > effective.maxCompressedBytes)
+    throw new Error("ZIP exceeds the compressed size limit");
   const end = findEnd(bytes);
   const entryCount = bytes.readUInt16LE(end + 10);
   const centralSize = bytes.readUInt32LE(end + 12);
@@ -105,7 +111,9 @@ export function inspectZip(input, limits = {}) {
     } catch {
       throw new Error(`unsafe ZIP path: ${name}`);
     }
-    const normalized = name.normalize("NFC");
+    if (name.split("/").length > effective.maxPathDepth)
+      throw new Error(`ZIP path is nested too deeply: ${name}`);
+    const normalized = name.normalize("NFC").toLocaleLowerCase("en-US");
     if (seen.has(normalized))
       throw new Error(`duplicate normalized ZIP path: ${name}`);
     seen.add(normalized);

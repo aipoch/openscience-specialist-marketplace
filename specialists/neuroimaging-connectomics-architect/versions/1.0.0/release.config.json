@@ -7,9 +7,10 @@
   "marketplace": {
     "display_name": "Multimodal Neuroimaging Connectomics Architect",
     "summary": "Designs reproducible structural MRI, resting-state fMRI, diffusion MRI, and multimodal connectomics workflows with distortion, motion, exchangeability, and network-inference controls and no clinical diagnosis.",
+    "author": "K-Dense Inc.",
     "publisher": {
       "id": "aipoch",
-      "name": "Aipoch",
+      "name": "AIPOCH",
       "url": "https://github.com/aipoch"
     }
   },

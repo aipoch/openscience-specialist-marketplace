@@ -7,9 +7,10 @@
   "marketplace": {
     "display_name": "Auto Research Specialist",
     "summary": "Coordinates reproducible biomedical research from evidence discovery through analysis, validation, and writing.",
+    "author": "AIPOCH",
     "publisher": {
       "id": "aipoch",
-      "name": "Aipoch",
+      "name": "AIPOCH",
       "url": "https://github.com/aipoch"
     }
   },

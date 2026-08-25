@@ -88,6 +88,15 @@ test("GitHub workflows are valid YAML documents", async () => {
     "/open-science/specialist-marketplace/v1/",
   );
   assert.equal(
+    workflows["publish.yml"].jobs.publish.env.MARKETPLACE_AUTHOR_POLICY,
+    "${{ vars.MARKETPLACE_AUTHOR_POLICY || 'omit' }}",
+  );
+  assert.equal(
+    workflows["publish.yml"].jobs.publish.env
+      .MARKETPLACE_MIN_OPEN_SCIENCE_VERSION,
+    "${{ vars.MARKETPLACE_MIN_OPEN_SCIENCE_VERSION }}",
+  );
+  assert.equal(
     workflows["verify-published.yml"].jobs.verify.steps.find(
       (step) => step.name === "Download and verify exact CDN mirror",
     ).env.MARKETPLACE_CDN_PREFIX,
@@ -205,6 +214,18 @@ test("GitHub workflows are valid YAML documents", async () => {
   assert.match(publishCommands, /cloudfront wait invalidation-completed/);
   assert.match(publishCommands, /--retry-all-errors/);
   assert.match(publishCommands, /PUBLISHED_COMMIT=/);
+  assert.match(
+    publishCommands,
+    /MARKETPLACE_AUTHOR_POLICY must be omit or include/,
+  );
+  assert.match(
+    publishCommands,
+    /Author publication requires a valid minimum Open Science SemVer/,
+  );
+  assert.match(
+    publishCommands,
+    /--author-policy "\$MARKETPLACE_AUTHOR_POLICY"/,
+  );
   assert.match(
     publishCommands,
     /raw="https:\/\/raw\.githubusercontent\.com\/\$\{GITHUB_REPOSITORY\}\/\$\{PUBLISHED_COMMIT\}\/"/,

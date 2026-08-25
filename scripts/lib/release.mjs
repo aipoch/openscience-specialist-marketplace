@@ -21,6 +21,17 @@ function assertString(value, label) {
     throw new Error(`${label} must be a non-empty string`);
 }
 
+function optionalTrimmedString(value, label, maxLength) {
+  if (value === undefined || value === null) return undefined;
+  if (typeof value !== "string")
+    throw new Error(`${label} must be a string, null, or omitted`);
+  const trimmed = value.trim();
+  if (!trimmed) return undefined;
+  if ([...trimmed].length > maxLength)
+    throw new Error(`${label} must be at most ${maxLength} characters`);
+  return trimmed;
+}
+
 function validateReleaseConfig(config) {
   assertExactKeys(
     config,
@@ -32,6 +43,7 @@ function validateReleaseConfig(config) {
     config.marketplace,
     ["display_name", "summary", "publisher"],
     "marketplace",
+    ["author"],
   );
   assertExactKeys(
     config.marketplace.publisher,
@@ -45,6 +57,7 @@ function validateReleaseConfig(config) {
   assertString(config.source.license, "source.license");
   assertString(config.marketplace.display_name, "marketplace.display_name");
   assertString(config.marketplace.summary, "marketplace.summary");
+  optionalTrimmedString(config.marketplace.author, "marketplace.author", 160);
   if (!ID_PATTERN.test(config.marketplace.publisher.id))
     throw new Error("invalid publisher ID");
   assertString(config.marketplace.publisher.name, "publisher.name");
@@ -116,6 +129,11 @@ export async function buildRelease({
     path.join(versionDirectory, "release.config.json"),
   );
   validateReleaseConfig(config);
+  const author = optionalTrimmedString(
+    config.marketplace.author,
+    "marketplace.author",
+    160,
+  );
 
   const built = await buildDeterministicZip(packageDirectory);
   const archive = inspectZip(built.bytes);
@@ -218,6 +236,7 @@ export async function buildRelease({
       id: specialistId,
       display_name: config.marketplace.display_name,
       summary: config.marketplace.summary,
+      ...(author ? { author } : {}),
       publisher: config.marketplace.publisher,
       latest: {
         version,
