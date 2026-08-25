@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "specialist_id": "precision-ag-phenotyping-designer",
+  "version": "1.0.0",
+  "source": {
+    "repository": "https://github.com/K-Dense-AI/scientific-agent-skills",
+    "commit": "36d8f13a1e754618794bf42f417884940077b4ae",
+    "license": "MIT"
+  },
+  "artifact": {
+    "path": "specialists/precision-ag-phenotyping-designer/1.0.0/precision-ag-phenotyping-designer-1.0.0.zip",
+    "github_release": {
+      "tag": "precision-ag-phenotyping-designer-v1.0.0",
+      "asset_name": "precision-ag-phenotyping-designer-1.0.0.zip"
+    },
+    "sha256": "fc0fb5b6908da41682124f889bc329b4975335abb38e8876e312c1fb54b95c59",
+    "compressed_bytes": 132788,
+    "uncompressed_bytes": 333224,
+    "file_count": 31
+  },
+  "defaults": {
+    "skill_ids": [
+      "experimental-design",
+      "geopandas",
+      "statistical-analysis"
+    ],
+    "connector_ids": [
+      "research-resources",
+      "literature"
+    ]
+  },
+  "skills": [
+    {
+      "id": "experimental-design",
+      "name": "experimental-design",
+      "display_name": "Experimental Design",
+      "description": "Designs randomized, blocked, factorial, response-surface, and sequential experiments while preventing confounding and pseudoreplication.",
+      "path": "skills/experimental-design",
+      "content_digest": "0b0c009f12b72f8d3b5712c08ad21bfafded2310963a4c85aaa4add83d241933",
+      "file_count": 7,
+      "uncompressed_bytes": 53960
+    },
+    {
+      "id": "geopandas",
+      "name": "geopandas",
+      "display_name": "GeoPandas",
+      "description": "Audits GeoPandas vector-data workflows, coordinate systems, geometry validity, spatial joins, and geospatial exports.",
+      "path": "skills/geopandas",
+      "content_digest": "58b6331e0173ce6f18fdba1584f02d9274a6d2cf9747829529c86d4d9d41cc8c",
+      "file_count": 14,
+      "uncompressed_bytes": 142556
+    },
+    {
+      "id": "statistical-analysis",
+      "name": "statistical-analysis",
+      "display_name": "Statistical Analysis",
+      "description": "Guides test selection, assumptions, effect sizes, power, Bayesian alternatives, and transparent statistical reporting.",
+      "path": "skills/statistical-analysis",
+      "content_digest": "e500941b3db38fc61cba704dc58e435ac1669ccb500e1a596e44c91861e39038",
+      "file_count": 7,
+      "uncompressed_bytes": 116948
+    }
+  ],
+  "connectors": [
+    {
+      "id": "research-resources",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}

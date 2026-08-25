@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": "9",
+  "revision": "10",
   "marketplace": {
     "id": "openscience",
     "name": "OpenScience Specialist Marketplace"
@@ -139,6 +139,23 @@
         "release": {
           "path": "releases/pharmacometrics-pkpd-designer/1.0.0.json",
           "sha256": "597f1d4064e2b5652bcf84a93a39deb55aa8c8f62ecfaeacd80a2fc1cdf7507a"
+        }
+      }
+    },
+    {
+      "id": "precision-ag-phenotyping-designer",
+      "display_name": "Precision Agriculture Phenotyping and Prescription Design Specialist",
+      "summary": "Designs radiometrically defensible UAV phenotyping, spatial validation, crop-stress inference, and machinery-ready variable-rate prescription workflows without inventing yield, nitrogen, or irrigation rates.",
+      "publisher": {
+        "id": "aipoch",
+        "name": "Aipoch",
+        "url": "https://github.com/aipoch"
+      },
+      "latest": {
+        "version": "1.0.0",
+        "release": {
+          "path": "releases/precision-ag-phenotyping-designer/1.0.0.json",
+          "sha256": "3b969b8d1e12a2bb709411f26b179efd9608b7819a4ffcdb576e379b3703ccb3"
         }
       }
     }
