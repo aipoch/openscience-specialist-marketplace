@@ -1,0 +1,76 @@
+{
+  "schema_version": 1,
+  "specialist_id": "astronomical-photometry-analyzer",
+  "version": "1.0.0",
+  "source": {
+    "repository": "https://github.com/K-Dense-AI/scientific-agent-skills",
+    "commit": "36d8f13a1e754618794bf42f417884940077b4ae",
+    "license": "MIT AND BSD-3-Clause"
+  },
+  "artifact": {
+    "path": "specialists/astronomical-photometry-analyzer/1.0.0/astronomical-photometry-analyzer-1.0.0.zip",
+    "github_release": {
+      "tag": "astronomical-photometry-analyzer-v1.0.0",
+      "asset_name": "astronomical-photometry-analyzer-1.0.0.zip"
+    },
+    "sha256": "dbea1cd4cc29acb3d3f079d56cf77fbfe9cb754f8ae209e25c932d4545258f24",
+    "compressed_bytes": 156476,
+    "uncompressed_bytes": 415773,
+    "file_count": 32
+  },
+  "defaults": {
+    "skill_ids": [
+      "astropy",
+      "statistical-analysis",
+      "uncertainty-and-units"
+    ],
+    "connector_ids": [
+      "research-resources",
+      "literature"
+    ]
+  },
+  "skills": [
+    {
+      "id": "astropy",
+      "name": "astropy",
+      "display_name": "Astropy",
+      "description": "Supports astronomy workflows using Astropy units, coordinates, FITS, tables, time systems, WCS, and cosmology APIs.",
+      "path": "skills/astropy",
+      "content_digest": "bc3e0007054e2b765886ee8948c95214b95235d742edd7dbc084e4d1a5d9224f",
+      "file_count": 8,
+      "uncompressed_bytes": 70235
+    },
+    {
+      "id": "statistical-analysis",
+      "name": "statistical-analysis",
+      "display_name": "Statistical Analysis",
+      "description": "Guides test selection, assumptions, effect sizes, power, Bayesian alternatives, and transparent statistical reporting.",
+      "path": "skills/statistical-analysis",
+      "content_digest": "e500941b3db38fc61cba704dc58e435ac1669ccb500e1a596e44c91861e39038",
+      "file_count": 7,
+      "uncompressed_bytes": 116948
+    },
+    {
+      "id": "uncertainty-and-units",
+      "name": "uncertainty-and-units",
+      "display_name": "Uncertainty and Units",
+      "description": "Audits units, dimensional consistency, plausibility, and measurement-uncertainty propagation in scientific calculations.",
+      "path": "skills/uncertainty-and-units",
+      "content_digest": "155fa7899bb8eb064a5195fdb799f57542cdcd0e6cc04e3ecbe4e695cfd146da",
+      "file_count": 14,
+      "uncompressed_bytes": 207652
+    }
+  ],
+  "connectors": [
+    {
+      "id": "research-resources",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}

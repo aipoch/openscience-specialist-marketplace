@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "revision": "3",
+  "revision": "4",
   "marketplace": {
     "id": "openscience",
     "name": "OpenScience Specialist Marketplace"
@@ -20,6 +20,23 @@
         "release": {
           "path": "releases/aerodynamics-cfd-validator/1.0.0.json",
           "sha256": "b350ce105bfb581e6432af7c9bb5c0c832270cb24b7192077125d46f38eef0d1"
+        }
+      }
+    },
+    {
+      "id": "astronomical-photometry-analyzer",
+      "display_name": "Astronomical Photometry and Time-domain Analysis Specialist",
+      "summary": "Designs calibrated astronomical image, photometry, transient, and variability analysis workflows with explicit detector characterization, false-alarm control, uncertainty propagation, and no fabricated magnitudes or classifications.",
+      "publisher": {
+        "id": "aipoch",
+        "name": "Aipoch",
+        "url": "https://github.com/aipoch"
+      },
+      "latest": {
+        "version": "1.0.0",
+        "release": {
+          "path": "releases/astronomical-photometry-analyzer/1.0.0.json",
+          "sha256": "5415b7ab15262fa296678a0300612747f7d779a023556410275b31dc15968dbf"
         }
       }
     },
