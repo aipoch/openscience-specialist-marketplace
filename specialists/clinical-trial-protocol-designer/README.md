@@ -40,3 +40,4 @@ Packaging notes (Skill files are otherwise byte-identical to that commit; audit 
 packaged):
 
 - endpoint-definition-designer: bytes reused from published auto-research-specialist@1.0.1 (content digest f6ec94c36758) so installing both Specialists does not raise a Skill conflict
+- 27 text file(s) normalized to repository format: LF line endings, no trailing whitespace, no blank lines at end of file
