@@ -1,0 +1,166 @@
+{
+  "source": {
+    "repository": "https://github.com/aipoch/medical-research-skills",
+    "commit": "f5ef65b9bea79b6dd9553f52f95b0d08f7d64d26",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Clinical Prediction Model Development and Validation Specialist",
+    "summary": "Plans, develops, and validates diagnostic and prognostic clinical prediction models with leakage-safe selection, sample-size and optimism checks, calibration, decision curves, and TRIPOD-aligned reporting for research, without issuing individual patient risk predictions.",
+    "publisher": {
+      "id": "mrsonord2240",
+      "name": "Samuel Nord",
+      "url": "https://github.com/mrsonord2240"
+    }
+  },
+  "skills": [
+    {
+      "id": "prognostic-biomarker-protocol-designer",
+      "name": "prognostic-biomarker-protocol-designer",
+      "display_name": "Prognostic Biomarker Protocol Designer",
+      "description": "Plans prognostic biomarker and risk-model studies: cohort backbone, endpoint and time scale, marker screening, modeling line, validation, and leakage review.",
+      "path": "skills/prognostic-biomarker-protocol-designer"
+    },
+    {
+      "id": "validation-strategy-designer",
+      "name": "validation-strategy-designer",
+      "display_name": "Validation Strategy Designer",
+      "description": "Plans protocol-stage internal, temporal, site-based, external, and functional validation tiers and states what each tier can and cannot support.",
+      "path": "skills/validation-strategy-designer"
+    },
+    {
+      "id": "sample-size-and-power-planning-assistant",
+      "name": "sample-size-and-power-planning-assistant",
+      "display_name": "Sample Size and Power Planning Assistant",
+      "description": "Plans assumption-audited sample size, event-driven, and fixed-N feasibility logic, including model-development and external-validation families.",
+      "path": "skills/sample-size-and-power-planning-assistant"
+    },
+    {
+      "id": "lasso-logistics-analysis",
+      "name": "lasso-logistics-analysis",
+      "display_name": "LASSO Logistic Regression Analysis",
+      "description": "Runs binary LASSO logistic regression on a numeric feature-by-sample matrix with cv.glmnet lambda selection, coefficient export, and CV and path plots.",
+      "path": "skills/lasso-logistics-analysis"
+    },
+    {
+      "id": "univariate-multivariable-cox-regression",
+      "name": "univariate-multivariable-cox-regression",
+      "display_name": "Univariable and Multivariable Cox Regression",
+      "description": "Fits univariable and multivariable Cox models on a complete-case clinical survival CSV and exports hazard-ratio tables and forest plots.",
+      "path": "skills/univariate-multivariable-cox-regression"
+    },
+    {
+      "id": "nomogram-construction",
+      "name": "nomogram-construction",
+      "display_name": "Nomogram Construction",
+      "description": "Builds an rms Cox nomogram from preselected survival predictors and exports the model bundle, an apparent C-index table, and a nomogram PDF.",
+      "path": "skills/nomogram-construction"
+    },
+    {
+      "id": "model-calibration-curve",
+      "name": "model-calibration-curve",
+      "display_name": "Survival Model Calibration Curve",
+      "description": "Refits a Cox model on a clinical CSV and produces bootstrap-corrected calibration curves and summary statistics at chosen survival horizons.",
+      "path": "skills/model-calibration-curve"
+    },
+    {
+      "id": "decision-curve-analysis",
+      "name": "decision-curve-analysis",
+      "display_name": "Decision Curve Analysis",
+      "description": "Computes net benefit and clinical-impact curves for one numeric predictor of a binary outcome with rmda, handling cohort or case-control prevalence.",
+      "path": "skills/decision-curve-analysis"
+    },
+    {
+      "id": "external-model-validation",
+      "name": "external-model-validation",
+      "display_name": "External Signature Validation",
+      "description": "Applies a fixed gene-coefficient prognostic signature to an external bulk expression cohort and outputs risk scores, KM, heatmap, and time-dependent ROC.",
+      "path": "skills/external-model-validation"
+    },
+    {
+      "id": "roc-diagnostic-performance",
+      "name": "roc-diagnostic-performance",
+      "display_name": "ROC Diagnostic Performance",
+      "description": "Fits a logistic model on case-control expression markers and reports in-sample ROC curves and AUCs for the combined model and each marker.",
+      "path": "skills/roc-diagnostic-performance"
+    },
+    {
+      "id": "time-dependent-roc",
+      "name": "time-dependent-roc",
+      "display_name": "Time-Dependent ROC Analysis",
+      "description": "Estimates IPCW time-dependent ROC curves and AUCs for a numeric risk marker against censored survival outcomes at chosen horizons.",
+      "path": "skills/time-dependent-roc"
+    },
+    {
+      "id": "elastic-net-feature-selection",
+      "name": "elastic-net-feature-selection",
+      "display_name": "Elastic Net Feature Selection",
+      "description": "Selects molecular features from bulk expression matrices for binary classification with elastic net logistic regression and alpha and lambda tuning.",
+      "path": "skills/elastic-net-feature-selection"
+    },
+    {
+      "id": "rf-model-importance-analysis",
+      "name": "rf-model-importance-analysis",
+      "display_name": "Random Forest Importance Analysis",
+      "description": "Trains a two-class random forest on a complete numeric feature matrix and reports OOB error curves and ranked variable importance.",
+      "path": "skills/rf-model-importance-analysis"
+    },
+    {
+      "id": "svm-model-importance-analysis",
+      "name": "svm-model-importance-analysis",
+      "display_name": "SVM-RFE Feature Ranking",
+      "description": "Ranks features for a two-class problem by linear SVM recursive feature elimination with cross-validated error across feature counts.",
+      "path": "skills/svm-model-importance-analysis"
+    },
+    {
+      "id": "xgboost-analysis",
+      "name": "xgboost-analysis",
+      "display_name": "XGBoost Modeling and Importance",
+      "description": "Trains an XGBoost binary or regression model on tabular data with one random train-test split and exports performance and feature-importance outputs.",
+      "path": "skills/xgboost-analysis"
+    },
+    {
+      "id": "lightgbm-analysis",
+      "name": "lightgbm-analysis",
+      "display_name": "LightGBM Modeling and Importance",
+      "description": "Trains a LightGBM model on tabular data with train, validation, and test splits and exports metrics, quality flags, and feature-importance rankings.",
+      "path": "skills/lightgbm-analysis"
+    },
+    {
+      "id": "km-survival-curve",
+      "name": "km-survival-curve",
+      "display_name": "Kaplan-Meier Survival Curve",
+      "description": "Plots Kaplan-Meier curves with log-rank or Wald statistics and a risk table for precomputed risk groups in tabular survival data.",
+      "path": "skills/km-survival-curve"
+    },
+    {
+      "id": "reporting-guideline-compliance-checker",
+      "name": "reporting-guideline-compliance-checker",
+      "display_name": "Reporting Guideline Compliance Checker",
+      "description": "Reviews manuscripts against reporting guidelines such as TRIPOD, STROBE, CONSORT, and PRISMA and ranks gaps by severity and submission risk.",
+      "path": "skills/reporting-guideline-compliance-checker"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "expression",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "omics-archives",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
