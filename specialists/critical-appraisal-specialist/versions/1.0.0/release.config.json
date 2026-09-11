@@ -1,0 +1,143 @@
+{
+  "source": {
+    "repository": "https://github.com/aipoch/medical-research-skills",
+    "commit": "f5ef65b9bea79b6dd9553f52f95b0d08f7d64d26",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Biomedical Critical Appraisal Specialist",
+    "summary": "Appraises individual biomedical papers or small paper sets for journal club, peer review and citation decisions, routing by verified study design to risk-of-bias, claim, spin and registry checks without reconstructing papers from memory.",
+    "publisher": {
+      "id": "mrsonord2240",
+      "name": "Samuel Nord",
+      "url": "https://github.com/mrsonord2240"
+    }
+  },
+  "skills": [
+    {
+      "id": "study-design-identifier",
+      "name": "study-design-identifier",
+      "display_name": "Study Design Identifier",
+      "description": "Identifies a paper's real study design from its methods, separates primary and secondary layers in hybrid papers, and corrects misleading author design labels.",
+      "path": "skills/study-design-identifier"
+    },
+    {
+      "id": "medical-research-literature-reader-pro",
+      "name": "medical-research-literature-reader-pro",
+      "display_name": "Medical Research Literature Reader Pro",
+      "description": "Classifies a medical paper into clinical, computational, experimental or hybrid tracks and writes a structured critical appraisal with explicit claim boundaries.",
+      "path": "skills/medical-research-literature-reader-pro"
+    },
+    {
+      "id": "rct-bias-assessment-rob2",
+      "name": "rct-bias-assessment-rob2",
+      "display_name": "RCT Risk of Bias Assessment (RoB 2)",
+      "description": "Applies the five RoB 2 domains to a randomized trial result and returns domain-level and overall risk-of-bias judgments in a fixed JSON schema.",
+      "path": "skills/rct-bias-assessment-rob2"
+    },
+    {
+      "id": "diagnostic-study-quality-assessment-quadas-2",
+      "name": "diagnostic-study-quality-assessment-quadas-2",
+      "display_name": "Diagnostic Accuracy Quality Assessment (QUADAS-2)",
+      "description": "Answers QUADAS-2 signalling questions for a diagnostic accuracy study across patient selection, index test, reference standard and flow/timing, with quotes.",
+      "path": "skills/diagnostic-study-quality-assessment-quadas-2"
+    },
+    {
+      "id": "result-reliability-checker",
+      "name": "result-reliability-checker",
+      "display_name": "Result Reliability Checker",
+      "description": "Audits whether each main result is trustworthy by tracing design, bias control, statistics, validation chain and claim discipline to a per-claim reliability judgment.",
+      "path": "skills/result-reliability-checker"
+    },
+    {
+      "id": "paper-to-claim-verifier",
+      "name": "paper-to-claim-verifier",
+      "display_name": "Paper-to-Claim Verifier",
+      "description": "Checks whether a claim is supported by the paper it cites, diagnosing citation drift, context transfer and causality inflation, and proposes citation-safe wording.",
+      "path": "skills/paper-to-claim-verifier"
+    },
+    {
+      "id": "high-value-paper-screener",
+      "name": "high-value-paper-screener",
+      "display_name": "High-Value Paper Screener",
+      "description": "Reading-priority triage: judges a paper's question fit and screening value and returns full read, skim, skip or uncertain, keeping relevance apart from quality.",
+      "path": "skills/high-value-paper-screener"
+    },
+    {
+      "id": "figure-first-paper-reader",
+      "name": "figure-first-paper-reader",
+      "display_name": "Figure-First Paper Reader",
+      "description": "Reads a paper figure by figure, maps each figure to the claim it is meant to carry, and judges whether the visual evidence supports that claim.",
+      "path": "skills/figure-first-paper-reader"
+    },
+    {
+      "id": "methods-reverse-engineer",
+      "name": "methods-reverse-engineer",
+      "display_name": "Methods Reverse Engineer",
+      "description": "Reconstructs a paper's methods into an ordered, reproducible workflow, labelling explicit, inferred and missing steps, and builds a replication checklist.",
+      "path": "skills/methods-reverse-engineer"
+    },
+    {
+      "id": "reproducibility-check",
+      "name": "reproducibility-check",
+      "display_name": "Reproducibility Check",
+      "description": "Audits a supplied Methods section for replication-critical omissions and ambiguities, rates reproducibility risk, and gives open-science practice guidance.",
+      "path": "skills/reproducibility-check"
+    },
+    {
+      "id": "reporting-guideline-compliance-checker",
+      "name": "reporting-guideline-compliance-checker",
+      "display_name": "Reporting Guideline Compliance Checker",
+      "description": "Checks a manuscript against its matching reporting guideline family (CONSORT, STROBE, PRISMA, TRIPOD) and ranks missing or weak reporting items by severity.",
+      "path": "skills/reporting-guideline-compliance-checker"
+    },
+    {
+      "id": "scientific-critical-thinking",
+      "name": "scientific-critical-thinking",
+      "display_name": "Scientific Critical Thinking",
+      "description": "General rigor checklist for methodology, bias, confounding, statistical pitfalls, logical fallacies and claim proportionality when no design-specific tool fits.",
+      "path": "skills/scientific-critical-thinking"
+    },
+    {
+      "id": "contradictory-findings-resolver",
+      "name": "contradictory-findings-resolver",
+      "display_name": "Contradictory Findings Resolver",
+      "description": "Explains why studies on one topic disagree by comparing population, endpoint, sample source, platform, model, validation depth and interpretation.",
+      "path": "skills/contradictory-findings-resolver"
+    },
+    {
+      "id": "retraction-watcher",
+      "name": "retraction-watcher",
+      "display_name": "Retraction Watcher",
+      "description": "Parses a reference list and queries Crossref, PubMed and Open Retractions by DOI or PMID for retractions and expressions of concern; needs network access.",
+      "path": "skills/retraction-watcher"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "biorxiv",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "clinical-trials",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "drug-regulatory",
+      "required": false,
+      "default_selected": false
+    }
+  ]
+}
