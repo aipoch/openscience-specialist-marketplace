@@ -1,0 +1,118 @@
+{
+  "source": {
+    "repository": "https://github.com/aipoch/medical-research-skills",
+    "commit": "f5ef65b9bea79b6dd9553f52f95b0d08f7d64d26",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Mendelian Randomization and Causal Genomics Specialist",
+    "summary": "Designs assumption-audited Mendelian randomization, pleiotropy-sensitivity, and QTL colocalization studies from GWAS summary statistics, with instrument, ancestry, overlap, and harmonization gates and supporting MR execution, without claiming proven causality or clinical advice.",
+    "publisher": {
+      "id": "mrsonord2240",
+      "name": "Samuel Nord",
+      "url": "https://github.com/mrsonord2240"
+    }
+  },
+  "skills": [
+    {
+      "id": "mendelian-randomization-protocol-designer",
+      "name": "mendelian-randomization-protocol-designer",
+      "display_name": "MR Protocol Designer",
+      "description": "Plans exposure-outcome MR studies: instrument rules, ancestry and overlap review, IVW-primary estimation, sensitivity stack, optional reverse or MVMR, claim limits.",
+      "path": "skills/mendelian-randomization-protocol-designer"
+    },
+    {
+      "id": "two-sample-mr-exposure-screening-reference-grounded",
+      "name": "two-sample-mr-exposure-screening-reference-grounded",
+      "display_name": "Two-Sample MR Exposure Screening Planner",
+      "description": "Plans one-outcome, exposure-panel two-sample MR screens with dependency maps, a verified literature pack, four workload configurations, and a self-critical risk review.",
+      "path": "skills/two-sample-mr-exposure-screening-reference-grounded"
+    },
+    {
+      "id": "mendelian-randomisation",
+      "name": "mendelian-randomisation",
+      "display_name": "Two-Sample MR Estimator",
+      "description": "Runs IVW, MR-Egger, weighted median and mode, Cochran's Q, Egger intercept, F and palindromic flags, and leave-one-out on pre-harmonised instrument JSON.",
+      "path": "skills/mendelian-randomisation"
+    },
+    {
+      "id": "bio-causal-genomics-pleiotropy-detection",
+      "name": "bio-causal-genomics-pleiotropy-detection",
+      "display_name": "MR Pleiotropy Sensitivity Toolkit",
+      "description": "R templates for MR-PRESSO outlier and distortion tests, MR-Egger intercept with I-squared, Steiger filtering and directionality, and MR-RAPS on harmonised MR data.",
+      "path": "skills/bio-causal-genomics-pleiotropy-detection"
+    },
+    {
+      "id": "qtl-colocalization-study-planner",
+      "name": "qtl-colocalization-study-planner",
+      "display_name": "QTL Colocalization Study Planner",
+      "description": "Plans eQTL, pQTL, or sQTL colocalization with GWAS loci: locus windows, ancestry and LD-reference alignment, fine-mapping and SMR follow-up, candidate-gene tiers.",
+      "path": "skills/qtl-colocalization-study-planner"
+    },
+    {
+      "id": "bidirectional-multi-phenotype-mr-research-planner",
+      "name": "bidirectional-multi-phenotype-mr-research-planner",
+      "display_name": "Bidirectional Multi-Phenotype MR Planner",
+      "description": "Plans exposure-family by outcome-family MR in both directions with subtype resolution, separate instruments per direction, sensitivity analyses, and FDR control.",
+      "path": "skills/bidirectional-multi-phenotype-mr-research-planner"
+    },
+    {
+      "id": "mr-scrna-research-planner",
+      "name": "mr-scrna-research-planner",
+      "display_name": "MR and Single-Cell Integration Planner",
+      "description": "Plans studies pairing MR causal evidence with scRNA-seq cell-type and gene-set analysis, using dependency maps that forbid QTL steps unless QTL data are declared.",
+      "path": "skills/mr-scrna-research-planner"
+    },
+    {
+      "id": "bio-causal-genomics-mediation-analysis",
+      "name": "bio-causal-genomics-mediation-analysis",
+      "display_name": "Genetic Effect Mediation Analysis",
+      "description": "R templates splitting individual-level genotype effects into ACME and ADE through molecular mediators, with bootstrap intervals, BH correction, HIMA, and medsens.",
+      "path": "skills/bio-causal-genomics-mediation-analysis"
+    },
+    {
+      "id": "gwas-database",
+      "name": "gwas-database",
+      "display_name": "GWAS Catalog Retrieval",
+      "description": "Queries the NHGRI-EBI GWAS Catalog REST and summary-statistics APIs for variant, trait, gene, and study associations with ancestry metadata and accessions.",
+      "path": "skills/gwas-database"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "human-genetics",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "variants",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "genes",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "expression",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "biorxiv",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
