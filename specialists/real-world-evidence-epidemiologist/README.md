@@ -41,4 +41,4 @@ Skills from [https://github.com/aipoch/medical-research-skills](https://github.c
 Packaging notes (Skill files are otherwise byte-identical to that commit; audit reports are not
 packaged):
 
-- None.
+- 9 text file(s) normalized to repository format: LF line endings, no trailing whitespace, no blank lines at end of file
