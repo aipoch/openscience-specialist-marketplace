@@ -1,0 +1,41 @@
+Cox Regression Analysis Session Information
+===========================================
+Generated: 2026-04-16 09:05:00
+
+Parameters:
+- data_file : /work/aipoch/univariate-multivariable-cox-regression/tests/data/sample_clinical_survival_data.csv
+- features : age,gender,stage,Tstage,Nstage,Mstage,risk
+- time_col : futime
+- event_col : fustat
+- skip_univariate : false
+- output_dir : /work/aipoch/univariate-multivariable-cox-regression/tests/expected_output
+- overwrite : TRUE
+- seed : 42
+- timeout_seconds : 0
+
+R version 4.1.2 (2021-11-01)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 20.04.5 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/liblapack.so.3
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base
+
+other attached packages:
+[1] optparse_1.7.1
+
+loaded via a namespace (and not attached):
+ [1] compiler_4.1.2   Matrix_1.5-0     tools_4.1.2      survival_3.2-13
+ [5] Rcpp_1.0.8       getopt_1.20.3    stringi_1.7.6    splines_4.1.2
+ [9] grid_4.1.2       zip_2.2.0        openxlsx_4.2.6.1 lattice_0.20-45

@@ -1,0 +1,28 @@
+run_analysis <- function(options) {
+  temp_paths <- character(0)
+  on.exit(if (length(temp_paths) > 0) unlink(temp_paths[file.exists(temp_paths)], force = TRUE), add = TRUE)
+  memory_guard()
+  if (options$mode == "build") {
+    features <- parse_feature_arg(options$features)
+    years <- parse_year_arg(options$years)
+    output_paths <- create_output_dirs(options$output_dir, overwrite = isTRUE(options$overwrite))
+    log_info("Loading clinical data...")
+    sample_info <- read_clinical_data(options$data_file)
+    log_info("Preparing model dataset...")
+    analysis_data <- prepare_nomogram_data(sample_info, features, options$time_col, options$event_col, years)
+    log_info("Constructing nomogram bundle...")
+    bundle <- build_nomogram_bundle(analysis_data, features, options$time_col, options$event_col, years)
+    log_info("Saving nomogram outputs...")
+    save_nomogram_bundle(bundle, output_paths)
+    save_session_info(output_paths$root, metadata = list(mode = options$mode, data_file = normalizePath(options$data_file, winslash = "/", mustWork = TRUE), features = features, time_col = options$time_col, event_col = options$event_col, years = years, output_dir = output_paths$root, overwrite = isTRUE(options$overwrite), seed = options$seed, timeout_seconds = options$timeout_seconds))
+    log_info(paste("Nomogram construction completed successfully. Output:", output_paths$root))
+    return(invisible(output_paths$root))
+  }
+  log_info("Loading nomogram bundle...")
+  bundle <- read_nomogram_bundle(options$nomo_data_file)
+  log_info("Rendering nomogram plot...")
+  save_nomogram_plot(bundle, options$plot_save, options$plot_width, options$plot_height, options$font_size, options$line_width, options$font_family)
+  save_session_info(dirname(options$plot_save), metadata = list(mode = options$mode, nomo_data_file = normalizePath(options$nomo_data_file, winslash = "/", mustWork = TRUE), plot_save = options$plot_save, plot_width = options$plot_width, plot_height = options$plot_height, font_size = options$font_size, line_width = options$line_width, font_family = options$font_family, seed = options$seed, timeout_seconds = options$timeout_seconds), title = "Nomogram Plot Session Information")
+  log_info(paste("Nomogram plot completed successfully. Plot:", options$plot_save))
+  invisible(options$plot_save)
+}

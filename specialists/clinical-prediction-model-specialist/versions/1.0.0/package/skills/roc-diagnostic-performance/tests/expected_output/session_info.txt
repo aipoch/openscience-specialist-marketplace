@@ -1,0 +1,54 @@
+ROC Diagnostic Performance Session Information
+==========================================
+Generated: 2026-04-17 01:21:27
+
+Parameters:
+- expression_file : /work/aipoch/roc-diagnostic-performance/tests/data/sample_expression_matrix.csv
+- group_file : /work/aipoch/roc-diagnostic-performance/tests/data/sample_group_info.csv
+- marker_genes : FOXP3,CD45,CD3E
+- case_group : Disease
+- group_col : group
+- output_dir : /work/aipoch/roc-diagnostic-performance/tests/expected_output
+- overwrite : TRUE
+- seed : 42
+- timeout_seconds : 0
+- plot_width : 6
+- plot_height : 6
+- font_family : sans
+- line_colors : #E64B35,#4DBBD5,#00A087,#3C5488,#F39B7F
+- line_width : 1.2
+- show_diagonal : TRUE
+- diagonal_color : #7F7F7F
+- diagonal_lty : 2
+- plot_title : ROC Diagnostic Performance
+- x_label : 1 - Specificity
+- y_label : Sensitivity
+- base_cex : 0.9
+- legend_position : bottomright
+- legend_cex : 0.8
+
+R version 4.1.2 (2021-11-01)
+Platform: x86_64-pc-linux-gnu (64-bit)
+Running under: Ubuntu 20.04.5 LTS
+
+Matrix products: default
+BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3
+LAPACK: /usr/lib/x86_64-linux-gnu/openblas-pthread/liblapack.so.3
+
+locale:
+ [1] LC_CTYPE=en_US.UTF-8       LC_NUMERIC=C
+ [3] LC_TIME=en_US.UTF-8        LC_COLLATE=en_US.UTF-8
+ [5] LC_MONETARY=en_US.UTF-8    LC_MESSAGES=en_US.UTF-8
+ [7] LC_PAPER=en_US.UTF-8       LC_NAME=C
+ [9] LC_ADDRESS=C               LC_TELEPHONE=C
+[11] LC_MEASUREMENT=en_US.UTF-8 LC_IDENTIFICATION=C
+
+attached base packages:
+[1] stats     graphics  grDevices utils     datasets  methods   base
+
+other attached packages:
+[1] optparse_1.7.1
+
+loaded via a namespace (and not attached):
+[1] compiler_4.1.2 plyr_1.8.6     tools_4.1.2    Rcpp_1.0.8     getopt_1.20.3
+[6] pROC_1.18.0
