@@ -1,0 +1,110 @@
+{
+  "source": {
+    "repository": "https://github.com/aipoch/medical-research-skills",
+    "commit": "f5ef65b9bea79b6dd9553f52f95b0d08f7d64d26",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Clinical Trial Protocol Design Specialist",
+    "summary": "Designs estimand-anchored, registry-informed clinical trial protocols—endpoints, eligibility, sample size, randomization, interim rules, and reporting checks—for research and regulatory planning without giving individual treatment advice or implying ethics approval.",
+    "publisher": {
+      "id": "mrsonord2240",
+      "name": "Samuel Nord",
+      "url": "https://github.com/mrsonord2240"
+    }
+  },
+  "skills": [
+    {
+      "id": "clinical-trial-protocol-skill",
+      "name": "clinical-trial-protocol-skill",
+      "display_name": "Clinical Trial Protocol Generator",
+      "description": "Researches similar registered trials and FDA pathways, then drafts NIH/FDA-template protocol sections for a drug or device, with a two-arm sample size script.",
+      "path": "skills/clinical-trial-protocol-skill"
+    },
+    {
+      "id": "endpoint-definition-designer",
+      "name": "endpoint-definition-designer",
+      "display_name": "Endpoint Definition Designer",
+      "description": "Turns study objectives into operational primary, secondary, and exploratory endpoints with event rules, timing windows, composite logic, and ambiguity review.",
+      "path": "skills/endpoint-definition-designer"
+    },
+    {
+      "id": "inclusion-exclusion-criteria-builder",
+      "name": "inclusion-exclusion-criteria-builder",
+      "display_name": "Inclusion-Exclusion Criteria Builder",
+      "description": "Converts a target population into executable, time-anchored inclusion and exclusion criteria tied to verifiable evidence sources, with edge-case adjudication rules.",
+      "path": "skills/inclusion-exclusion-criteria-builder"
+    },
+    {
+      "id": "sample-size-and-power-planning-assistant",
+      "name": "sample-size-and-power-planning-assistant",
+      "display_name": "Sample Size and Power Planning Assistant",
+      "description": "Plans sample-size logic, audits the quality of every power assumption, and builds conservative and feasibility-bound fallback scenarios instead of false-precision N.",
+      "path": "skills/sample-size-and-power-planning-assistant"
+    },
+    {
+      "id": "randomization-gen",
+      "name": "randomization-gen",
+      "display_name": "Randomization Sequence Generator",
+      "description": "Generates permuted-block allocation schedules for multi-arm RCTs from a bundled script, as input to a separately controlled allocation-concealment process.",
+      "path": "skills/randomization-gen"
+    },
+    {
+      "id": "adaptive-trial-simulator",
+      "name": "adaptive-trial-simulator",
+      "display_name": "Adaptive Trial Simulator",
+      "description": "Monte Carlo simulation of group-sequential and sample-size re-estimation designs for a two-arm continuous endpoint, summarizing power, stopping rates, and type I error.",
+      "path": "skills/adaptive-trial-simulator"
+    },
+    {
+      "id": "tooluniverse-clinical-trial-design",
+      "name": "tooluniverse-clinical-trial-design",
+      "display_name": "Trial Feasibility Assessment Framework",
+      "description": "Scores early-phase trial feasibility across population, biomarker, endpoint, comparator, safety, and regulatory paths; built on ToolUniverse, usable here via Connectors.",
+      "path": "skills/tooluniverse-clinical-trial-design"
+    },
+    {
+      "id": "sop-writer",
+      "name": "sop-writer",
+      "display_name": "SOP Writer",
+      "description": "Drafts standard operating procedures with purpose, scope, responsibilities, numbered steps, quality control, and documentation sections for clinical or lab workflows.",
+      "path": "skills/sop-writer"
+    },
+    {
+      "id": "clinicaltrials-database",
+      "name": "clinicaltrials-database",
+      "display_name": "ClinicalTrials.gov Database",
+      "description": "Queries ClinicalTrials.gov API v2 by condition, intervention, sponsor, status, or phase and retrieves registered design, eligibility, and outcome fields by NCT ID.",
+      "path": "skills/clinicaltrials-database"
+    },
+    {
+      "id": "reporting-guideline-compliance-checker",
+      "name": "reporting-guideline-compliance-checker",
+      "display_name": "Reporting Guideline Compliance Checker",
+      "description": "Checks trial and other biomedical manuscripts against CONSORT, STROBE, PRISMA, or TRIPOD and grades missing or weakly reported items by submission risk.",
+      "path": "skills/reporting-guideline-compliance-checker"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "clinical-trials",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "drug-regulatory",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
