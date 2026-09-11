@@ -39,3 +39,4 @@ Packaging notes (Skill files are otherwise byte-identical to that commit; audit 
 packaged):
 
 - gwas-database: upstream SKILL.md references `references/api_reference.md`, which upstream never shipped — accepted: supplementary API reference not shipped upstream; SKILL.md body documents the queries
+- 3 text file(s) normalized to repository format: LF line endings, no trailing whitespace, no blank lines at end of file
