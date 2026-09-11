@@ -53,3 +53,4 @@ packaged):
 - retraction-watcher: upstream SKILL.md references `references/api-documentation.md`, which upstream never shipped — accepted: peripheral API notes; endpoints are hard-coded in scripts/main.py
 - retraction-watcher: upstream SKILL.md references `references/example-reports/`, which upstream never shipped — accepted: sample outputs only; SKILL.md defines the report format
 - retraction-watcher: upstream SKILL.md references `requirements.txt`, which upstream never shipped — accepted: scripts/main.py is standard library except optional PyPDF2 for PDF input
+- 26 text file(s) normalized to repository format: LF line endings, no trailing whitespace, no blank lines at end of file
