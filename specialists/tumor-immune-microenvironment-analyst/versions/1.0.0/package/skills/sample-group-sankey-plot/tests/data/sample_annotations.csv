@@ -1,0 +1,7 @@
+SampleID,risk,Responder,Subtype
+S1,High,Yes,Basal
+S2,Low,No,LumA
+S3,High,Yes,Basal
+S4,Low,No,LumB
+S5,High,No,Her2
+S6,Low,Yes,LumA

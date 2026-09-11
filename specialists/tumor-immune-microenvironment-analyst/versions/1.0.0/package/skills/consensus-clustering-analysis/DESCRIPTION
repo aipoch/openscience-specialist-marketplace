@@ -1,0 +1,17 @@
+Package: consensus.clustering.analysis
+Title: Consensus Clustering Analysis Scripts
+Version: 0.1.0
+Authors@R: person("OpenCode", role = c("aut", "cre"), email = "opencode@example.com")
+Description: Script-oriented consensus clustering workflow for bulk expression
+    matrices with PAC-based model selection, plot generation, and reproducible
+    command-line execution.
+License: GPL-3
+Encoding: UTF-8
+Depends: R (>= 4.1.0)
+Imports:
+    ConsensusClusterPlus,
+    data.table,
+    optparse
+Suggests:
+    testthat (>= 3.0.0)
+Config/testthat/edition: 3
