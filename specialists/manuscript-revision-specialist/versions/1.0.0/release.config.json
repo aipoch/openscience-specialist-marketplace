@@ -1,0 +1,152 @@
+{
+  "source": {
+    "repository": "https://github.com/aipoch/medical-research-skills",
+    "commit": "f5ef65b9bea79b6dd9553f52f95b0d08f7d64d26",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Manuscript Submission and Peer-Review Revision Specialist",
+    "summary": "Runs pre-submission QA, reporting-guideline, consistency and reference checks, anonymization, revision triage, and location-mapped reviewer responses for biomedical manuscripts without claiming experiments, analyses, or edits the authors have not supplied.",
+    "publisher": {
+      "id": "mrsonord2240",
+      "name": "Samuel Nord",
+      "url": "https://github.com/mrsonord2240"
+    }
+  },
+  "skills": [
+    {
+      "id": "paper-sprint-review",
+      "name": "paper-sprint-review",
+      "display_name": "Paper Sprint Review",
+      "description": "Runs a multi-lens (contribution, rigor, writing, editor) manuscript review and turns findings into a prioritized revision backlog with gated sprints.",
+      "path": "skills/paper-sprint-review"
+    },
+    {
+      "id": "revision-strategy-planner",
+      "name": "revision-strategy-planner",
+      "display_name": "Revision Strategy Planner",
+      "description": "Triages editor and reviewer comments by severity and routes each to experiment, analysis, clarification, restructuring, wording, or bounded rebuttal.",
+      "path": "skills/revision-strategy-planner"
+    },
+    {
+      "id": "response-letter",
+      "name": "response-letter",
+      "display_name": "Point-by-Point Response Letter",
+      "description": "Assembles a Word response letter with an editor overview and Comment/Response/Changes-in-Text blocks mapped to page, paragraph, and line.",
+      "path": "skills/response-letter"
+    },
+    {
+      "id": "reporting-guideline-compliance-checker",
+      "name": "reporting-guideline-compliance-checker",
+      "display_name": "Reporting Guideline Compliance Checker",
+      "description": "Checks a manuscript against its design-matched reporting guideline (CONSORT, STROBE, PRISMA, TRIPOD, or hybrid) and grades gaps by submission risk.",
+      "path": "skills/reporting-guideline-compliance-checker"
+    },
+    {
+      "id": "consistency-checker-across-manuscript",
+      "name": "consistency-checker-across-manuscript",
+      "display_name": "Cross-Manuscript Consistency Checker",
+      "description": "Finds sample-size, endpoint, terminology, figure/table/supplement, and conclusion-result contradictions and version drift across manuscript sections.",
+      "path": "skills/consistency-checker-across-manuscript"
+    },
+    {
+      "id": "reference-integrity-checker",
+      "name": "reference-integrity-checker",
+      "display_name": "Reference Integrity Checker",
+      "description": "Checks that each citation supports the exact claim it is attached to, flagging mismatch, overextension, quote drift, and second-hand citation.",
+      "path": "skills/reference-integrity-checker"
+    },
+    {
+      "id": "author-response-builder",
+      "name": "author-response-builder",
+      "display_name": "Author Response Builder",
+      "description": "Drafts point-by-point replies in accept, explain, rebut, or added-analysis mode, linked to actual manuscript changes and open about unresolved items.",
+      "path": "skills/author-response-builder"
+    },
+    {
+      "id": "rebuttal-letter-strategist",
+      "name": "rebuttal-letter-strategist",
+      "display_name": "Rebuttal Letter Strategist",
+      "description": "Frames soft-but-firm replies to a sharp or disputed reviewer criticism or an appeal; its script only grades severity and fills a response template.",
+      "path": "skills/rebuttal-letter-strategist"
+    },
+    {
+      "id": "response-tone-polisher",
+      "name": "response-tone-polisher",
+      "display_name": "Response Tone Polisher",
+      "description": "Rewrites defensive or confrontational draft replies into professional academic tone while keeping the author's scientific position.",
+      "path": "skills/response-tone-polisher"
+    },
+    {
+      "id": "claim-strength-calibrator",
+      "name": "claim-strength-calibrator",
+      "display_name": "Claim Strength Calibrator",
+      "description": "Maps manuscript claims to their evidence level and flags causal, mechanistic, validation, and translational inflation with narrower wording.",
+      "path": "skills/claim-strength-calibrator"
+    },
+    {
+      "id": "retraction-watcher",
+      "name": "retraction-watcher",
+      "display_name": "Retraction Watcher",
+      "description": "Parses reference lists and queries Open Retractions, Crossref, and PubMed by DOI or PMID for retractions and expressions of concern; needs network.",
+      "path": "skills/retraction-watcher"
+    },
+    {
+      "id": "cover-letter-drafter",
+      "name": "cover-letter-drafter",
+      "display_name": "Cover Letter Drafter",
+      "description": "Drafts a five-paragraph editor-facing submission cover letter from supplied title, journal, contributions, results, and declarations.",
+      "path": "skills/cover-letter-drafter"
+    },
+    {
+      "id": "blind-review-sanitizer",
+      "name": "blind-review-sanitizer",
+      "display_name": "Blind Review Sanitizer",
+      "description": "Masks author names, institutions, contacts, acknowledgments, and first-person self-citation phrases in .docx/.md/.txt files for double-blind review.",
+      "path": "skills/blind-review-sanitizer"
+    },
+    {
+      "id": "figure-reference-checker",
+      "name": "figure-reference-checker",
+      "display_name": "Figure Reference Checker",
+      "description": "Checks figure citation numbering in manuscript text; its bundled script only extracts 'Fig. N' mentions and does not detect orphans or label mismatches.",
+      "path": "skills/figure-reference-checker"
+    },
+    {
+      "id": "arxiv-preflight",
+      "name": "arxiv-preflight",
+      "display_name": "arXiv Preflight",
+      "description": "Preflights LaTeX or PDF manuscripts for LLM residue, placeholders, AI-as-author, and fabricated or mismatched BibTeX references.",
+      "path": "skills/arxiv-preflight"
+    },
+    {
+      "id": "journal-recommender",
+      "name": "journal-recommender",
+      "display_name": "Journal Recommender",
+      "description": "Proposes sprint, robust, and safe target-journal tiers from topic, abstract, and target impact factor; every metric needs live verification.",
+      "path": "skills/journal-recommender"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "clinical-trials",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "biorxiv",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
