@@ -1,0 +1,129 @@
+{
+  "source": {
+    "repository": "https://github.com/aipoch/medical-research-skills",
+    "commit": "f5ef65b9bea79b6dd9553f52f95b0d08f7d64d26",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Real-World Evidence and Observational Epidemiology Specialist",
+    "summary": "Designs and audits target-trial-aligned cohort, case-control, and survey studies on EHR, claims, registry, and NHANES-type data with explicit time zero, DAG-justified confounding control, and bias sensitivity analyses, without drawing individual patient conclusions.",
+    "publisher": {
+      "id": "mrsonord2240",
+      "name": "Samuel Nord",
+      "url": "https://github.com/mrsonord2240"
+    }
+  },
+  "skills": [
+    {
+      "id": "real-world-evidence-study-designer",
+      "name": "real-world-evidence-study-designer",
+      "display_name": "Real-World Evidence Study Designer",
+      "description": "Designs EHR, claims, or registry RWE studies with explicit time zero, exposure and outcome windows, censoring, confounding control, and target trial emulation.",
+      "path": "skills/real-world-evidence-study-designer"
+    },
+    {
+      "id": "clinical-cohort-protocol-designer",
+      "name": "clinical-cohort-protocol-designer",
+      "display_name": "Clinical Cohort Protocol Designer",
+      "description": "Builds retrospective or prospective cohort protocol frameworks: eligibility, time zero, follow-up, endpoints, variable tiers, and one primary analysis line.",
+      "path": "skills/clinical-cohort-protocol-designer"
+    },
+    {
+      "id": "confounder-and-bias-control-planner",
+      "name": "confounder-and-bias-control-planner",
+      "display_name": "Confounder and Bias Control Planner",
+      "description": "Classifies variable roles, selects a minimal adjustment set and control strategy, and flags mediator, collider, immortal-time, and selection bias before analysis.",
+      "path": "skills/confounder-and-bias-control-planner"
+    },
+    {
+      "id": "case-control-study-planner",
+      "name": "case-control-study-planner",
+      "display_name": "Case-Control Study Planner",
+      "description": "Frames case-control designs with source-population logic, control sampling, matching decisions, exposure timing, and a bias-control matrix.",
+      "path": "skills/case-control-study-planner"
+    },
+    {
+      "id": "clinical-data-cleaner",
+      "name": "clinical-data-cleaner",
+      "display_name": "Clinical Data Cleaner",
+      "description": "Runs SDTM-style DM, LB, and VS data checks: required-field validation, outlier flagging, ISO 8601 date standardization, and a JSON audit trail.",
+      "path": "skills/clinical-data-cleaner"
+    },
+    {
+      "id": "nhanes-clinical-retrospective-biomarker-research-planner",
+      "name": "nhanes-clinical-retrospective-biomarker-research-planner",
+      "display_name": "NHANES Biomarker Research Planner",
+      "description": "Plans NHANES-style cross-sectional biomarker association studies with spline and subgroup modules, optional hospital validation, and four workload tiers.",
+      "path": "skills/nhanes-clinical-retrospective-biomarker-research-planner"
+    },
+    {
+      "id": "sample-size-and-power-planning-assistant",
+      "name": "sample-size-and-power-planning-assistant",
+      "display_name": "Sample Size and Power Planning Assistant",
+      "description": "Writes assumption-audited sample size, event-count, precision, and fixed-N feasibility memos with fallback scenarios instead of false-precision numbers.",
+      "path": "skills/sample-size-and-power-planning-assistant"
+    },
+    {
+      "id": "table-1-generator-advanced",
+      "name": "table-1-generator-advanced",
+      "display_name": "Table 1 Generator",
+      "description": "Generates an unweighted baseline characteristics table from a CSV: mean and SD, median and IQR, n (%), with t-test, ANOVA, or chi-square by group.",
+      "path": "skills/table-1-generator-advanced"
+    },
+    {
+      "id": "univariate-multivariable-cox-regression",
+      "name": "univariate-multivariable-cox-regression",
+      "display_name": "Univariate and Multivariable Cox Regression",
+      "description": "Runs complete-case univariate and multivariable Cox models in R, exports hazard ratio tables, and draws forest plots.",
+      "path": "skills/univariate-multivariable-cox-regression"
+    },
+    {
+      "id": "km-survival-curve",
+      "name": "km-survival-curve",
+      "display_name": "Kaplan-Meier Survival Curve",
+      "description": "Draws Kaplan-Meier curves in R for a precomputed categorical group with log-rank or Wald p-value, confidence bands, and a risk table.",
+      "path": "skills/km-survival-curve"
+    },
+    {
+      "id": "epidemiology",
+      "name": "epidemiology",
+      "display_name": "Epidemiology",
+      "description": "Guides occurrence measures with person-time denominators, absolute and relative association measures, DAG-based confounder reasoning, and bias checklists.",
+      "path": "skills/epidemiology"
+    },
+    {
+      "id": "reporting-guideline-compliance-checker",
+      "name": "reporting-guideline-compliance-checker",
+      "display_name": "Reporting Guideline Compliance Checker",
+      "description": "Checks manuscripts against STROBE, CONSORT, PRISMA, or TRIPOD and ranks missing or weak reporting items by submission risk.",
+      "path": "skills/reporting-guideline-compliance-checker"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "clinical-trials",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "drug-regulatory",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "research-resources",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
