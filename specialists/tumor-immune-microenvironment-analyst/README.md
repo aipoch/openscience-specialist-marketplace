@@ -48,3 +48,4 @@ packaged):
 - gsva-analysis-and-visualization: `tests/data/expr_matrix.csv` omitted from the package — 25.5 MB test fixture exceeds the marketplace 10 MiB per-file limit; tests/run_tests.R cannot run without it
 - gene-protein-expression-matrix-normalization: bytes reused from published auto-research-specialist@1.0.1 (content digest 059eccb371e4) so installing both Specialists does not raise a Skill conflict
 - batch-effect-correction: bytes reused from published auto-research-specialist@1.0.1 (content digest 9c2947db05ba) so installing both Specialists does not raise a Skill conflict
+- 21 text file(s) normalized to repository format: LF line endings, no trailing whitespace, no blank lines at end of file
