@@ -38,3 +38,4 @@ Packaging notes (Skill files are otherwise byte-identical to that commit; audit 
 packaged):
 
 - novelty-vs-feasibility-assessor: bytes reused from published auto-research-specialist@1.0.1 (content digest d8137f2f4b8e) so installing both Specialists does not raise a Skill conflict
+- 13 text file(s) normalized to repository format: LF line endings, no trailing whitespace, no blank lines at end of file
