@@ -1,0 +1,41 @@
+Bundled Skills are taken from https://github.com/aipoch/medical-research-skills at commit f5ef65b9bea79b6dd9553f52f95b0d08f7d64d26.
+
+- tumor-immune-infiltration-diagnostic-ml-research-planner: author AIPOCH, license MIT
+- cibersort-immune-infiltration-analysis: author AIPOCH, license MIT
+- ssgsea-immune-infiltration-analysis: author AIPOCH, license MIT
+- estimate-immune-score-analysis: author AIPOCH, license MIT
+- consensus-clustering-analysis: author AIPOCH, license MIT
+- deg-screening-analysis: author AIPOCH, license MIT
+- immune-pathway-analysis: author AIPOCH, license MIT
+- gsva-analysis-and-visualization: author AIPOCH, license MIT
+- gokegg-analysis: author AIPOCH, license MIT
+- pcd-immune-oncology-research-planner: author AIPOCH, license MIT
+- hierarchical-clustering-plot: author unstated, license unstated (repository MIT)
+- sample-group-sankey-plot: author AIPOCH, license MIT
+- gene-protein-expression-matrix-normalization: author AIPOCH, license MIT
+- batch-effect-correction: author AIPOCH, license MIT
+- km-survival-curve: author AIPOCH, license MIT
+
+aipoch/medical-research-skills repository license
+
+MIT License
+
+Copyright (c) 2026 AIpoch
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

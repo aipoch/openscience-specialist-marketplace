@@ -1,0 +1,9 @@
+sample_id,OS_event,OS_time,signature_group
+P001,1,420,low
+P002,0,365,low
+P003,1,210,low
+P004,0,180,high
+P005,1,90,high
+P006,0,510,high
+P007,1,300,low
+P008,0,240,high

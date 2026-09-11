@@ -1,0 +1,13 @@
+Package: hierarchicalclusteringplot
+Type: Project
+Title: Hierarchical Clustering Plot Skill
+Version: 1.0.0
+Authors@R: person("OpenCode", "Assistant", email = "noreply@example.com", role = c("aut", "cre"))
+Description: Dependency manifest for the hierarchical-clustering-plot Agent Skill.
+Imports:
+    data.table,
+    optparse
+Suggests:
+    testthat
+License: MIT
+Encoding: UTF-8

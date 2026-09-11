@@ -1,0 +1,160 @@
+{
+  "source": {
+    "repository": "https://github.com/aipoch/medical-research-skills",
+    "commit": "f5ef65b9bea79b6dd9553f52f95b0d08f7d64d26",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Tumor Immune Microenvironment Bulk-Transcriptome Specialist",
+    "summary": "Estimates, triangulates and interprets tumor immune microenvironment composition from bulk transcriptomes via CIBERSORT-style deconvolution, ssGSEA, ESTIMATE and consensus subtyping, without treating scores as measured infiltration or making patient-level claims.",
+    "publisher": {
+      "id": "mrsonord2240",
+      "name": "Samuel Nord",
+      "url": "https://github.com/mrsonord2240"
+    }
+  },
+  "skills": [
+    {
+      "id": "tumor-immune-infiltration-diagnostic-ml-research-planner",
+      "name": "tumor-immune-infiltration-diagnostic-ml-research-planner",
+      "display_name": "Tumor Immune-Infiltration Study Planner",
+      "description": "Plans tumor immune-infiltration-guided bulk-transcriptome biomarker and diagnostic-ML studies with four workload tiers, dependency maps and verified references.",
+      "path": "skills/tumor-immune-infiltration-diagnostic-ml-research-planner"
+    },
+    {
+      "id": "cibersort-immune-infiltration-analysis",
+      "name": "cibersort-immune-infiltration-analysis",
+      "display_name": "CIBERSORT Immune Deconvolution",
+      "description": "Runs local CIBERSORT-style nu-SVR deconvolution against LM22 to estimate relative immune-cell fractions with permutation p-values and a case-vs-control test.",
+      "path": "skills/cibersort-immune-infiltration-analysis"
+    },
+    {
+      "id": "ssgsea-immune-infiltration-analysis",
+      "name": "ssgsea-immune-infiltration-analysis",
+      "display_name": "ssGSEA Immune Cell Enrichment",
+      "description": "Scores immune cell-type gene sets per sample with ssGSEA or GSVA on bulk expression and compares one case group against one control group.",
+      "path": "skills/ssgsea-immune-infiltration-analysis"
+    },
+    {
+      "id": "estimate-immune-score-analysis",
+      "name": "estimate-immune-score-analysis",
+      "display_name": "ESTIMATE Stromal And Immune Scoring",
+      "description": "Computes ESTIMATE StromalScore, ImmuneScore and ESTIMATEScore (plus platform-dependent purity) from bulk expression, with optional two-group tests.",
+      "path": "skills/estimate-immune-score-analysis"
+    },
+    {
+      "id": "consensus-clustering-analysis",
+      "name": "consensus-clustering-analysis",
+      "display_name": "Consensus Clustering Subtyping",
+      "description": "Finds stable sample subtypes in bulk expression with ConsensusClusterPlus across distance/algorithm pairs, choosing K by minimum PAC with consensus and CDF plots.",
+      "path": "skills/consensus-clustering-analysis"
+    },
+    {
+      "id": "deg-screening-analysis",
+      "name": "deg-screening-analysis",
+      "display_name": "limma DEG Screening",
+      "description": "Screens differentially expressed genes between two groups of a non-count bulk expression matrix with limma, exporting DEG tables, a volcano plot and a heatmap.",
+      "path": "skills/deg-screening-analysis"
+    },
+    {
+      "id": "immune-pathway-analysis",
+      "name": "immune-pathway-analysis",
+      "display_name": "Immune Pathway GSVA",
+      "description": "Scores immune Reactome pathways from a user-supplied local gene-set table with GSVA or ssGSEA and tests two-group differences with limma plus a heatmap.",
+      "path": "skills/immune-pathway-analysis"
+    },
+    {
+      "id": "gsva-analysis-and-visualization",
+      "name": "gsva-analysis-and-visualization",
+      "display_name": "MSigDB GSVA Pathway Analysis",
+      "description": "Runs GSVA or ssGSEA on MSigDB collections loaded via msigdbr, tests case-vs-control pathway differences with limma, and renders heatmaps.",
+      "path": "skills/gsva-analysis-and-visualization"
+    },
+    {
+      "id": "gokegg-analysis",
+      "name": "gokegg-analysis",
+      "display_name": "GO And KEGG Enrichment",
+      "description": "Runs clusterProfiler GO and KEGG over-representation on a supplied gene list for human, mouse or rat and draws a combined GO/KEGG dot chart.",
+      "path": "skills/gokegg-analysis"
+    },
+    {
+      "id": "pcd-immune-oncology-research-planner",
+      "name": "pcd-immune-oncology-research-planner",
+      "display_name": "PCD Immuno-Oncology Study Planner",
+      "description": "Plans cell-death-themed bulk-transcriptome oncology studies spanning subtype discovery, immune landscape, prognostic signatures, TIDE/TMB context and drug hypotheses.",
+      "path": "skills/pcd-immune-oncology-research-planner"
+    },
+    {
+      "id": "hierarchical-clustering-plot",
+      "name": "hierarchical-clustering-plot",
+      "display_name": "Sample Hierarchical Clustering QC",
+      "description": "Builds a sample-level hierarchical clustering dendrogram and distance matrix from bulk expression for QC, batch inspection and sample-similarity checks.",
+      "path": "skills/hierarchical-clustering-plot"
+    },
+    {
+      "id": "sample-group-sankey-plot",
+      "name": "sample-group-sankey-plot",
+      "display_name": "Sample Group Sankey Plot",
+      "description": "Draws Sankey/alluvial plots of how samples flow across categorical annotations such as immune subtype, score group, cohort or response label.",
+      "path": "skills/sample-group-sankey-plot"
+    },
+    {
+      "id": "gene-protein-expression-matrix-normalization",
+      "name": "gene-protein-expression-matrix-normalization",
+      "display_name": "Expression Matrix Normalization",
+      "description": "Applies log2 with pseudo-count, z-score or min-max transforms to a finite bulk gene or protein matrix; not count-model (CPM/TPM/DESeq2) normalization.",
+      "path": "skills/gene-protein-expression-matrix-normalization"
+    },
+    {
+      "id": "batch-effect-correction",
+      "name": "batch-effect-correction",
+      "display_name": "ComBat Batch Correction",
+      "description": "Corrects known batch effects in merged bulk expression matrices with ComBat while modeling biological group, then exports the matrix and before/after QC plots.",
+      "path": "skills/batch-effect-correction"
+    },
+    {
+      "id": "km-survival-curve",
+      "name": "km-survival-curve",
+      "display_name": "Kaplan-Meier Survival Curve",
+      "description": "Draws a Kaplan-Meier curve with log-rank or Wald p-value and risk table from time, event status and a precomputed categorical group such as immune subtype.",
+      "path": "skills/km-survival-curve"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "expression",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "omics-archives",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "cancer-models",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "genes",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "cellguide",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
