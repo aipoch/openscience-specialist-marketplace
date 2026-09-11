@@ -52,3 +52,4 @@ packaged):
 - nomogram-construction: upstream SKILL.md references `scripts/install_dependencies.R`, which upstream never shipped — accepted: dependency installer not shipped upstream; analysis scripts present
 - model-calibration-curve: upstream SKILL.md references `scripts/install_dependencies.R`, which upstream never shipped — accepted: dependency installer not shipped upstream; analysis scripts present
 - external-model-validation: bytes reused from published auto-research-specialist@1.0.1 (content digest a95dfa782a67) so installing both Specialists does not raise a Skill conflict
+- 14 text file(s) normalized to repository format: LF line endings, no trailing whitespace, no blank lines at end of file
