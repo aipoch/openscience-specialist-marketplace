@@ -1,0 +1,34 @@
+Bundled Skills are taken from https://github.com/aipoch/medical-research-skills at commit f5ef65b9bea79b6dd9553f52f95b0d08f7d64d26.
+
+- mechanism-to-validation-planner: author AIPOCH, license MIT
+- animal-and-cell-validation-planner: author AIPOCH, license MIT
+- translational-study-blueprint: author AIPOCH, license MIT
+- experiment-design: author AIPOCH, license MIT
+- sample-size-basic: author AIPOCH, license MIT
+- randomization-gen: author AIPOCH, license MIT
+- sop-writer: author AIPOCH, license MIT
+- methodology-extractor: author AIPOCH, license MIT
+
+aipoch/medical-research-skills repository license
+
+MIT License
+
+Copyright (c) 2026 AIpoch
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.

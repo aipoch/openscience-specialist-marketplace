@@ -1,0 +1,111 @@
+{
+  "source": {
+    "repository": "https://github.com/aipoch/medical-research-skills",
+    "commit": "f5ef65b9bea79b6dd9553f52f95b0d08f7d64d26",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Preclinical Mechanism Validation Design Specialist",
+    "summary": "Designs claim-locked cell and animal validation routes from computational or association findings, with defined experimental units, randomization, blinding, controls, and escalation gates, without inventing models, effect sizes, or ethics approvals.",
+    "publisher": {
+      "id": "mrsonord2240",
+      "name": "Samuel Nord",
+      "url": "https://github.com/mrsonord2240"
+    }
+  },
+  "skills": [
+    {
+      "id": "mechanism-to-validation-planner",
+      "name": "mechanism-to-validation-planner",
+      "display_name": "Mechanism-to-Validation Planner",
+      "description": "Turns an association or mechanism finding into a staged validation ladder that separates replication, perturbation, specificity, robustness, and clinical relevance.",
+      "path": "skills/mechanism-to-validation-planner"
+    },
+    {
+      "id": "animal-and-cell-validation-planner",
+      "name": "animal-and-cell-validation-planner",
+      "display_name": "Animal and Cell Validation Planner",
+      "description": "Plans claim-centered cell and animal validation with model choice, perturbations, controls, readouts, go/no-go gates, and Lite to Publication+ workload tiers.",
+      "path": "skills/animal-and-cell-validation-planner"
+    },
+    {
+      "id": "translational-study-blueprint",
+      "name": "translational-study-blueprint",
+      "display_name": "Translational Study Blueprint",
+      "description": "Frames one primary translational use case with an evidence ladder, milestone thresholds, non-advancement signals, and feasibility-aware fallback routes.",
+      "path": "skills/translational-study-blueprint"
+    },
+    {
+      "id": "experiment-design",
+      "name": "experiment-design",
+      "display_name": "Experiment Design",
+      "description": "Guides design selection, control types, randomization and blinding schemes, bias mitigation, and protocol structure for comparative experiments.",
+      "path": "skills/experiment-design"
+    },
+    {
+      "id": "sample-size-basic",
+      "name": "sample-size-basic",
+      "display_name": "Basic Sample Size Estimator",
+      "description": "Computes per-group and total N for two-group mean, proportion, or survival comparisons from alpha, power, and effect size, with an assumptions summary.",
+      "path": "skills/sample-size-basic"
+    },
+    {
+      "id": "randomization-gen",
+      "name": "randomization-gen",
+      "display_name": "Randomization Generator",
+      "description": "Generates blocked randomization lists across named groups and exports them as CSV for concealed allocation of subjects or animals.",
+      "path": "skills/randomization-gen"
+    },
+    {
+      "id": "sop-writer",
+      "name": "sop-writer",
+      "display_name": "SOP Writer",
+      "description": "Drafts a structured standard operating procedure with purpose, scope, responsibilities, procedure steps, quality control, documentation, and approval sections.",
+      "path": "skills/sop-writer"
+    },
+    {
+      "id": "methodology-extractor",
+      "name": "methodology-extractor",
+      "display_name": "Methodology Extractor",
+      "description": "Extracts and compares experimental methods across papers into protocol-oriented tables of steps, parameters, and cross-study variations.",
+      "path": "skills/methodology-extractor"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "cancer-models",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "research-resources",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "genes",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "protein-annotation",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "expression",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
