@@ -1,0 +1,68 @@
+{
+  "source": {
+    "repository": "https://github.com/aipoch/medical-research-skills",
+    "commit": "f5ef65b9bea79b6dd9553f52f95b0d08f7d64d26",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Pharmacovigilance Signal Study Design Specialist",
+    "summary": "Designs deduplicated, MedDRA-versioned FAERS disproportionality, single-drug safety-atlas, and active-comparator signal studies with reporting-bias controls, without inventing reporting ratios, case counts, case facts, or causal claims.",
+    "publisher": {
+      "id": "mrsonord2240",
+      "name": "Samuel Nord",
+      "url": "https://github.com/mrsonord2240"
+    }
+  },
+  "skills": [
+    {
+      "id": "faers-pharmacovigilance-disproportionality-research-planner",
+      "name": "faers-pharmacovigilance-disproportionality-research-planner",
+      "display_name": "FAERS Disproportionality Research Planner",
+      "description": "Plans FAERS-style ROR studies for a drug or class with comparator benchmarking, indication strata, serious-case filters, and follow-up signal prioritization.",
+      "path": "skills/faers-pharmacovigilance-disproportionality-research-planner"
+    },
+    {
+      "id": "single-drug-faers-safety-profile-research-planner",
+      "name": "single-drug-faers-safety-profile-research-planner",
+      "display_name": "Single-Drug FAERS Safety Profile Planner",
+      "description": "Plans one-drug whole-profile FAERS SOC/PT signal atlases with subgroup, onset, and seriousness characterization and conservative label-gap framing.",
+      "path": "skills/single-drug-faers-safety-profile-research-planner"
+    },
+    {
+      "id": "active-comparator-single-soc-faers-safety-comparison",
+      "name": "active-comparator-single-soc-faers-safety-comparison",
+      "display_name": "Active-Comparator Single-SOC FAERS Comparison Planner",
+      "description": "Plans multi-drug or class FAERS comparisons inside one predefined SOC or PT family using active-comparator restriction and tiered evidence labels.",
+      "path": "skills/active-comparator-single-soc-faers-safety-comparison"
+    },
+    {
+      "id": "confounder-and-bias-control-planner",
+      "name": "confounder-and-bias-control-planner",
+      "display_name": "Confounder and Bias Control Planner",
+      "description": "Plans protocol-stage variable-role classification, adjustment sets, and bias mitigation, flagging overadjustment, collider, selection, and indication bias.",
+      "path": "skills/confounder-and-bias-control-planner"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "drug-regulatory",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "chembl",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
