@@ -1,0 +1,101 @@
+{
+  "source": {
+    "repository": "https://github.com/aipoch/medical-research-skills",
+    "commit": "f5ef65b9bea79b6dd9553f52f95b0d08f7d64d26",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Research Grant Proposal Specialist",
+    "summary": "Frames testable aims, drafts agency-aligned proposal sections, and stress-tests them with structured mock review, verifying the current funding notice and never inventing preliminary data, citations, budgets, or reviewer scores.",
+    "publisher": {
+      "id": "mrsonord2240",
+      "name": "Samuel Nord",
+      "url": "https://github.com/mrsonord2240"
+    }
+  },
+  "skills": [
+    {
+      "id": "grant-proposal-assistant",
+      "name": "grant-proposal-assistant",
+      "display_name": "Grant Proposal Assistant",
+      "description": "Drafts and revises NIH, NSF, and similar proposal sections from structured templates, with a heuristic structure checklist for existing drafts.",
+      "path": "skills/grant-proposal-assistant"
+    },
+    {
+      "id": "grant-specific-aims-writer",
+      "name": "grant-specific-aims-writer",
+      "display_name": "Grant Specific Aims Writer",
+      "description": "Writes or revises a one-page NIH Specific Aims page or NSF Project Summary using a problem, gap, hypothesis, and aims logic chain.",
+      "path": "skills/grant-specific-aims-writer"
+    },
+    {
+      "id": "aim-and-hypothesis-designer",
+      "name": "aim-and-hypothesis-designer",
+      "display_name": "Aim and Hypothesis Designer",
+      "description": "Turns a broad research idea into one primary aim, bounded secondary aims, and testable hypotheses separated from exploratory work.",
+      "path": "skills/aim-and-hypothesis-designer"
+    },
+    {
+      "id": "grant-mock-reviewer",
+      "name": "grant-mock-reviewer",
+      "display_name": "Grant Mock Reviewer",
+      "description": "Simulates structured NIH-style critique of significance, innovation, approach, investigators, and environment to prioritize revisions.",
+      "path": "skills/grant-mock-reviewer"
+    },
+    {
+      "id": "grant-budget-justification",
+      "name": "grant-budget-justification",
+      "display_name": "Grant Budget Justification",
+      "description": "Writes narrative justifications for personnel, equipment, supplies, and travel lines that the applicant has already costed.",
+      "path": "skills/grant-budget-justification"
+    },
+    {
+      "id": "novelty-vs-feasibility-assessor",
+      "name": "novelty-vs-feasibility-assessor",
+      "display_name": "Novelty vs. Feasibility Assessor",
+      "description": "Separates true from pseudo-novelty, audits feasibility under stated constraints, and forces a start, narrow, redesign, or stop decision.",
+      "path": "skills/novelty-vs-feasibility-assessor"
+    },
+    {
+      "id": "feasibility-aware-study-planner",
+      "name": "feasibility-aware-study-planner",
+      "display_name": "Feasibility-Aware Study Planner",
+      "description": "Scales a study idea to the best executable version under stated sample, time, budget, data-access, and team constraints.",
+      "path": "skills/feasibility-aware-study-planner"
+    },
+    {
+      "id": "sample-size-and-power-planning-assistant",
+      "name": "sample-size-and-power-planning-assistant",
+      "display_name": "Sample Size and Power Planning Assistant",
+      "description": "Plans sample-size logic, power assumptions, and fallback enrollment scenarios without fabricating exact calculations from missing inputs.",
+      "path": "skills/sample-size-and-power-planning-assistant"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "literature",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "biorxiv",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "research-resources",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "clinical-trials",
+      "required": false,
+      "default_selected": true
+    }
+  ]
+}
