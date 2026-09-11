@@ -1,0 +1,71 @@
+{
+  "skill_name": "arxiv-preflight",
+  "evals": [
+    {
+      "id": 1,
+      "prompt": "I'm about to upload this paper to arXiv. Please run a preflight check on the LaTeX source in evals/fixtures/clean/ and tell me if it's submission-ready.",
+      "expected_output": "Decision: PASS or PASS_WITH_FIXES. No BLOCKER findings. References resolve (or marked INCOMPLETE if network unavailable). All \\ref{} / \\cite{} reconcile. Disclosure section: no action.",
+      "files": [
+        "fixtures/clean/main.tex",
+        "fixtures/clean/refs.bib"
+      ],
+      "assertions": [
+        {"text": "Decision is PASS or PASS_WITH_FIXES (not HOLD)"},
+        {"text": "No BLOCKER findings reported"},
+        {"text": "AI-use disclosure recommendation is 'no action' or absent"},
+        {"text": "Every \\cite key in main.tex is matched to a BibTeX entry"}
+      ]
+    },
+    {
+      "id": 2,
+      "prompt": "Check evals/fixtures/llm_meta/ before I submit to arXiv. I think I left some assistant chatter in there.",
+      "expected_output": "Decision: HOLD. Multiple BLOCKER findings citing META-* and PLACE-* rules with specific file:line locations. Findings include 'As an AI language model', 'TODO', 'XX%', 'I hope this helps' or similar.",
+      "files": [
+        "fixtures/llm_meta/main.tex",
+        "fixtures/llm_meta/refs.bib"
+      ],
+      "assertions": [
+        {"text": "Decision is HOLD"},
+        {"text": "At least one BLOCKER finding cites META-01 (as-an-AI-language-model)"},
+        {"text": "At least one BLOCKER finding cites PLACE-01 (TODO/TBD)"},
+        {"text": "At least one finding cites PLACE-06 (XX%)"},
+        {"text": "Every finding includes a file:line location"}
+      ]
+    },
+    {
+      "id": 3,
+      "prompt": "Please verify the references in evals/fixtures/hallucinated_ref/refs.bib against arXiv preflight rules. I want to know which ones look real before I submit.",
+      "expected_output": "Decision: HOLD or PASS_WITH_FIXES (depending on network). Entries 'liang2023quantum' and 'nguyen2024recursive' flagged as BLOCKER or HIGH for being unverifiable. Other entries (shazeer2017outrageously, fedus2022switch, lepikhin2021gshard) verify cleanly.",
+      "files": [
+        "fixtures/hallucinated_ref/main.tex",
+        "fixtures/hallucinated_ref/refs.bib"
+      ],
+      "assertions": [
+        {"text": "liang2023quantum is flagged BLOCKER or HIGH"},
+        {"text": "nguyen2024recursive is flagged BLOCKER or HIGH (future year + made-up venue)"},
+        {"text": "shazeer2017outrageously, fedus2022switch, lepikhin2021gshard not flagged as BLOCKER"},
+        {"text": "Report explains why the flagged references could not be matched and recommends author verification"},
+        {"text": "Report does not call the paper AI-generated based on writing style alone"}
+      ]
+    },
+    {
+      "id": 4,
+      "prompt": "Run arXiv preflight on evals/fixtures/multifile/. This is a multi-file LaTeX project using \\input{}.",
+      "expected_output": "Decision: HOLD. The extractor processes intro.tex, method.tex, and results.tex. The report flags 'As an AI language model', 'XX%', and 'TODO' with file:line locations in child files.",
+      "files": [
+        "fixtures/multifile/main.tex",
+        "fixtures/multifile/intro.tex",
+        "fixtures/multifile/method.tex",
+        "fixtures/multifile/results.tex",
+        "fixtures/multifile/refs.bib"
+      ],
+      "assertions": [
+        {"text": "method.tex is included in manuscript.json raw_text"},
+        {"text": "results.tex is included in manuscript.json raw_text"},
+        {"text": "At least one BLOCKER cites META-01 from method.tex"},
+        {"text": "At least one BLOCKER cites PLACE-01 or PLACE-06 from results.tex"},
+        {"text": "Decision is HOLD"}
+      ]
+    }
+  ]
+}
