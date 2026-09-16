@@ -1,0 +1,110 @@
+{
+  "source": {
+    "repository": "https://github.com/mrsonord2240/optimizing-agent-science-skills",
+    "commit": "2f7bc21efd510c4c500eee1f3df2ce29eeeff026",
+    "license": "MIT"
+  },
+  "marketplace": {
+    "display_name": "Molecular Phylogenetics Analyst",
+    "summary": "Takes homologous sequences to a defensible phylogeny: alignment and trimming, model selection, maximum-likelihood and Bayesian trees with honest support and convergence checks, coalescent species trees, divergence dating, and publication-ready tree figures.",
+    "publisher": {
+      "id": "mrsonord2240",
+      "name": "Samuel Nord",
+      "url": "https://github.com/mrsonord2240"
+    }
+  },
+  "skills": [
+    {
+      "id": "bio-alignment-multiple",
+      "name": "bio-alignment-multiple",
+      "display_name": "Multiple Sequence Alignment",
+      "description": "Choose and run MAFFT, MUSCLE5, Clustal Omega or T-Coffee by dataset size, divergence and downstream use, including codon-aware and confidence-assessed alignments.",
+      "path": "skills/bio-alignment-multiple"
+    },
+    {
+      "id": "bio-phylo-modern-tree-inference",
+      "name": "bio-phylo-modern-tree-inference",
+      "display_name": "Maximum-Likelihood Tree Inference",
+      "description": "IQ-TREE and RAxML-NG trees with ModelFinder, UFBoot2 and SH-aLRT support, concordance factors, partitioning, topology tests and long-branch-attraction checks.",
+      "path": "skills/bio-phylo-modern-tree-inference"
+    },
+    {
+      "id": "bio-phylo-bayesian-inference",
+      "name": "bio-phylo-bayesian-inference",
+      "display_name": "Bayesian Phylogenetic Inference",
+      "description": "MrBayes posteriors gated on scalar and topology convergence, prior checks, stepping-stone model comparison and site-heterogeneous models for deep data.",
+      "path": "skills/bio-phylo-bayesian-inference"
+    },
+    {
+      "id": "bio-phylo-species-trees",
+      "name": "bio-phylo-species-trees",
+      "display_name": "Coalescent Species Trees",
+      "description": "ASTRAL, wASTRAL and ASTRAL-Pro species trees from gene trees, concordance factors, polytomy tests and minority-quartet checks for introgression.",
+      "path": "skills/bio-phylo-species-trees"
+    },
+    {
+      "id": "bio-alignment-trimming",
+      "name": "bio-alignment-trimming",
+      "display_name": "Alignment Trimming",
+      "description": "ClipKIT, trimAl and BMGE trimming chosen by downstream goal, with retention rules, column maps and trimmed-versus-untrimmed tree checks.",
+      "path": "skills/bio-alignment-trimming"
+    },
+    {
+      "id": "bio-phylo-divergence-dating",
+      "name": "bio-phylo-divergence-dating",
+      "display_name": "Divergence Time Estimation",
+      "description": "MCMCTree, BEAST2 and LSD2 dating with fossils as soft minima, prior-only runs and temporal-signal tests before tip-dating.",
+      "path": "skills/bio-phylo-divergence-dating"
+    },
+    {
+      "id": "bio-phylo-distance-calculations",
+      "name": "bio-phylo-distance-calculations",
+      "display_name": "Distance Trees",
+      "description": "Model-corrected distance matrices and NJ, BIONJ or FastME trees with saturation checks, LogDet for compositional bias and valid bootstrap support.",
+      "path": "skills/bio-phylo-distance-calculations"
+    },
+    {
+      "id": "bio-phylo-tree-manipulation",
+      "name": "bio-phylo-tree-manipulation",
+      "display_name": "Rooting and Tree Editing",
+      "description": "Outgroup, MAD, MinVar and non-reversible rooting with stated uncertainty, distance-preserving pruning and support-based collapsing.",
+      "path": "skills/bio-phylo-tree-manipulation"
+    },
+    {
+      "id": "bio-phylo-tree-io",
+      "name": "bio-phylo-tree-io",
+      "display_name": "Tree File I/O",
+      "description": "Read, convert and write Newick, Nexus, phyloXML and NeXML trees without losing posteriors, HPD intervals or support values.",
+      "path": "skills/bio-phylo-tree-io"
+    },
+    {
+      "id": "bio-phylo-tree-visualization",
+      "name": "bio-phylo-tree-visualization",
+      "display_name": "Tree Figures",
+      "description": "Publication tree figures with named support measures, HPD bars, correct rooting and vector export via Bio.Phylo or ggtree.",
+      "path": "skills/bio-phylo-tree-visualization"
+    }
+  ],
+  "connectors": [
+    {
+      "id": "pubmed",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "protein-annotation",
+      "required": false,
+      "default_selected": true
+    },
+    {
+      "id": "genes",
+      "required": false,
+      "default_selected": false
+    },
+    {
+      "id": "genomes",
+      "required": false,
+      "default_selected": false
+    }
+  ]
+}
